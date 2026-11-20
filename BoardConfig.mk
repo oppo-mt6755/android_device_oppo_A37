@@ -67,7 +67,7 @@ TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery/fstab.mt6755
 TARGET_SYSTEM_PROP := $(DEVICE_PATH)/system.prop
 
 # SELinux
-BOARD_SEPOLICY_DIRS += device/oppo/A37/sepolicy/boot
+BOARD_SEPOLICY_DIRS += device/oppo/A37/sepolicy/boot device/oppo/A37/sepolicy/audio
 
 # This kernel exposes the legacy f_adb character device.
 TARGET_USES_LEGACY_ADB_INTERFACE := true
@@ -76,7 +76,7 @@ TARGET_USES_HWC2 := true
 KERNEL_TOOLCHAIN := $(abspath prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin)
 
 # Defer donor hardware daemons until each device has been brought up.
-PRODUCT_COPY_FILES := $(foreach entry,$(PRODUCT_COPY_FILES),$(if $(findstring :system/vendor/etc/init/,$(entry)),,$(entry)))
+PRODUCT_COPY_FILES := $(filter-out vendor/sony/tuba/vendor/etc/init/%,$(PRODUCT_COPY_FILES))
 # The platform builds these DRM plugins itself.
 PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib/mediadrm/libdrmclearkeyplugin.so %:system/vendor/lib64/mediadrm/libdrmclearkeyplugin.so %:system/vendor/lib/mediadrm/libmockdrmcryptoplugin.so %:system/vendor/lib64/mediadrm/libmockdrmcryptoplugin.so,$(PRODUCT_COPY_FILES))
 
@@ -88,3 +88,6 @@ TARGET_LD_SHIM_LIBS += /system/vendor/lib64/libgpu_aux.so|libmtk_atomic_compat.s
 
 # The donor display structs do not match the retained kernel ABI.
 PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib/hw/hwcomposer.mt6755.so %:system/vendor/lib64/hw/hwcomposer.mt6755.so,$(PRODUCT_COPY_FILES))
+
+# The legacy HAL reads calibration files owned by the system group.
+TARGET_USES_CUSTOM_AUDIO_SERVICE_RC := true

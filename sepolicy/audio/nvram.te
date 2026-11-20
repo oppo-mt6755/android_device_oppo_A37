@@ -1,0 +1,13 @@
+type mtk_nvramd, domain;
+type mtk_nvramd_exec, exec_type, file_type;
+init_daemon_domain(mtk_nvramd)
+type nvdata_file, file_type, data_file_type;
+type mtk_nvram_prop, property_type;
+allow mtk_nvramd nvdata_file:dir create_dir_perms;
+allow mtk_nvramd nvdata_file:file create_file_perms;
+allow mtk_nvramd nvdata_file:lnk_file r_file_perms;
+set_prop(mtk_nvramd, mtk_nvram_prop)
+allow hal_audio_default nvdata_file:dir rw_dir_perms;
+allow hal_audio_default nvdata_file:file create_file_perms;
+allow hal_audio_default nvdata_file:lnk_file r_file_perms;
+get_prop(hal_audio_default, mtk_nvram_prop)

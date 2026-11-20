@@ -8,5 +8,6 @@ persist.sys.usb.config=mtp,adb
 service.adb.root=1
 ro.sys.sdcardfs=true
 
-# Hardware audio is deferred until the donor NVRAM interface is adapted.
-ro.hardware.audio.primary=default
+# Use the platform implementations for virtual and USB audio devices.
+ro.hardware.audio.r_submix=default
+ro.hardware.audio.usb=default

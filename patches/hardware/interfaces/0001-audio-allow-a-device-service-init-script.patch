@@ -1,0 +1,29 @@
+From c95a77e018d6452225ec42a42d072ed09a4ab960 Mon Sep 17 00:00:00 2001
+From: affggh <879632264@qq.com>
+Date: Fri, 20 Nov 2026 22:35:45 +0800
+Subject: [PATCH] audio: Allow the device to supply its service init script
+
+Keep the default init script unless TARGET_USES_CUSTOM_AUDIO_SERVICE_RC is selected. Legacy calibration storage can require a device-specific supplementary group.
+
+Change-Id: I2be67fcf8bd7beb8e9772504e607c7451637938b
+---
+ audio/2.0/default/Android.mk | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/audio/2.0/default/Android.mk b/audio/2.0/default/Android.mk
+index 8dec482..afd0493 100644
+--- a/audio/2.0/default/Android.mk
++++ b/audio/2.0/default/Android.mk
+@@ -59,7 +59,9 @@ include $(BUILD_SHARED_LIBRARY)
+ 
+ include $(CLEAR_VARS)
+ LOCAL_MODULE := android.hardware.audio@2.0-service
++ifneq ($(TARGET_USES_CUSTOM_AUDIO_SERVICE_RC),true)
+ LOCAL_INIT_RC := android.hardware.audio@2.0-service.rc
++endif
+ LOCAL_MODULE_RELATIVE_PATH := hw
+ LOCAL_PROPRIETARY_MODULE := true
+ LOCAL_SRC_FILES := \
+-- 
+2.43.0
+

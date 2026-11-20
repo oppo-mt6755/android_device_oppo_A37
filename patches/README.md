@@ -12,4 +12,7 @@ Android source root. Do not apply the former common tree's entire patch series.
 - frameworks/base: allow `/dev/mali0` and `/proc/ged` descriptors retained
   by the selected OPPO GPU driver during zygote EGL preload.
 
+- hardware/interfaces: allow the audio service init script to be supplied by
+  the device tree. The retained calibration files require the system group.
+
 No IMS, RIL, camera, Bluetooth or Wi-Fi platform patches are enabled at this stage.

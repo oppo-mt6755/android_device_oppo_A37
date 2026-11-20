@@ -30,18 +30,21 @@ Only one old atomic C symbol is supplied by compat/. No global preload is used.
 Necessary platform changes are exported under patches/ with their reasons.
 SELinux is permissive during bring-up. Android reaches the Trebuchet desktop;
 physical display and touch were confirmed on 2026-11-20. USB ADB also works.
-This does not establish radio, cameras, audio, connectivity or suspend support.
+Radio, cameras, connectivity and suspend remain under bring-up.
 
-The first-boot product selects AOSP default primary audio with an output-only
-placeholder policy. Playback and capture are not functional. This avoids starting
-the Sony audio HAL before its NVRAM/calibration interface is ported.
-
-The lights service declares its required init socket. Wi-Fi Display remains
-disabled until the connectivity stack is ported; enabling the donor overlay
-without a working P2P service crashes the system display thread. No audio
-framework workaround is active with the placeholder audio configuration.
+Audio uses the Sony primary HAL with the A37 NVRAM runtime and MT6750 mixer
+configuration. NVRAM initialization runs before the binderized HAL. The HAL
+service has the system group required to read calibration data. Platform
+remote-submix and USB audio modules are selected explicitly, since the donor's
+remote-submix input reports an invalid buffer size on this userspace.
+Framework AudioTrack playback is audible and AudioRecord capture returns
+nonzero microphone data. No audio framework deadlock workaround is needed.
 
 Wi-Fi/P2P feature declarations keep the framework services available to the
 Settings dashboard during connectivity bring-up. This does not establish
 working scanning or network association. Debugfs is mounted for kernel wake
 source statistics and the graphics memory HAL.
+
+Backlight uses lights/lights.c with the retained kernel 0–255 sysfs interface.
+The donor lights HAL, liblights-core and led_service are removed. Unsupported
+logical light IDs return ENOSYS; only the real LCD backlight is advertised.

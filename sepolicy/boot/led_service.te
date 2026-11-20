@@ -1,7 +1,0 @@
-# Sony's light HAL sends backlight commands to this userspace service.
-type led_service, domain;
-type led_service_exec, exec_type, file_type;
-init_daemon_domain(led_service)
-allow led_service sysfs:dir r_dir_perms;
-allow led_service sysfs:file rw_file_perms;
-allow led_service self:unix_stream_socket create_stream_socket_perms;

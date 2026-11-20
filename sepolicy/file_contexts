@@ -27,8 +27,6 @@
 /(system|system\/vendor|vendor)/bin/teed                        u:object_r:tkcore_exec:s0
 /(system|system\/vendor|vendor)/bin/hw/vendor.mediatek.hardware.power@1.1-service           u:object_r:mtk_hal_power_exec:s0
 /(system|system\/vendor|vendor)/bin/hw/vendor.mediatek.hardware.pq@2.0-service              u:object_r:mtk_hal_pq_exec:s0
-/dev/socket/led_socket(/.*)?	                                u:object_r:led_service_socket:s0
-/system/bin/led_service	                                        u:object_r:led_service_exec:s0
 
 # exfat & ntfs
 /system/bin/mkfs\.exfat                                         u:object_r:mkfs_exec:s0
