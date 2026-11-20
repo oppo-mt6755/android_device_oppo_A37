@@ -8,7 +8,7 @@ $(call inherit-product, frameworks/native/build/phone-xhdpi-2048-dalvik-heap.mk)
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/manifest.xml:system/vendor/manifest.xml \
-    $(LOCAL_PATH)/configs/audio/audio_policy_configuration.xml:system/vendor/etc/audio_policy_configuration.xml \
+    $(LOCAL_PATH)/configs/audio/boot_audio_policy_configuration.xml:system/vendor/etc/audio_policy_configuration.xml \
     $(LOCAL_PATH)/configs/audio/a2dp_audio_policy_configuration.xml:system/vendor/etc/a2dp_audio_policy_configuration.xml \
     $(LOCAL_PATH)/rootdir/fstab.mt6755:root/fstab.mt6755 \
     $(LOCAL_PATH)/rootdir/init.mt6755.rc:root/init.mt6755.rc \

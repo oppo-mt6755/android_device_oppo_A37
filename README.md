@@ -28,5 +28,15 @@ firmware-provenance.json and graphics-provenance.json for exact sources.
 
 Only one old atomic C symbol is supplied by compat/. No global preload is used.
 Necessary platform changes are exported under patches/ with their reasons.
-SELinux is permissive during bring-up. A successful build alone does not prove
-that Android boots or that radio, cameras, audio and suspend work.
+SELinux is permissive during bring-up. Android reaches the Trebuchet desktop;
+physical display and touch were confirmed on 2026-11-20. USB ADB also works.
+This does not establish radio, cameras, audio, connectivity or suspend support.
+
+The first-boot product selects AOSP default primary audio with an output-only
+placeholder policy. Playback and capture are not functional. This avoids starting
+the Sony audio HAL before its NVRAM/calibration interface is ported.
+
+The lights service declares its required init socket. Wi-Fi Display remains
+disabled until the connectivity stack is ported; enabling the donor overlay
+without a working P2P service crashes the system display thread. No audio
+framework workaround is active with the placeholder audio configuration.

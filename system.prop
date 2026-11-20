@@ -7,3 +7,6 @@ qemu.hw.mainkeys=1
 persist.sys.usb.config=mtp,adb
 service.adb.root=1
 ro.sys.sdcardfs=true
+
+# Hardware audio is deferred until the donor NVRAM interface is adapted.
+ro.hardware.audio.primary=default
