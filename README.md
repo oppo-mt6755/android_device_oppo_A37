@@ -21,6 +21,7 @@ at `/system/vendor/etc/firmware`. Sony r12 Mali requires kernel ABI 10.2,
 whereas the retained OPPO driver implements ABI 8.0. The matching OPPO Mali,
 GPU auxiliary library and gralloc replace those three donor components.
 32-bit and 64-bit isolated EGLImage/pixel-readback probes pass with this mix.
+The OPPO libstlport runtime is included because the stock GPU imports it.
 The donor HWC frame structs also differ from the retained kernel; the source
 composer in hwcomposer/ uses the actual kernel header. See the vendor's
 firmware-provenance.json and graphics-provenance.json for exact sources.
