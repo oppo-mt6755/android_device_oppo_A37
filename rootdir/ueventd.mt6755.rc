@@ -109,3 +109,7 @@
 
 # Fingerprint
 /dev/madev0               0660   system     system
+
+# Existing kernel node names used by the graphics services and app EGL clients.
+/dev/mali0                0666   system     graphics
+/dev/mtk_disp_mgr         0660   system     graphics

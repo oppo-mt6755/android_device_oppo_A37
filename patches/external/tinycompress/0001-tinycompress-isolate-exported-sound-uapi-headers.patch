@@ -1,0 +1,48 @@
+From ef4d462b9318ea4a76844cdd05107b2189052755 Mon Sep 17 00:00:00 2001
+From: affggh <879632264@qq.com>
+Date: Fri, 20 Nov 2026 18:08:12 +0800
+Subject: [PATCH] tinycompress: Isolate exported sound UAPI headers
+
+Change-Id: I43c2266b9784e00560068b775a884e69a9f6686c
+---
+ Android.mk | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/Android.mk b/Android.mk
+index fa3ccad..d743d77 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -5,11 +5,20 @@
+ 
+ LOCAL_PATH := $(call my-dir)
+ 
++# Export only the sound UAPI used here. Adding the whole arm64 header root
++# overrides libc's signal/asm headers in 32-bit builds.
++tinycompress_kernel_include := $(call intermediates-dir-for,HEADER_LIBRARIES,tinycompress_kernel_uapi)/include
++tinycompress_kernel_headers := $(addprefix $(tinycompress_kernel_include)/sound/,asound.h compress_params.h compress_offload.h)
++$(tinycompress_kernel_headers): PRIVATE_KERNEL_SOUND := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include/sound
++$(tinycompress_kernel_headers): INSTALLED_KERNEL_HEADERS
++	@mkdir -p $(dir $@)
++	$(hide) cp $(PRIVATE_KERNEL_SOUND)/$(notdir $@) $@
++
+ include $(CLEAR_VARS)
+ LOCAL_CFLAGS := -Wno-macro-redefined
+ LOCAL_C_INCLUDES:= $(LOCAL_PATH)/include
+-LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+-LOCAL_ADDITIONAL_DEPENDENCIES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
++LOCAL_C_INCLUDES += $(tinycompress_kernel_include)
++LOCAL_ADDITIONAL_DEPENDENCIES += $(tinycompress_kernel_headers)
+ LOCAL_CFLAGS += -DUSE_VENDOR_EXTN
+ LOCAL_SRC_FILES:= compress.c utils.c
+ LOCAL_MODULE := libtinycompress_vendor
+@@ -21,8 +30,8 @@ include $(BUILD_SHARED_LIBRARY)
+ include $(CLEAR_VARS)
+ LOCAL_CFLAGS := -Wno-macro-redefined
+ LOCAL_C_INCLUDES:= $(LOCAL_PATH)/include
+-LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+-LOCAL_ADDITIONAL_DEPENDENCIES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
++LOCAL_C_INCLUDES += $(tinycompress_kernel_include)
++LOCAL_ADDITIONAL_DEPENDENCIES += $(tinycompress_kernel_headers)
+ LOCAL_SRC_FILES:= compress.c utils.c
+ LOCAL_MODULE := libtinycompress
+ LOCAL_SHARED_LIBRARIES:= libcutils libutils

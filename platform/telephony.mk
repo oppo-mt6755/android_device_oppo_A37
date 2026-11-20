@@ -1,4 +1,4 @@
-LOCAL_PATH := device/sony/tuba/platform
+LOCAL_PATH := device/oppo/A37/platform
 
 # Configs
 PRODUCT_COPY_FILES += \

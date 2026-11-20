@@ -1,0 +1,7 @@
+/dev/mali[0-9]*                    u:object_r:gpu_device:s0
+/dev/ged                           u:object_r:gpu_device:s0
+/dev/mtk_disp_mgr                  u:object_r:graphics_device:s0
+/dev/mtk_disp                      u:object_r:graphics_device:s0
+/dev/mtk_cmdq                      u:object_r:graphics_device:s0
+/dev/m4u                           u:object_r:graphics_device:s0
+/system/bin/led_service            u:object_r:led_service_exec:s0

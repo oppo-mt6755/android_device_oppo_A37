@@ -1,2 +1,1 @@
-PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/full_tuba.mk
+PRODUCT_MAKEFILES := lineage_A37:$(LOCAL_DIR)/lineage.mk

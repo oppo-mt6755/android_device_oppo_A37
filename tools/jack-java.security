@@ -1,0 +1,4 @@
+# Jack 1.3 requests an SSLv3 context whose enabled protocols in JDK 8 include
+# TLS 1.0/1.1. This override is supplied only to the loopback Jack JVM.
+# Keep SSLv3 and the JDK's weak cipher exclusions disabled.
+jdk.tls.disabledAlgorithms=SSLv3, RC4, DES, MD5withRSA, DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL, ECDH, include jdk.disabled.namedCurves

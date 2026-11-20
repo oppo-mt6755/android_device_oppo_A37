@@ -1,9 +1,8 @@
-LOCAL_PATH := device/sony/tuba
+DEVICE_PATH := device/oppo/A37
 
-include $(LOCAL_PATH)/platform/board.mk
+include $(DEVICE_PATH)/platform/board.mk
 
 # Platform
-#ARCH_ARM_HAVE_TLS_REGISTER := true
 TARGET_BOARD_PLATFORM := mt6755
 TARGET_NO_BOOTLOADER := true
 
@@ -13,30 +12,23 @@ TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 :=
 TARGET_CPU_VARIANT := cortex-a53
-#TARGET_CPU_SMP := true
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv7-a-neon
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a53
-TARGET_BOARD_SUFFIX := _64
-TARGET_USES_64_BIT_BINDER := true
 
-TARGET_CPU_CORTEX_A53 := true
-
-TARGET_BOOTLOADER_BOARD_NAME := mt6755
+TARGET_BOOTLOADER_BOARD_NAME := A37
 
 # Kernel
 TARGET_USES_64_BIT_BINDER := true
-TARGET_IS_64_BIT := true
-LZMA_RAMDISK_TARGETS := boot,recovery
 BOARD_USES_FULL_RECOVERY_IMAGE := true
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
-BOARD_KERNEL_BASE := 0x40078000
+BOARD_KERNEL_BASE := 0x40000000
 BOARD_KERNEL_PAGESIZE := 2048
-BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2 enforcing=0 androidboot.selinux=permissive loglevel=8
-BOARD_MKBOOTIMG_ARGS := --board 1465391499 --ramdisk_offset 0x04f88000 --second_offset 0x00e88000 --tags_offset 0x03f88000
+BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2 androidboot.selinux=permissive
+BOARD_MKBOOTIMG_ARGS := --board A37 --kernel_offset 0x00080000 --ramdisk_offset 0x05000000 --second_offset 0x00f00000 --tags_offset 0x04000000
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-android-
 TARGET_KERNEL_SOURCE := kernel/oppo/mt6750
@@ -46,19 +38,17 @@ TARGET_KERNEL_CONFIG := oppo6750_15127_debug_defconfig
 BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 16777216
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_CACHEIMAGE_PARTITION_SIZE := 444596224
+BOARD_CACHEIMAGE_PARTITION_SIZE := 268435456
 BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2793406464
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2147483648
 BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 27468479488
-BOARD_FLASH_BLOCK_SIZE := 131072
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 13048462336
+BOARD_FLASH_BLOCK_SIZE := 4096
 
-BOARD_HAS_LARGE_FILESYSTEM := true
 TARGET_USERIMAGES_USE_EXT4 := true
-TARGET_USERIMAGES_USE_F2FS := true
 
 # Include needed symbols
-TARGET_INCLUDE_LIBTUBA := true
+TARGET_INCLUDE_LIBTUBA := false
 
 # Display
 DEVICE_RESOLUTION := 720x1280
@@ -66,37 +56,35 @@ TARGET_SCREEN_WIDTH := 720
 TARGET_SCREEN_HEIGHT := 1280
 
 # Bluetooth
-BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(LOCAL_PATH)/bluetooth
+BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(DEVICE_PATH)/bluetooth
 
 # LightHAL
 TARGET_PROVIDES_LIBLIGHT := true
 
 # Recovery
-TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/rootdir/fstab.mt6755
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery/fstab.mt6755
 
-# TWRP
-BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_23x41.h\"
-TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID := true
-TW_DEVICE_VERSION := 0
-RECOVERY_SDCARD_ON_DATA := true
-TW_BRIGHTNESS_PATH := /sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness/
-TW_INCLUDE_CRYPTO := true
-TW_USE_TOOLBOX := true
-TWRP_INCLUDE_LOGCAT := true
-TW_MAX_BRIGHTNESS := 255
-TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone1/temp
-TW_CUSTOM_BATTERY_PATH := "/sys/class/power_supply/battery"
-TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/virtual/android_usb/android0/f_mass_storage/lun%d/file"
-TWHAVE_SELINUX := true
-
-# Crypto
-TW_CRYPTO_REAL_BLKDEV := "/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/userdata" 
-TW_CRYPTO_MNT_POINT := "/data"
-TW_CRYPTO_KEY_LOC := "footer"
-TW_CRYPTO_FS_OPTIONS := "nosuid,nodev,noatime,discard,noauto_da_alloc,data =ordered"
-TW_INCLUDE_L_CRYPTO := true
-
-TARGET_SYSTEM_PROP := $(LOCAL_PATH)/system.prop
+TARGET_SYSTEM_PROP := $(DEVICE_PATH)/system.prop
 
 # SELinux
-BOARD_SEPOLICY_DIRS += $(LOCAL_PATH)/sepolicy
+BOARD_SEPOLICY_DIRS += device/oppo/A37/sepolicy/boot
+
+# This kernel exposes the legacy f_adb character device.
+TARGET_USES_LEGACY_ADB_INTERFACE := true
+TARGET_COPY_OUT_VENDOR := system/vendor
+TARGET_USES_HWC2 := true
+KERNEL_TOOLCHAIN := $(abspath prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin)
+
+# Defer donor hardware daemons until each device has been brought up.
+PRODUCT_COPY_FILES := $(foreach entry,$(PRODUCT_COPY_FILES),$(if $(findstring :system/vendor/etc/init/,$(entry)),,$(entry)))
+# The platform builds these DRM plugins itself.
+PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib/mediadrm/libdrmclearkeyplugin.so %:system/vendor/lib64/mediadrm/libdrmclearkeyplugin.so %:system/vendor/lib/mediadrm/libmockdrmcryptoplugin.so %:system/vendor/lib64/mediadrm/libmockdrmcryptoplugin.so,$(PRODUCT_COPY_FILES))
+
+# Add compatibility symbols only to the libraries that import them.
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/egl/libGLES_mali.so|libmtk_atomic_compat.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libgpu_aux.so|libmtk_atomic_compat.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib64/egl/libGLES_mali.so|libmtk_atomic_compat.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib64/libgpu_aux.so|libmtk_atomic_compat.so
+
+# The donor display structs do not match the retained kernel ABI.
+PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib/hw/hwcomposer.mt6755.so %:system/vendor/lib64/hw/hwcomposer.mt6755.so,$(PRODUCT_COPY_FILES))
