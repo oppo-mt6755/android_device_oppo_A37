@@ -40,3 +40,8 @@ The lights service declares its required init socket. Wi-Fi Display remains
 disabled until the connectivity stack is ported; enabling the donor overlay
 without a working P2P service crashes the system display thread. No audio
 framework workaround is active with the placeholder audio configuration.
+
+Wi-Fi/P2P feature declarations keep the framework services available to the
+Settings dashboard during connectivity bring-up. This does not establish
+working scanning or network association. Debugfs is mounted for kernel wake
+source statistics and the graphics memory HAL.
