@@ -22,3 +22,8 @@ requests and their completions remain in the vendor library's own queues;
 framework requests stay in the Hermes HIDL queue. The shared RequestInfo prefix
 is checked at compile time. See ../ims/README.md for service sources, vendor
 provenance, SIM selection, and the unsupported video-call media operations.
+
+The native codec requires a connected legacy radio notification subscriber before
+it fans unsolicited bearer updates out to MAL. The HIDL adapter holds read-only
+subscriptions to rild/rild2 so that existing native notification handling remains
+active. They send no radio requests; the framework still uses HIDL.

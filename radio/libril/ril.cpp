@@ -939,6 +939,24 @@ extern "C" void IMS_RIL_onRequestComplete(RIL_Token, RIL_Errno, void*, size_t);
 static void (*vendorRequestComplete)(RIL_Token, RIL_Errno, void*, size_t);
 static void (*vendorUnsolicitedResponse)(int, const void*, size_t, RIL_SOCKET_ID);
 
+static void* subscribeNativeRadio(void* argument) {
+    const char* name = static_cast<const char*>(argument);
+    // The legacy codec broadcasts bearer updates to MAL only while its radio
+    // notification socket has a subscriber. HIDL replaces the old Java RIL
+    // client, so retain a read-only subscription to activate that native path.
+    for (;;) {
+        int fd = socket_local_client(name, ANDROID_SOCKET_NAMESPACE_RESERVED, SOCK_STREAM);
+        if (fd >= 0) {
+            RLOGI("Native radio notification subscription connected: %s", name);
+            char buffer[4096];
+            while (TEMP_FAILURE_RETRY(read(fd, buffer, sizeof(buffer))) > 0) {}
+            close(fd);
+        }
+        sleep(2);
+    }
+    return nullptr;
+}
+
 static void registerVendorSockets(const RIL_RadioFunctionsSocket* callbacks) {
     // Use the paired vendor library's IMS socket codec and request queues.
     void* vendor = dlopen("librilmtk.so", RTLD_NOW | RTLD_LOCAL);
@@ -966,6 +984,14 @@ static void registerVendorSockets(const RIL_RadioFunctionsSocket* callbacks) {
             dlsym(vendor, "RIL_onUnsolicitedResponseSocket"));
     if (registerVendor && vendorRequestComplete && vendorUnsolicitedResponse) {
         registerVendor(callbacks);
+        static const char* names[] = {"rild", "rild2"};
+        for (const char* name : names) {
+            pthread_t thread;
+            int result = pthread_create(&thread, nullptr, subscribeNativeRadio,
+                                        const_cast<char*>(name));
+            if (result == 0) pthread_detach(thread);
+            else RLOGE("Cannot subscribe native radio %s: %d", name, result);
+        }
     }
     IMS_RILA_register();
 }
