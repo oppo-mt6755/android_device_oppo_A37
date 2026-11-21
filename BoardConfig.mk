@@ -93,3 +93,8 @@ PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib/hw/hwcomposer.mt6755.so %
 TARGET_USES_CUSTOM_AUDIO_SERVICE_RC := true
 
 BOARD_HAL_STATIC_LIBRARIES += libhealthd.mt6755
+
+TARGET_USES_CUSTOM_SENSORS_SERVICE_RC := true
+TARGET_USES_CUSTOM_BLUETOOTH_SERVICE_RC := true
+BOARD_SEPOLICY_DIRS += device/oppo/A37/sepolicy/connectivity
+TARGET_USES_CUSTOM_WIFI_SERVICE_RC := true

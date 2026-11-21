@@ -1,0 +1,93 @@
+From 04f218d58e2231f74956060ba8cbcd3474f945db Mon Sep 17 00:00:00 2001
+From: affggh <879632264@qq.com>
+Date: Sat, 21 Nov 2026 19:17:59 +0800
+Subject: [PATCH] scan: Use local BSS age before falling back to AP timestamps
+
+Older kernels expose SEEN_MS_AGO without LAST_SEEN_BOOTTIME. Convert that local age to boot time so an AP timestamp is not treated as a stale local observation. Preserve the explicit boottime attribute and clamp observations older than boot. Validate clock precedence and underflow.
+
+Change-Id: I67a6ffb9e18de3c32fbf7da5591b5fb9b97b9403
+---
+ scanning/scan_utils.cpp       | 13 +++++++++++++
+ tests/scan_utils_unittest.cpp | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 41 insertions(+)
+
+diff --git a/scanning/scan_utils.cpp b/scanning/scan_utils.cpp
+index dfd051c..37cbfd9 100644
+--- a/scanning/scan_utils.cpp
++++ b/scanning/scan_utils.cpp
+@@ -17,6 +17,7 @@
+ #include "wificond/scanning/scan_utils.h"
+ 
+ #include <vector>
++#include <time.h>
+ 
+ #include <linux/netlink.h>
+ #include <linux/nl80211.h>
+@@ -196,6 +197,18 @@ bool ScanUtils::GetBssTimestamp(const NL80211NestedAttr& bss,
+                             &last_seen_since_boot_nanoseconds)) {
+     *last_seen_since_boot_microseconds = last_seen_since_boot_nanoseconds / 1000;
+   } else {
++    // Older kernels expose the local BSS age but TSF may be the AP clock.
++    // Reconstruct a boot-relative observation time before falling back to TSF.
++    uint32_t age_ms;
++    struct timespec now;
++    if (bss.GetAttributeValue(NL80211_BSS_SEEN_MS_AGO, &age_ms) &&
++        clock_gettime(CLOCK_BOOTTIME, &now) == 0) {
++      const uint64_t boot_us = static_cast<uint64_t>(now.tv_sec) * 1000000 +
++                              now.tv_nsec / 1000;
++      const uint64_t age_us = static_cast<uint64_t>(age_ms) * 1000;
++      *last_seen_since_boot_microseconds = boot_us > age_us ? boot_us - age_us : 0;
++      return true;
++    }
+     // Fall back to use TSF if we can't find NL80211_BSS_LAST_SEEN_BOOTTIME
+     // attribute.
+     if (!bss.GetAttributeValue(NL80211_BSS_TSF, last_seen_since_boot_microseconds)) {
+diff --git a/tests/scan_utils_unittest.cpp b/tests/scan_utils_unittest.cpp
+index 28ea283..a3e24b3 100644
+--- a/tests/scan_utils_unittest.cpp
++++ b/tests/scan_utils_unittest.cpp
+@@ -17,6 +17,7 @@
+ #include <functional>
+ #include <memory>
+ #include <vector>
++#include <time.h>
+ 
+ #include <linux/netlink.h>
+ #include <linux/nl80211.h>
+@@ -246,6 +247,33 @@ TEST_F(ScanUtilsTest, CanPrioritizeLastSeenSinceBootNetlinkAttribute) {
+   EXPECT_EQ(kLastSeenTimestampNanoSeconds/1000, timestamp_microseconds);
+ }
+ 
++TEST_F(ScanUtilsTest, ReconstructsLocalTimestampFromBssAge) {
++  constexpr uint32_t kAgeMs = 2000;
++  NL80211NestedAttr bss(NL80211_ATTR_BSS);
++  bss.AddAttribute(NL80211Attr<uint32_t>(NL80211_BSS_SEEN_MS_AGO, kAgeMs));
++  // An AP clock must not override the observation's local clock.
++  bss.AddAttribute(NL80211Attr<uint64_t>(NL80211_BSS_TSF, UINT64_MAX));
++  struct timespec before, after;
++  ASSERT_EQ(0, clock_gettime(CLOCK_BOOTTIME, &before));
++  uint64_t timestamp;
++  ASSERT_TRUE(scan_utils_.GetBssTimestampForTesting(bss, &timestamp));
++  ASSERT_EQ(0, clock_gettime(CLOCK_BOOTTIME, &after));
++  const uint64_t beforeUs = static_cast<uint64_t>(before.tv_sec) * 1000000 +
++                            before.tv_nsec / 1000;
++  const uint64_t afterUs = static_cast<uint64_t>(after.tv_sec) * 1000000 +
++                           after.tv_nsec / 1000;
++  EXPECT_GE(timestamp + kAgeMs * 1000, beforeUs);
++  EXPECT_LE(timestamp + kAgeMs * 1000, afterUs);
++}
++
++TEST_F(ScanUtilsTest, ClampsBssAgeBeforeBoot) {
++  NL80211NestedAttr bss(NL80211_ATTR_BSS);
++  bss.AddAttribute(NL80211Attr<uint32_t>(NL80211_BSS_SEEN_MS_AGO, UINT32_MAX));
++  uint64_t timestamp;
++  ASSERT_TRUE(scan_utils_.GetBssTimestampForTesting(bss, &timestamp));
++  EXPECT_EQ(0u, timestamp);
++}
++
+ TEST_F(ScanUtilsTest, CanHandleMissingLastSeenSinceBootNetlinkAttribute) {
+   constexpr uint64_t kBssTsfTimestampMicroSeconds = 654321;
+   NL80211NestedAttr bss(NL80211_ATTR_BSS);
+-- 
+2.43.0
+

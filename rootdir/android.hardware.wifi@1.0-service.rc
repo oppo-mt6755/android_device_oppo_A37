@@ -1,0 +1,5 @@
+# The legacy kernel requires privileged interface and driver mode operations.
+service wifi_hal_legacy /vendor/bin/hw/android.hardware.wifi@1.0-service
+    class hal
+    user root
+    group wifi inet gps

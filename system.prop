@@ -11,3 +11,6 @@ ro.sys.sdcardfs=true
 # Use the platform implementations for virtual and USB audio devices.
 ro.hardware.audio.r_submix=default
 ro.hardware.audio.usb=default
+
+# The controller rejects extended feature page 2 despite advertising it.
+ro.bluetooth.max_feature_page=1

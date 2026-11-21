@@ -1,0 +1,2 @@
+# Patch context and format-patch signatures intentionally contain spaces.
+patches/** -whitespace

@@ -113,3 +113,11 @@
 # Existing kernel node names used by the graphics services and app EGL clients.
 /dev/mali0                0666   system     graphics
 /dev/mtk_disp_mgr         0660   system     graphics
+
+# Physical sensor nodes on the retained kernel.
+/dev/gsensor 0660 system system
+/dev/als_ps 0660 system system
+/dev/hwmsensor 0660 system system
+/dev/m_acc_misc 0660 system system
+/dev/m_alsps_misc 0660 system system
+/dev/msensor 0660 system system

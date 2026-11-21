@@ -30,7 +30,7 @@ Only one old atomic C symbol is supplied by compat/. No global preload is used.
 Necessary platform changes are exported under patches/ with their reasons.
 SELinux is permissive during bring-up. Android reaches the Trebuchet desktop;
 physical display and touch were confirmed on 2026-11-20. USB ADB also works.
-Radio, cameras, connectivity and suspend remain under bring-up.
+Radio, cameras and suspend remain under bring-up.
 
 Audio uses the Sony primary HAL with the A37 NVRAM runtime and MT6750 mixer
 configuration. NVRAM initialization runs before the binderized HAL. The HAL
@@ -40,10 +40,10 @@ remote-submix input reports an invalid buffer size on this userspace.
 Framework AudioTrack playback is audible and AudioRecord capture returns
 nonzero microphone data. No audio framework deadlock workaround is needed.
 
-Wi-Fi/P2P feature declarations keep the framework services available to the
-Settings dashboard during connectivity bring-up. This does not establish
-working scanning or network association. Debugfs is mounted for kernel wake
-source statistics and the graphics memory HAL.
+Wi-Fi/P2P and USB accessory declarations keep the corresponding framework
+services available to Settings. The connected-devices dashboard also requires
+UsbManager. Debugfs is mounted for kernel wake-source statistics and the
+graphics memory HAL.
 
 Backlight uses lights/lights.c with the retained kernel 0–255 sysfs interface.
 The donor lights HAL, liblights-core and led_service are removed. Unsupported
@@ -57,3 +57,23 @@ Fuel gauging uses the matching A37 fuelgauged and /system/lib/libfgauge.so.
 The daemon starts in Android and charger modes; its logger can write kmsg as
 system. The board health module corrects the kernel millivolt voltage interface
 without changing the platform BatteryMonitor or reported capacity values.
+
+A relative vendor/firmware -> etc/firmware link supports the donor connectivity
+launcher while retaining the single A37 firmware directory.
+
+Connectivity starts the Sony WMT loader/launcher against the firmware alias.
+The MediaTek Wi-Fi HAL is built from wifi/; its service needs privileged
+interface operations on this legacy kernel. Bluetooth retains the Sony vendor
+libraries, with complete H4 writes and a bounded extended-feature page query.
+The Wi-Fi HAL reads regulatory channels through nl80211 rather than the
+kernel's stub vendor channel list. Wificond uses the local BSS age when the
+legacy kernel does not provide a boot-time timestamp. Scanning, association,
+DHCP and Wi-Fi-bound Internet traffic were verified with WTA541 on 5 GHz.
+Bluetooth discovery, pairing and connection were confirmed by the user;
+Bluetooth audio remains untested.
+
+The donor sensor library contains only a multi-HAL loader with no sub-HAL.
+The target sensor HAL and MMC3416x calibration daemon supply the physical
+sensors, with a version-aware Oreo adapter. Acceleration, light, proximity
+and magnetic-field events were observed through SensorManager. Sensor list
+entries alone do not prove that optional gyro/step sensors are functional.

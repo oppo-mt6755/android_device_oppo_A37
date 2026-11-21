@@ -1,4 +1,5 @@
 import /init.mt6755.usb.rc
+import /init.mt6755.connectivity.rc
 
 on init
     symlink /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name /dev/block/platform/mtk-msdc.0/by-name
