@@ -18,6 +18,8 @@
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <bool name="config_device_volte_available">true</bool>
+    <bool name="config_carrier_volte_available">true</bool>
     <!-- The physical ALS is supplied by the retained sensor HAL. -->
     <bool name="config_automatic_brightness_available">true</bool>
     <!-- Minimum screen brightness setting allowed by the power manager.

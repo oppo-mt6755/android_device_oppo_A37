@@ -54,3 +54,7 @@ PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.usb.accessory.
 PRODUCT_COPY_FILES += device/oppo/A37/rootdir/init.mt6755.radio.rc:root/init.mt6755.radio.rc
 
 PRODUCT_PACKAGES += mtk-ril librilmtk mtkc mtklog
+
+PRODUCT_PACKAGES += ImsService libmtk_ims_bionic libmtk_ims_ifc \
+    libmtk_ims_vt_compat libmtk_ims_sockets
+PRODUCT_COPY_FILES += device/oppo/A37/ims/init.mt6755.ims.rc:root/init.mt6755.ims.rc

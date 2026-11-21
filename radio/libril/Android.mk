@@ -28,6 +28,7 @@ ril_shared_libs := \
     libcutils \
     libhardware_legacy \
     libbinder \
+    libdl \
     librilmtk \
     librilutils \
     mtk-ril \

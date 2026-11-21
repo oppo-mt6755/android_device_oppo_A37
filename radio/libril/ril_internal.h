@@ -21,6 +21,8 @@
 #ifndef ANDROID_RIL_INTERNAL_H
 #define ANDROID_RIL_INTERNAL_H
 
+#include <stddef.h>
+
 namespace android {
 
 #define RIL_SERVICE_NAME_BASE "slot"
@@ -74,16 +76,25 @@ typedef struct CommandInfo CommandInfo;
 extern "C" const char * requestToString(int request);
 
 typedef struct RequestInfo {
-//    RIL_Client_Type *client;	// MTK, why must be in beginning? ***seem for external SIM,volte ???
+    void *client;  // Vendor request ABI: client pointer precedes the serial.
     int32_t token;	//this is not RIL_Token
     CommandInfo *pCI;
     struct RequestInfo *p_next;
     char cancelled;
     char local;		// responses to local commands do not go back to command process
     RIL_SOCKET_ID socket_id;
-    int wasAckSent;	// Indicates whether an ack was sent earlier
     RILChannelId cid;	// MTK, for command dispatch after onRequest()
+    int wasAckSent;	// HIDL-only field follows the vendor ABI prefix.
 } RequestInfo;
+
+// librilmtk's IMS socket code shares this prefix with the HIDL request queue.
+static_assert(offsetof(RequestInfo, token) == sizeof(void*), "vendor request serial ABI");
+static_assert(offsetof(RequestInfo, pCI) == (sizeof(void*) == 8 ? 16 : 8),
+              "vendor request command ABI");
+static_assert(offsetof(RequestInfo, socket_id) == (sizeof(void*) == 8 ? 36 : 20),
+              "vendor request socket ABI");
+static_assert(offsetof(RequestInfo, cid) == (sizeof(void*) == 8 ? 40 : 24),
+              "vendor request channel ABI");
 
 typedef struct CommandInfo {
     int requestNumber;

@@ -1,0 +1,44 @@
+on property:sys.boot_completed=1
+    start mal-daemon
+    start volte_stack
+    start volte_ua
+    start volte_imcb
+    start vtservice
+
+service volte_stack /vendor/bin/volte_stack
+    class main
+    user root
+    group system log inet radio
+    socket volte_stack stream 0660 root system
+    disabled
+
+service volte_ua /vendor/bin/volte_ua
+    class main
+    user system
+    group system log inet radio
+    socket volte_ua stream 0660 root system
+    disabled
+
+service volte_imcb /vendor/bin/volte_imcb
+    class main
+    user system
+    group system log inet radio
+    socket volte_imsa1 stream 0660 root radio
+    socket volte_imsa2 stream 0660 root radio
+    socket volte_ut stream 0660 root radio
+    socket volte_vt.socket stream 0660 root radio
+    disabled
+
+service vtservice /vendor/bin/vtservice
+    class main
+    user media
+    group radio audio camera inet net_bt net_bt_admin media system
+    disabled
+
+service mal-daemon /vendor/bin/mtkmal
+    class main
+    user root
+    group radio cache inet misc log system wifi
+    socket mal-mfi stream 0660 root radio
+    socket volte_imsm stream 0660 root radio
+    disabled

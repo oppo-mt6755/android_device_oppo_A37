@@ -1158,12 +1158,14 @@ Return<void> RadioImpl::setupDataCall(int32_t serial, RadioTechnology radioTechn
     if (s_vendorFunctions->version >= 4 && s_vendorFunctions->version <= 14) {
         const hidl_string &protocol =
                 (isRoaming ? dataProfileInfo.roamingProtocol : dataProfileInfo.protocol);
-        int i=0;
-        while ((i<4) && (dataCallCids[i] != -1))
-            i++;
-        if (i < 4)
-            i++;	// = i+1 if found, otherwise use 0
-        else i=0;
+        // The native IMS stack discovers P-CSCF only on ccmni4. The vendor
+        // request numbers interfaces from one; regular PDNs use ccmni0-3.
+        int i = 5;
+        if ((int)dataProfileInfo.profileId != RIL_DATA_PROFILE_IMS) {
+            i = 0;
+            while (i < 4 && dataCallCids[i] != -1) i++;
+            i = i < 4 ? i + 1 : 0;
+        }
 #if VDBG
     RLOGD("setupDataCall: radioTech:%u,profile=%u,apn:%s,user:%s,pw:%s,auth:%u,protocol:%s,i=%d",
         radioTechnology,dataProfileInfo.profileId,dataProfileInfo.apn.c_str(),
@@ -1349,9 +1351,9 @@ Return<void> RadioImpl::deactivateDataCall(int32_t serial,
 #endif
     // clear local Interface id's
     int i=0;
-    while ((i<4) && (dataCallCids[i] != cid))
+    while ((i<5) && (dataCallCids[i] != cid))
         i++;
-    if (i < 4)
+    if (i < 5)
         dataCallCids[i] = -1;
     dispatchStrings(serial, mSlotId, RIL_REQUEST_DEACTIVATE_DATA_CALL,
             2, (std::to_string(cid)).c_str(), reasonRadioShutDown ? "1" : "0");
@@ -2087,7 +2089,7 @@ Return<void> RadioImpl::setInitialAttachApn(int32_t serial, const DataProfileInf
         }
         iaa.operatorNumeric = (char *) calloc(8, sizeof(char));
         strncpy(iaa.operatorNumeric, p, 8);
-        iaa.canHandleIms = 0;
+        iaa.canHandleIms = property_get_bool("ro.mtk_ims_support", false) ? 1 : 0;
         iaa.dualApnPlmnList = NULL;
         android::my_enqueue(RIL_REQUEST_SET_INITIAL_ATTACH_APN, &iaa,
                 sizeof(iaa)-sizeof(iaa.dualApnPlmnList), android::FMT_AttchAPN, pRI);
@@ -4007,10 +4009,14 @@ int radio::setupDataCallResponse(int slotId,
             result.pcscf = hidl_string();
         } else {
             convertRilDataCallToHal((RIL_Data_Call_Response_v11 *) response, result);
-            int i=0;
-            while ((i<4) && (dataCallCids[i] != -1))
-                i++;
-            dataCallCids[i] = result.cid;
+            // Responses can complete out of order. Record the actual interface
+            // rather than attributing an IMS CID to the next regular PDN slot.
+            for (int i = 0; i < 5; i++) {
+                if (strcmp(result.ifname.c_str(), ("ccmni" + std::to_string(i)).c_str()) == 0) {
+                    dataCallCids[i] = result.cid;
+                    break;
+                }
+            }
         }
 
         Return<void> retStatus = radioService[slotId]->mRadioResponse->setupDataCallResponse(

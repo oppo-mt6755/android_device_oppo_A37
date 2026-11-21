@@ -173,7 +173,26 @@ void switchUser() {
     }
 }
 
+static void publishLegacySocketNames(void) {
+    // Oreo init normalizes '-' to '_' in inherited socket environment names.
+    static const char *names[] = {
+        "rild-ims", "rild-mal", "rild-mal-at", "rild-debug", "rild-oem",
+        "rild-mtk-ut", "rild-mtk-ut-2", "rild-mtk-modem", "rild-atci",
+    };
+    for (size_t n = 0; n < sizeof(names) / sizeof(names[0]); n++) {
+        char normalized[64], legacy[64];
+        snprintf(legacy, sizeof(legacy), "ANDROID_SOCKET_%s", names[n]);
+        snprintf(normalized, sizeof(normalized), "%s", legacy);
+        for (char *c = normalized; *c; c++) {
+            if (*c == '-') *c = '_';
+        }
+        const char *fd = getenv(normalized);
+        if (fd != NULL) setenv(legacy, fd, 0);
+    }
+}
+
 int main(int argc, char **argv) {
+    publishLegacySocketNames();
     // vendor ril lib path either passed in as -l parameter, or read from rild.libpath property
     const char *rilLibPath = NULL;
     // ril arguments either passed in as -- parameter, or read from rild.libargs property

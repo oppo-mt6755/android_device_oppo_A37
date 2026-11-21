@@ -69,6 +69,7 @@
 #include <time.h>
 #include <errno.h>
 #include <assert.h>
+#include <dlfcn.h>
 #include <ctype.h>
 #include <sys/un.h>
 #include <netinet/in.h>
@@ -376,19 +377,8 @@ extern "C" void RIL_myProxyTimedCallback (RIL_TimedCallback callback, void *para
 
 extern "C" RILChannelId RIL_myChannelId(RIL_Token t)
 {
-    RequestInfo* r = (RequestInfo*)t;
-    //TODO:handle more than 2 sims
-    int cid = r->socket_id;
-    RILChannelId id = RIL_queryMyChannelId(t);
-/*    if (cid == RIL_SOCKET_1)
-        cid = r->pCI->proxyId;
-    else cid = r->pCI->proxyId + RIL_CHANNEL_OFFSET;*/
-    cid = r->cid;
-#if VDBG
-    RLOGD("RIL_queryMyChannelId:***cid=%d,id=%d,pthread_self()=%lu", cid, (int)id, pthread_self());
-#endif
-//    addThreadPid(cid, pthread_self());
-    return (RILChannelId)cid;
+    if (IMS_isRilRequestFromIms(t)) return RIL_queryMyChannelId(t);
+    return static_cast<RequestInfo*>(t)->cid;
 }
 
 extern "C" int RIL_myProxyIdByThread()
@@ -405,12 +395,12 @@ extern "C" int RIL_myProxyIdByThread()
     return i;
 }
 
-// for mtk-ril
-extern "C"
-int isRequestTokFromMal(RIL_Token t)
-{
-    RLOGD("isRequestTokFromMal:token:%p", t);
-    return 0;
+// MAL's native client record starts with its fixed client ID (1001).
+// Keep the loader-visible entry point in the adapter for this vendor binary.
+extern "C" int isRequestTokFromMal(RIL_Token token) {
+    if (!token) return 0;
+    const auto* request = static_cast<const RequestInfo*>(token);
+    return request->client && *static_cast<const int*>(request->client) == 1001;
 }
 
 static char PROPERTY_ICCID_SIM[SIM_COUNT][16] =
@@ -544,7 +534,8 @@ addRequestToList(int serial, int slotId, int request) {
     return pRI;
 }
 
-static void triggerEvLoop() {
+// The native IMS/MAL codec queues events into this same event loop.
+void triggerEvLoop() {
     int ret;
     if (!pthread_equal(pthread_self(), s_tid_dispatch)) {
         /* trigger event loop to wakeup. No reason to do this,
@@ -943,17 +934,45 @@ void my_enqueue(int request, void *buf, size_t buflen, BUF_FMTS bf, RequestInfo 
 }
 // daniel added end
 
-extern "C" bool
-IMS_isRilRequestFromIms(RIL_Token t)
-{ return false; }
+extern "C" void IMS_RILA_register(void);
+extern "C" void IMS_RIL_onRequestComplete(RIL_Token, RIL_Errno, void*, size_t);
+static void (*vendorRequestComplete)(RIL_Token, RIL_Errno, void*, size_t);
+static void (*vendorUnsolicitedResponse)(int, const void*, size_t, RIL_SOCKET_ID);
 
-extern "C"
-void IMS_RIL_onUnsolicitedResponseSocket(int unsolResponse, const void *data,
-                                size_t datalen, RIL_SOCKET_ID socket_id)
-{}
+static void registerVendorSockets(const RIL_RadioFunctionsSocket* callbacks) {
+    // Use the paired vendor library's IMS socket codec and request queues.
+    void* vendor = dlopen("librilmtk.so", RTLD_NOW | RTLD_LOCAL);
+    if (!vendor) {
+        RLOGE("IMS vendor library unavailable: %s", dlerror());
+        return;
+    }
+    auto* socketCallbacks = static_cast<RIL_RadioFunctionsSocket*>(
+            dlsym(vendor, "_ZN7android21ims_s_callbacksSocketE"));
+    auto* legacyCallbacks = static_cast<RIL_RadioFunctionsSocket*>(
+            dlsym(vendor, "_ZN7android15ims_s_callbacksE"));
+    if (!socketCallbacks || !legacyCallbacks) {
+        RLOGE("IMS callback table unavailable");
+        return;
+    }
+    *socketCallbacks = *callbacks;
+    *legacyCallbacks = *callbacks;
+    // MAL's AT and command channels are implemented by the same native codec.
+    // Keep the framework on HIDL and let the vendor own its private queues.
+    auto registerVendor = reinterpret_cast<void (*)(const RIL_RadioFunctionsSocket*)>(
+            dlsym(vendor, "RIL_registerSocket"));
+    vendorRequestComplete = reinterpret_cast<decltype(vendorRequestComplete)>(
+            dlsym(vendor, "RIL_onRequestComplete"));
+    vendorUnsolicitedResponse = reinterpret_cast<decltype(vendorUnsolicitedResponse)>(
+            dlsym(vendor, "RIL_onUnsolicitedResponseSocket"));
+    if (registerVendor && vendorRequestComplete && vendorUnsolicitedResponse) {
+        registerVendor(callbacks);
+    }
+    IMS_RILA_register();
+}
 
 extern "C" void
 RIL_startEventLoop(void) {
+    if (s_started) return;
     RIL_startRILProxys();
 
     /* spin up eventLoop thread and wait for it to get started */
@@ -1040,6 +1059,7 @@ RIL_register (const RIL_RadioFunctions *callbacks) {
     }
 
     radio::registerService(&s_callbacksSocket, s_commands);
+    registerVendorSockets(&s_callbacksSocket);
     RLOGI("RILHIDL called registerService");
 
 }
@@ -1106,6 +1126,7 @@ RIL_registerSocket (const RIL_RadioFunctionsSocket *callbacks) {
                 (int)NUM_ELEMS(s_unsolResponses), mtk_unsol_start);
 
     radio::registerService(&s_callbacksSocket, s_commands);
+    registerVendorSockets(&s_callbacksSocket);
     RLOGI("RILHIDL called registerService");
 }
 
@@ -1249,7 +1270,11 @@ RIL_onRequestComplete(RIL_Token t, RIL_Errno s_e, void *s_response, size_t s_res
     pRI = (RequestInfo *)t;
 
     if (!checkAndDequeueRequestInfoIfAck(pRI, false)) {
-        RLOGE ("RIL_onRequestComplete: invalid RIL_Token");
+        if (IMS_isRilRequestFromIms(t)) {
+            IMS_RIL_onRequestComplete(t, s_e, s_response, s_responselen);
+        } else if (vendorRequestComplete) {
+            vendorRequestComplete(t, s_e, s_response, s_responselen);
+        }
         return;
     }
 
@@ -1686,6 +1711,10 @@ extern "C"
 void RIL_onUnsolicitedResponseSocket(int unsolResponse, const void *data,
                                 size_t datalen, RIL_SOCKET_ID socket_id)
 {
+    IMS_RIL_onUnsolicitedResponseSocket(unsolResponse, data, datalen, socket_id);
+    if (vendorUnsolicitedResponse) {
+        vendorUnsolicitedResponse(unsolResponse, data, datalen, socket_id);
+    }
     if (s_registerCalled == 0) {
         // Ignore RIL_onUnsolicitedResponse before RIL_register
         RLOGW("RIL_onUnsolicitedResponse called before RIL_register");
@@ -1811,7 +1840,9 @@ internalRequestTimedCallback (RIL_TimedCallback callback, void *param,
 extern "C" void
 RIL_requestTimedCallback (RIL_TimedCallback callback, void *param,
                                 const struct timeval *relativeTime) {
-    internalRequestTimedCallback (callback, param, relativeTime, -1);
+    // Vendor callbacks can wait synchronously for AT/MAL replies. Running them
+    // on the event thread prevents that same thread from receiving the reply.
+    RIL_requestProxyTimedCallback(callback, param, relativeTime, RIL_CMD_PROXY_1);
 }
 
 const char *

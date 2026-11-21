@@ -1,0 +1,14 @@
+{
+  "sources": [
+    {
+      "repository": "https://github.com/coolpadnote3litedevelopment/mt6735-volte-fix",
+      "commit": "96c18f91109020bf370d86bd584bee90d04df79d"
+    },
+    {
+      "repository": "https://github.com/coolpadnote3litedevelopment/android_device_coolpad_mt6735-common",
+      "commit": "a600edc128f66e64c8cf5d3302a519676a175129"
+    }
+  ],
+  "integration": "Hermes native librilmtk IMS socket with Android 8 HIDL adapter; no private RIL bridge",
+  "video_call_support": false
+}

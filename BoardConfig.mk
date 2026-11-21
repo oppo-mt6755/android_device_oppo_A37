@@ -104,9 +104,20 @@ TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 BACKLIGHT_PATH := /sys/class/leds/lcd-backlight/brightness
 HEALTHD_BACKLIGHT_LEVEL := 100
 
-# Use the donor's Android 8 MTK radio stack and its own init services.
+# Build the Hermes Oreo HIDL adapter with its paired native RIL.
 ENABLE_VENDOR_RIL_SERVICE := true
 BOARD_PROVIDES_LIBRIL := true
 SIM_COUNT := 2
 
 PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib64/mtk-ril.so %:system/vendor/lib64/librilmtk.so %:system/vendor/lib/mtk-ril.so %:system/vendor/lib/librilmtk.so,$(PRODUCT_COPY_FILES))
+
+TARGET_LD_SHIM_LIBS += /system/vendor/bin/volte_stack|libmtk_ims_bionic.so
+TARGET_LD_SHIM_LIBS += /system/vendor/bin/volte_ua|libmtk_ims_bionic.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libmal_datamngr.so|libmtk_ims_ifc.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib64/libmal_datamngr.so|libmtk_ims_ifc.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libvtmal.so|libmtk_ims_vt_compat.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libsink.so|libmtk_ims_vt_compat.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libsource.so|libmtk_ims_vt_compat.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcomutils.so|libmtk_ims_vt_compat.so
+TARGET_LD_SHIM_LIBS += /system/vendor/bin/mtkmal|libmtk_ims_sockets.so
+TARGET_LD_SHIM_LIBS += /system/vendor/bin/volte_imcb|libmtk_ims_sockets.so

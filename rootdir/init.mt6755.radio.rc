@@ -37,6 +37,17 @@ on property:ril.muxreport=1
     start muxreport-daemon
 
 service ril-daemon-mtk /vendor/bin/hw/rild
+    socket rild stream 0660 root radio
+    socket rild2 stream 0660 root radio
+    socket rild-ims stream 0660 root radio
+    socket rild-debug stream 0660 radio system
+    socket rild-oem stream 0660 radio system
+    socket rild-mtk-ut stream 0660 radio net_bt
+    socket rild-mtk-ut-2 stream 0660 radio net_bt
+    socket rild-mtk-modem stream 0660 radio system
+    socket rild-atci stream 0660 root radio
+    socket rild-mal stream 0660 radio system
+    socket rild-mal-at stream 0660 radio system
     class main
     # The daemon drops to radio itself while retaining its network capabilities.
     user root
