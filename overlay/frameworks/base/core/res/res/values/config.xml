@@ -18,6 +18,8 @@
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- The physical ALS is supplied by the retained sensor HAL. -->
+    <bool name="config_automatic_brightness_available">true</bool>
     <!-- Minimum screen brightness setting allowed by the power manager.
          The user is forbidden from setting the brightness below this level. -->
     <integer name="config_screenBrightnessSettingMinimum">3</integer>
