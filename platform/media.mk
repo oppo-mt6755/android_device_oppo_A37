@@ -34,3 +34,7 @@ PRODUCT_COPY_FILES += \
 # Storage
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.sys.sdcardfs=true
+
+# MediaCodecList needs an entry point before it can register software decoders.
+PRODUCT_COPY_FILES += \
+    device/oppo/A37/configs/media_codecs_software.xml:system/vendor/etc/media_codecs.xml
