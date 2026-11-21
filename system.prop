@@ -14,3 +14,22 @@ ro.hardware.audio.usb=default
 
 # The controller rejects extended feature page 2 despite advertising it.
 ro.bluetooth.max_feature_page=1
+
+# Android 8 MediaTek modem / RIL stack.
+rild.libpath=mtk-ril.so
+rild.libargs=-d /dev/ttyC0
+ro.telephony.sim.count=2
+persist.radio.multisim.config=dsds
+ril.external.md=0
+ril.telephony.mode=0
+ro.mtk_sim_hot_swap=1
+ro.mtk_lte_support=1
+ro.mtk_rild_read_imsi=1
+ro.mtk_protocol1_rat_config=Lf/Lt/W/T/G
+persist.radio.mtk_ps2_rat=W/G
+persist.radio.mtk_ps3_rat=G
+# The loader leaves these boot options out of the command line.
+ro.boot.opt_using_default=1
+ro.boot.opt_md1_support=12
+ro.boot.opt_md2_support=0
+ro.boot.opt_md5_support=0

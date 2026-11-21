@@ -98,3 +98,15 @@ TARGET_USES_CUSTOM_SENSORS_SERVICE_RC := true
 TARGET_USES_CUSTOM_BLUETOOTH_SERVICE_RC := true
 BOARD_SEPOLICY_DIRS += device/oppo/A37/sepolicy/connectivity
 TARGET_USES_CUSTOM_WIFI_SERVICE_RC := true
+
+# The LCD resume path does not restore LED-class brightness in charger mode.
+TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
+BACKLIGHT_PATH := /sys/class/leds/lcd-backlight/brightness
+HEALTHD_BACKLIGHT_LEVEL := 100
+
+# Use the donor's Android 8 MTK radio stack and its own init services.
+ENABLE_VENDOR_RIL_SERVICE := true
+BOARD_PROVIDES_LIBRIL := true
+SIM_COUNT := 2
+
+PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib64/mtk-ril.so %:system/vendor/lib64/librilmtk.so %:system/vendor/lib/mtk-ril.so %:system/vendor/lib/librilmtk.so,$(PRODUCT_COPY_FILES))

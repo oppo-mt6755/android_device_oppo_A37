@@ -1,0 +1,31 @@
+From 2051b1c4c04a7af460a6b746de2d06f132845080 Mon Sep 17 00:00:00 2001
+From: affggh <879632264@qq.com>
+Date: Sat, 21 Nov 2026 20:53:14 +0800
+Subject: [PATCH] rild: Allow a board-provided radio daemon
+
+Change-Id: Ic42bcc11b632d74c28932d8dbe87c9e3f6840903
+---
+ rild/Android.mk | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/rild/Android.mk b/rild/Android.mk
+index 7ac505c..67d9537 100644
+--- a/rild/Android.mk
++++ b/rild/Android.mk
+@@ -1,5 +1,7 @@
+ # Copyright 2006 The Android Open Source Project
+ 
++ifndef ENABLE_VENDOR_RIL_SERVICE
++
+ LOCAL_PATH:= $(call my-dir)
+ include $(CLEAR_VARS)
+ 
+@@ -30,4 +32,4 @@ LOCAL_MODULE:= rild
+ LOCAL_INIT_RC := rild.rc
+ 
+ include $(BUILD_EXECUTABLE)
+-
++endif
+-- 
+2.43.0
+

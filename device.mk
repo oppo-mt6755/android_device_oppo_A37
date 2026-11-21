@@ -50,3 +50,7 @@ PRODUCT_COPY_FILES += device/oppo/A37/rootdir/init.mt6755.connectivity.rc:root/i
 PRODUCT_COPY_FILES += device/oppo/A37/rootdir/android.hardware.wifi@1.0-service.rc:system/vendor/etc/init/android.hardware.wifi@1.0-service.rc
 
 PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml
+
+PRODUCT_COPY_FILES += device/oppo/A37/rootdir/init.mt6755.radio.rc:root/init.mt6755.radio.rc
+
+PRODUCT_PACKAGES += mtk-ril librilmtk mtkc mtklog

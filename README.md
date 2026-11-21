@@ -30,7 +30,7 @@ Only one old atomic C symbol is supplied by compat/. No global preload is used.
 Necessary platform changes are exported under patches/ with their reasons.
 SELinux is permissive during bring-up. Android reaches the Trebuchet desktop;
 physical display and touch were confirmed on 2026-11-20. USB ADB also works.
-Radio, cameras and suspend remain under bring-up.
+Cameras and suspend remain under bring-up.
 
 Audio uses the Sony primary HAL with the A37 NVRAM runtime and MT6750 mixer
 configuration. NVRAM initialization runs before the binderized HAL. The HAL
@@ -77,3 +77,16 @@ The target sensor HAL and MMC3416x calibration daemon supply the physical
 sensors, with a version-aware Oreo adapter. Acceleration, light, proximity
 and magnetic-field events were observed through SensorManager. Sensor list
 entries alone do not prove that optional gyro/step sensors are functional.
+
+Automatic brightness uses the physical ALS and the target lux/backlight curve;
+the donor disable flag is removed. The user confirmed changes in ambient light
+now adjust display brightness.
+
+Radio uses the Hermes/Daniel HK open-source MTK Oreo adapter in radio/, with
+its paired RIL/MAL binaries and the target modem firmware. CCCI initializes the
+modem and starts the serial multiplexer before the HIDL daemon. Both SIM slots
+share modem 1. Reading the real baseband version and SIM2 READY is established;
+this alone does not validate calls, IMS or mobile data traffic.
+
+Charger rendering uses RGBX_8888 and the configured LED-class backlight restore
+after framebuffer unblank. System is already available from first-stage init.

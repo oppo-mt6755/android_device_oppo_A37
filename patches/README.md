@@ -26,4 +26,9 @@ Android source root. Do not apply the former common tree's entire patch series.
   when the legacy kernel omits LAST_SEEN_BOOTTIME. Remote AP TSF clocks must
   not be compared with Android elapsed time. Includes age and precedence tests.
 
-No IMS, RIL or camera platform patches are enabled at this stage.
+No IMS or camera platform patches are enabled at this stage.
+
+- hardware/ril: let the board provide the Hermes MTK Oreo daemon instead of
+  building a second generic rild service. The adapter is under radio/.
+- system/core/healthd: restore the LED-class backlight after framebuffer resume
+  in charger mode. The path and level are selected by the board configuration.

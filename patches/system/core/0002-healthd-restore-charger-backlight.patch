@@ -1,0 +1,85 @@
+From 45db32b19b4f398ee5f4c58bbfb318febecea3ef Mon Sep 17 00:00:00 2001
+From: affggh <879632264@qq.com>
+Date: Sat, 21 Nov 2026 20:53:14 +0800
+Subject: [PATCH] healthd: Restore charger backlight after framebuffer resume
+
+Change-Id: I22c9a86e2217766435edc82a6b8eca1187f4713f
+---
+ healthd/Android.mk       |  8 ++++++++
+ healthd/healthd_draw.cpp | 34 +++++++++++++++++++++++++++++++++-
+ 2 files changed, 41 insertions(+), 1 deletion(-)
+
+diff --git a/healthd/Android.mk b/healthd/Android.mk
+index a90f550..674201c 100644
+--- a/healthd/Android.mk
++++ b/healthd/Android.mk
+@@ -41,6 +41,14 @@ LOCAL_STATIC_LIBRARIES := \
+ 	libbase
+ LOCAL_SRC_FILES := healthd_draw.cpp
+ 
++# Keep the device's charger backlight in step with framebuffer blanking.
++ifneq ($(BACKLIGHT_PATH),)
++LOCAL_CFLAGS += -DHEALTHD_BACKLIGHT_PATH=\"$(BACKLIGHT_PATH)\"
++ifneq ($(HEALTHD_BACKLIGHT_LEVEL),)
++LOCAL_CFLAGS += -DHEALTHD_BACKLIGHT_LEVEL=$(HEALTHD_BACKLIGHT_LEVEL)
++endif
++endif
++
+ ifneq ($(TARGET_HEALTHD_DRAW_SPLIT_SCREEN),)
+ LOCAL_CFLAGS += -DHEALTHD_DRAW_SPLIT_SCREEN=$(TARGET_HEALTHD_DRAW_SPLIT_SCREEN)
+ else
+diff --git a/healthd/healthd_draw.cpp b/healthd/healthd_draw.cpp
+index ea3d991..3975420 100644
+--- a/healthd/healthd_draw.cpp
++++ b/healthd/healthd_draw.cpp
+@@ -15,6 +15,10 @@
+  */
+ 
+ #include <android-base/stringprintf.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <string.h>
++#include <unistd.h>
+ #include <batteryservice/BatteryService.h>
+ #include <cutils/klog.h>
+ 
+@@ -58,7 +62,35 @@ void HealthdDraw::redraw_screen(const animation* batt_anim, GRSurface* surf_unkn
+   gr_flip();
+ }
+ 
+-void HealthdDraw::blank_screen(bool blank) { gr_fb_blank(blank); }
++#ifdef HEALTHD_BACKLIGHT_PATH
++#ifndef HEALTHD_BACKLIGHT_LEVEL
++#define HEALTHD_BACKLIGHT_LEVEL 100
++#endif
++static void set_backlight(bool on) {
++  const std::string value = std::to_string(on ? HEALTHD_BACKLIGHT_LEVEL : 0);
++  const int fd = open(HEALTHD_BACKLIGHT_PATH, O_WRONLY | O_CLOEXEC);
++  if (fd < 0) {
++    LOGE("Cannot open charger backlight: %s\n", strerror(errno));
++    return;
++  }
++  const ssize_t written = TEMP_FAILURE_RETRY(write(fd, value.data(), value.size()));
++  if (written != static_cast<ssize_t>(value.size())) {
++    LOGE("Cannot set charger backlight: %s\n", strerror(errno));
++  }
++  close(fd);
++}
++#endif
++
++void HealthdDraw::blank_screen(bool blank) {
++#ifdef HEALTHD_BACKLIGHT_PATH
++  if (blank) set_backlight(false);
++#endif
++  gr_fb_blank(blank);
++#ifdef HEALTHD_BACKLIGHT_PATH
++  // The MTK panel resume sequence does not restore LED-class brightness.
++  if (!blank) set_backlight(true);
++#endif
++}
+ 
+ void HealthdDraw::clear_screen(void) {
+   gr_color(0, 0, 0, 255);
+-- 
+2.43.0
+
