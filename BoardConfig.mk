@@ -91,3 +91,5 @@ PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib/hw/hwcomposer.mt6755.so %
 
 # The legacy HAL reads calibration files owned by the system group.
 TARGET_USES_CUSTOM_AUDIO_SERVICE_RC := true
+
+BOARD_HAL_STATIC_LIBRARIES += libhealthd.mt6755

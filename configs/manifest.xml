@@ -98,4 +98,10 @@
             <instance>default</instance>
         </interface>
     </hal>
+    <hal format="hidl">
+        <name>android.hardware.health</name>
+        <transport arch="32+64">passthrough</transport>
+        <version>1.0</version>
+        <interface><name>IHealth</name><instance>default</instance></interface>
+    </hal>
 </manifest>

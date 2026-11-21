@@ -48,3 +48,12 @@ source statistics and the graphics memory HAL.
 Backlight uses lights/lights.c with the retained kernel 0–255 sysfs interface.
 The donor lights HAL, liblights-core and led_service are removed. Unsupported
 logical light IDs return ENOSYS; only the real LCD backlight is advertised.
+
+Software codec registration is rooted at vendor/etc/media_codecs.xml so OGG
+ringtones can find OMX.google.vorbis.decoder. Settings ringtone playback was
+confirmed with the Sony primary HAL retained.
+
+Fuel gauging uses the matching A37 fuelgauged and /system/lib/libfgauge.so.
+The daemon starts in Android and charger modes; its logger can write kmsg as
+system. The board health module corrects the kernel millivolt voltage interface
+without changing the platform BatteryMonitor or reported capacity values.

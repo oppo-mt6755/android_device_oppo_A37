@@ -27,3 +27,5 @@ $(call inherit-product, device/oppo/A37/platform/media.mk)
 $(call inherit-product, vendor/sony/tuba/tuba-vendor.mk)
 
 PRODUCT_PACKAGES += lights.mt6755
+
+PRODUCT_PACKAGES += android.hardware.health@1.0-impl

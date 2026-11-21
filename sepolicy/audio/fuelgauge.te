@@ -1,0 +1,6 @@
+type mtk_fuelgauge, domain;
+type mtk_fuelgauge_exec, exec_type, file_type;
+init_daemon_domain(mtk_fuelgauge)
+allow mtk_fuelgauge self:netlink_socket { create bind read write getattr getopt setopt };
+allow mtk_fuelgauge sysfs:file rw_file_perms;
+allow mtk_fuelgauge kmsg_device:chr_file { open write getattr };
