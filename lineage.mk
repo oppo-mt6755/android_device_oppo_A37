@@ -3,6 +3,8 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, device/oppo/A37/device.mk)
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
+DEVICE_PACKAGE_OVERLAYS += device/oppo/A37/overlay-lineage
+
 PRODUCT_DEVICE := A37
 PRODUCT_NAME := lineage_A37
 PRODUCT_BRAND := OPPO

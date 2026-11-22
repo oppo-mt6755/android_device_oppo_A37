@@ -1,0 +1,5 @@
+on post-fs-data
+    # The PMIC implements off/steady/breathing through brightness 0/255/1.
+    write /sys/class/leds/white/trigger none
+    chown system system /sys/class/leds/white/brightness
+    chmod 0664 /sys/class/leds/white/brightness

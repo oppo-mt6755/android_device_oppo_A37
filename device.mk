@@ -69,3 +69,5 @@ PRODUCT_COPY_FILES += device/oppo/A37/configs/media_profiles.xml:system/vendor/e
 PRODUCT_PACKAGES += android.hardware.gnss@1.0-impl android.hardware.gnss@1.0-service libcurl
 PRODUCT_COPY_FILES += device/oppo/A37/rootdir/gps.rc:system/vendor/etc/init/gps.rc
 PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml
+
+PRODUCT_COPY_FILES += device/oppo/A37/rootdir/lights.rc:system/vendor/etc/init/lights.rc
