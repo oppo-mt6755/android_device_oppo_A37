@@ -32,6 +32,13 @@ SELinux is permissive during bring-up. Android reaches the Trebuchet desktop;
 physical display and touch were confirmed on 2026-11-20. USB ADB also works.
 Cameras and suspend remain under bring-up.
 
+The Synaptics touch driver follows primary framebuffer blank events. Oreo
+autosleep and the display can bypass legacy early-suspend callbacks; relying
+on those callbacks alone left the controller asleep with the screen on after
+overnight standby. Six screen cycles and an explicit legacy sleep followed by
+fbdev wake passed, with physical touch confirmed after two manual wake cycles.
+An overnight retest remains pending.
+
 Audio uses the Sony primary HAL with the A37 NVRAM runtime and MT6750 mixer
 configuration. NVRAM initialization runs before the binderized HAL. The HAL
 service has the system group required to read calibration data. Platform
