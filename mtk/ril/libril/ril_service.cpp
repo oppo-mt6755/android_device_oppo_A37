@@ -59,6 +59,7 @@
 #include <hwbinder/IPCThreadState.h>
 #include <hwbinder/ProcessState.h>
 #include <ril_service.h>
+#include "stk_alpha.h"
 #include <hidl/HidlTransportSupport.h>
 #include <utils/SystemClock.h>
 #include <inttypes.h>
@@ -8191,16 +8192,16 @@ int radio::stkCallControlAlphaNotifyInd(int slotId,
                                         int indicationType, int token, RIL_Errno e, void *response,
                                         size_t responseLen) {
     if (radioService[slotId] != NULL && radioService[slotId]->mRadioIndication != NULL) {
-        if (response == NULL || responseLen == 0) {
+        std::string alpha;
+        if (!mtk_stk::notification(response, responseLen, alpha)) {
             RLOGE("stkCallControlAlphaNotifyInd: invalid response");
             return 0;
         }
-#if VDBG
-        RLOGD("stkCallControlAlphaNotifyInd");
-#endif
+        // An empty alpha is the SIM's explicit request for no user message.
+        if (alpha.empty()) return 0;
         Return<void> retStatus = radioService[slotId]->mRadioIndication->stkCallControlAlphaNotify(
                 convertIntToRadioIndicationType(indicationType),
-                convertCharPtrToHidlString((char *) response));
+                convertCharPtrToHidlString(alpha.c_str()));
         radioService[slotId]->checkReturnStatus(retStatus);
     } else {
         RLOGE("stkCallControlAlphaNotifyInd: radioService[%d]->mRadioIndication == NULL",

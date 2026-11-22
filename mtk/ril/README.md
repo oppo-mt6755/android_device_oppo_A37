@@ -34,3 +34,12 @@ framework IMS request token and response method. This lets the vendor choose
 the SMS transport and preserves its message reference and error result.
 CDMA submissions retain their existing dispatch. Queued GSM IMS messages use
 the native structure size, including alignment padding.
+
+MTK v10 STK call-control notifications contain three string pointers: control
+type, ADN-encoded alpha hex, and modified address. The HIDL adapter decodes the
+alpha field (GSM default/extension alphabet and UCS-2 0x80/0x81/0x82 forms).
+An empty alpha requests no user message; pointer bytes must never be forwarded
+as UTF-8. This fixes garbled SIM toolkit toasts after successful SMS submission.
+
+Run `mtk/ril/tests/run-stk-tests.sh` from the device directory for the host
+ASan/UBSan decoding regression tests.
