@@ -138,7 +138,7 @@ compressed storage was 3,204,835 bytes. Swap was restored after the test and
 automatic activation was verified after reboot.
 
 Lineage-specific resources live in overlay-lineage/, following wt88047's
-layout but using the retained controller's Home/Back/Menu/volume keys (71),
+layout but using the retained controller's Home/Back/Recents/volume keys (83),
 volume wake mask (64), and one non-RGB PMIC light (capability mask 72).
 Button backlight is absent. The lights HAL maps the white indicator to off=0,
 hardware breathing=1 and steady=255; 2..255 are the same hardware brightness.
