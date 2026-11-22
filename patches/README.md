@@ -44,3 +44,9 @@ patches.
   Both paths are enabled only by TARGET_HAS_LEGACY_CAMERA_HAL1.
 - frameworks/av mediaserver: allow a board init file so the in-process HAL1
   camera can read system-owned calibration data and access graphics devices.
+
+- frameworks/base: initialize the AGnss RIL callback interface during GNSS
+  startup. MTK requests the subscriber/reference information through this
+  interface; leaving it uninitialized crashes the legacy HAL on first start.
+- hardware/interfaces: copy the legacy NMEA byte buffer into a terminated HIDL
+  string. The callback length does not guarantee a zero byte after the payload.

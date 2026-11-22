@@ -1,0 +1,31 @@
+on post-fs-data
+    mkdir /data/gps_mnl 0771 gps system
+    mkdir /data/misc/gps 0770 gps system
+    mkdir /data/agps_supl 0771 gps system
+    chown gps gps /sys/class/gpsdrv/gps/pwrctl
+    chown gps gps /sys/class/gpsdrv/gps/suspend
+    chown gps gps /sys/class/gpsdrv/gps/state
+    chown gps gps /sys/class/gpsdrv/gps/pwrsave
+    chown gps gps /sys/class/gpsdrv/gps/status
+    restorecon_recursive /data/misc/gps
+    restorecon_recursive /data/gps_mnl
+    restorecon_recursive /data/agps_supl
+
+service mnld /vendor/bin/mnld
+    class main
+    user gps
+    group gps inet misc sdcard_rw sdcard_r media_rw system radio
+    socket mnld stream 660 gps system
+
+service agpsd /vendor/bin/mtk_agpsd
+    class main
+    user gps
+    group gps radio inet sdcard_r sdcard_rw misc system
+    socket agpsd stream 660 gps system
+    socket agpsd2 stream 660 gps inet
+    socket agpsd3 stream 660 gps inet
+
+service wifi2agps /vendor/bin/wifi2agps
+    class main
+    user wifi
+    group gps inet

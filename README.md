@@ -115,3 +115,12 @@ with ordinary service permissions on 2026-11-22; recording remains unverified.
 The stock Camera2 application starts with the packaged media profiles and saved
 a 2448x3264 JPEG. Video profiles are declared; recording has not been validated
 with this camera integration.
+
+GNSS uses the existing Sony gps.mt6755 HAL, mnld, libmnl, mtk_agpsd and wifi2agps
+in their ordinary vendor paths, exposed through the platform GNSS 1.0 adapter.
+The device init file creates GPS data directories and grants the daemon access
+to the kernel power controls. libcurl is built from platform source. Platform
+patches initialize the AGnss RIL callbacks before use and copy length-delimited
+NMEA buffers into terminated HIDL strings. The China MCC overlay uses the NTP
+server that responded on the test network. Satellite reception passed at the
+window; an actual position fix still requires verification with better sky view.

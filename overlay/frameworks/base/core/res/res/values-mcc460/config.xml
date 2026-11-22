@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The stock regional server times out on the tested network. -->
+    <string name="config_ntpServer" translatable="false">ntp.aliyun.com</string>
+</resources>

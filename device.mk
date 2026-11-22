@@ -64,3 +64,8 @@ PRODUCT_PACKAGES += android.hardware.camera.provider@2.4-impl mtkui libmtk_jpeg_
 PRODUCT_COPY_FILES += device/oppo/A37/rootdir/pq.rc:system/vendor/etc/init/pq.rc
 PRODUCT_COPY_FILES += device/oppo/A37/rootdir/mediaserver.rc:system/etc/init/mediaserver.rc
 PRODUCT_COPY_FILES += device/oppo/A37/configs/media_profiles.xml:system/vendor/etc/media_profiles_V1_0.xml
+
+# Binderized GNSS adapter for the donor MTK GPS HAL and navigation daemon.
+PRODUCT_PACKAGES += android.hardware.gnss@1.0-impl android.hardware.gnss@1.0-service libcurl
+PRODUCT_COPY_FILES += device/oppo/A37/rootdir/gps.rc:system/vendor/etc/init/gps.rc
+PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml
