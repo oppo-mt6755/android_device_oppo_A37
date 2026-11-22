@@ -17,7 +17,7 @@
 /(system|system\/vendor|vendor)/bin/pq                          u:object_r:pq_exec:s0
 /(system|system\/vendor|vendor)/bin/thermal_manager             u:object_r:thermal_manager_exec:s0
 /(system|system\/vendor|vendor)/bin/mtkrild                     u:object_r:ril-daemon-mtk_exec:s0
-/(system|system\/vendor|vendor)/bin/hw/rilproxy                 u:object_r:rild_exec:s0
+/(system|system\/vendor|vendor)/bin/rilproxy                 u:object_r:rild_exec:s0
 /(system|system\/vendor|vendor)/bin/wmt_loader                  u:object_r:wmt_loader_exec:s0
 /(system|system\/vendor|vendor)/bin/wmt_launcher                u:object_r:wmt_launcher_exec:s0
 /(system|system\/vendor|vendor)/bin/em_svr                      u:object_r:em_svr_exec:s0

@@ -76,7 +76,7 @@ TARGET_USES_HWC2 := true
 KERNEL_TOOLCHAIN := $(abspath prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin)
 
 # Defer donor hardware daemons until each device has been brought up.
-PRODUCT_COPY_FILES := $(filter-out vendor/sony/tuba/vendor/etc/init/%,$(PRODUCT_COPY_FILES))
+PRODUCT_COPY_FILES := $(filter-out vendor/oppo/A37/proprietary/vendor/etc/init/%,$(PRODUCT_COPY_FILES))
 # The platform builds these DRM plugins itself.
 PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib/mediadrm/libdrmclearkeyplugin.so %:system/vendor/lib64/mediadrm/libdrmclearkeyplugin.so %:system/vendor/lib/mediadrm/libmockdrmcryptoplugin.so %:system/vendor/lib64/mediadrm/libmockdrmcryptoplugin.so,$(PRODUCT_COPY_FILES))
 

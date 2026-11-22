@@ -24,7 +24,7 @@ $(call inherit-product, device/oppo/A37/platform/common.mk)
 $(call inherit-product, device/oppo/A37/platform/media.mk)
 
 # Sony userspace remains the donor; board-specific firmware is from OPPO.
-$(call inherit-product, vendor/sony/tuba/tuba-vendor.mk)
+$(call inherit-product, vendor/oppo/A37/A37-vendor.mk)
 
 PRODUCT_PACKAGES += lights.mt6755
 

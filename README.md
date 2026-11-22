@@ -16,7 +16,9 @@ The kernel remains `kernel/oppo/mt6750`, configuration
 The real device has 16 MiB boot/recovery and a 2 GiB system partition.
 Recovery uses its own fstab; the Android fstab does not remount system.
 
-Vendor comes from SonyCustoms/vendor_sony_tuba. A37 firmware is installed only
+Vendor is maintained in `vendor/oppo/A37`, with all blobs under `proprietary/`
+using paths relative to `/system`, following the Hermes layout. Its history
+originates from SonyCustoms/vendor_sony_tuba. A37 firmware is installed only
 at `/system/vendor/etc/firmware`. Sony r12 Mali requires kernel ABI 10.2,
 whereas the retained OPPO driver implements ABI 8.0. The matching OPPO Mali,
 GPU auxiliary library and gralloc replace those three donor components.
@@ -55,13 +57,15 @@ graphics memory HAL.
 
 Backlight uses lights/lights.c with the retained kernel 0–255 sysfs interface.
 The donor lights HAL, liblights-core and led_service are removed. Unsupported
-logical light IDs return ENOSYS; only the real LCD backlight is advertised.
+The white PMIC indicator is shared by notification and battery light IDs;
+keyboard, button and RGB-only light controls are not advertised.
 
 Software codec registration is rooted at vendor/etc/media_codecs.xml so OGG
 ringtones can find OMX.google.vorbis.decoder. Settings ringtone playback was
 confirmed with the Sony primary HAL retained.
 
-Fuel gauging uses the matching A37 fuelgauged and /system/lib/libfgauge.so.
+Fuel gauging uses the Hermes Oreo loader and the matching A37 algorithm at
+/vendor/lib/libfgauge.so.
 The daemon starts in Android and charger modes; its logger can write kmsg as
 system. The board health module corrects the kernel millivolt voltage interface
 without changing the platform BatteryMonitor or reported capacity values.
