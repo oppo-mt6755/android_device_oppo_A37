@@ -1,6 +1,48 @@
 DEVICE_PATH := device/oppo/A37
 
-include $(DEVICE_PATH)/platform/board.mk
+# MTK Hardware
+BOARD_HAS_MTK_HARDWARE := true
+
+# Display
+USE_OPENGL_RENDERER := true
+NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
+TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := false
+TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
+MAX_VIRTUAL_DISPLAY_DIMENSION := 1
+PRESENT_TIME_OFFSET_FROM_VSYNC_NS := 0
+MTK_HWC_SUPPORT := yes
+MTK_HWC_VERSION := 1.5.0
+
+BOARD_EGL_CFG := $(DEVICE_PATH)/configs/egl.cfg
+
+# Vold
+TARGET_KERNEL_HAVE_EXFAT := true
+
+# Audio
+USE_XML_AUDIO_POLICY_CONF := 1
+
+# Wireless
+BOARD_WLAN_DEVICE := MediaTek
+WPA_SUPPLICANT_VERSION := VER_0_8_X
+BOARD_HOSTAPD_DRIVER := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_mt66xx
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_mt66xx
+WIFI_DRIVER_FW_PATH_PARAM := /dev/wmtWifi
+WIFI_DRIVER_FW_PATH_AP := AP
+WIFI_DRIVER_FW_PATH_STA := STA
+WIFI_DRIVER_FW_PATH_P2P := P2P
+WIFI_DRIVER_STATE_CTRL_PARAM := /dev/wmtWifi
+WIFI_DRIVER_STATE_ON := 1
+WIFI_DRIVER_STATE_OFF := 0
+
+# Bluetooth
+BOARD_HAVE_BLUETOOTH := true
+
+# DEXPREOPT
+ifneq ($(TARGET_BUILD_VARIANT),user)
+WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := true
+endif
 
 # Platform
 TARGET_BOARD_PLATFORM := mt6755
@@ -47,9 +89,6 @@ BOARD_FLASH_BLOCK_SIZE := 4096
 
 TARGET_USERIMAGES_USE_EXT4 := true
 
-# Include needed symbols
-TARGET_INCLUDE_LIBTUBA := false
-
 # Display
 DEVICE_RESOLUTION := 720x1280
 TARGET_SCREEN_WIDTH := 720
@@ -75,20 +114,6 @@ TARGET_COPY_OUT_VENDOR := system/vendor
 TARGET_USES_HWC2 := true
 KERNEL_TOOLCHAIN := $(abspath prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin)
 
-# Defer donor hardware daemons until each device has been brought up.
-PRODUCT_COPY_FILES := $(filter-out vendor/oppo/A37/proprietary/vendor/etc/init/%,$(PRODUCT_COPY_FILES))
-# The platform builds these DRM plugins itself.
-PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib/mediadrm/libdrmclearkeyplugin.so %:system/vendor/lib64/mediadrm/libdrmclearkeyplugin.so %:system/vendor/lib/mediadrm/libmockdrmcryptoplugin.so %:system/vendor/lib64/mediadrm/libmockdrmcryptoplugin.so,$(PRODUCT_COPY_FILES))
-
-# Add compatibility symbols only to the libraries that import them.
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/egl/libGLES_mali.so|libmtk_atomic_compat.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libgpu_aux.so|libmtk_atomic_compat.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib64/egl/libGLES_mali.so|libmtk_atomic_compat.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib64/libgpu_aux.so|libmtk_atomic_compat.so
-
-# The donor display structs do not match the retained kernel ABI.
-PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib/hw/hwcomposer.mt6755.so %:system/vendor/lib64/hw/hwcomposer.mt6755.so,$(PRODUCT_COPY_FILES))
-
 # The legacy HAL reads calibration files owned by the system group.
 TARGET_USES_CUSTOM_AUDIO_SERVICE_RC := true
 
@@ -109,56 +134,10 @@ ENABLE_VENDOR_RIL_SERVICE := true
 BOARD_PROVIDES_LIBRIL := true
 SIM_COUNT := 2
 
-PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib64/mtk-ril.so %:system/vendor/lib64/librilmtk.so %:system/vendor/lib/mtk-ril.so %:system/vendor/lib/librilmtk.so,$(PRODUCT_COPY_FILES))
-
-TARGET_LD_SHIM_LIBS += /system/vendor/bin/volte_stack|libmtk_ims_bionic.so
-TARGET_LD_SHIM_LIBS += /system/vendor/bin/volte_ua|libmtk_ims_bionic.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libmal_datamngr.so|libmtk_ims_ifc.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib64/libmal_datamngr.so|libmtk_ims_ifc.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libvtmal.so|libmtk_ims_vt_compat.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libsink.so|libmtk_ims_vt_compat.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libsource.so|libmtk_ims_vt_compat.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcomutils.so|libmtk_ims_vt_compat.so
-TARGET_LD_SHIM_LIBS += /system/vendor/bin/mtkmal|libmtk_ims_sockets.so
-TARGET_LD_SHIM_LIBS += /system/vendor/bin/volte_imcb|libmtk_ims_sockets.so
 
 # Legacy MTK camera, following Hermes's HAL1 integration.
 TARGET_HAS_LEGACY_CAMERA_HAL1 := true
 TARGET_NEEDS_LEGACY_CAMERA_HAL1_DYN_NATIVE_HANDLE := true
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libCustomFeature.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libJpgEncPipe.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libJpgEncPipe.so|libmtk_jpeg_compat.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.camadapter.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.camnode.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.camshot.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.client.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.device1.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.device3.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.hal3a.v3.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.halsensor.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.iopipe.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.sdkclient.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.utils.cpuctrl.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.utils.sensorlistener.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam3_app.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam3_hwnode.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam3_hwpipeline.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam3_pipeline.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam3_utils.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam_utils.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcamdrv.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcameracustom.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libfeatureio.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libfeatureiodrv.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libhdrproc.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libimageio.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libimageio_plat_drv.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libmmsdkservice.feature.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libmmsdkservice.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libmtk_mmutils.so|mtkui.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib/libpqservice.so|mtklog.so
-TARGET_LD_SHIM_LIBS += /system/vendor/lib64/libpqservice.so|mtklog.so
-PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib/libmtkjpeg.so,$(PRODUCT_COPY_FILES))
 
 # Legacy in-process camera reads system-owned calibration data.
 TARGET_USES_CUSTOM_MEDIASERVER_RC := true

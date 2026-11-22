@@ -34,7 +34,7 @@ patches.
   no private framework or graphics runtime is copied into vendor.
 
 - hardware/ril: let the board provide the Hermes MTK Oreo daemon instead of
-  building a second generic rild service. The adapter is under radio/.
+  building a second generic rild service. The adapter is under mtk/ril/.
 - system/core/healthd: restore the LED-class backlight after framebuffer resume
   in charger mode. The path and level are selected by the board configuration.
 

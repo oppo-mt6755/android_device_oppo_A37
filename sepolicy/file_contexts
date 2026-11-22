@@ -79,7 +79,6 @@
 /dev/wmtdetect                                                  u:object_r:wmtdetect_device:s0
 /dev/ttyC0                                                      u:object_r:gsm0710muxd_device:s0
 /dev/radio(/.*)?                                                u:object_r:radio_device:s0
-/dev/fm                                                         u:object_r:fm_device:s0
 /dev/Vcodec                                                     u:object_r:Vcodec_device:s0
 /dev/M4U_device(/.*)?                                           u:object_r:M4U_device_device:s0
 /dev/ebc                                                        u:object_r:ebc_device:s0

@@ -1,15 +1,15 @@
 # OPPO A37 — SonyCustoms Oreo base
 
 This device tree preserves the history of SonyCustoms/device_sony_tuba (oreo,
-base c348e1a66e0b). The common MTK configuration remains in platform/.
+base c348e1a66e0b). Hardware implementations are grouped under mtk/, following the Hermes tree.
 The first target is Android boot with display, touch and USB ADB. Other hardware
 services are enabled only after checking the donor HAL against the target kernel.
 
 Build with `tools/build-android.sh bootimage systemimage` from this directory
 or invoke the script from the source root. The default output is
 `out-sony-restart`, separate from the previous port. Android's init binary is
-used directly; the donor's shell-init debug scripts and global libtuba preload
-are disabled.
+used directly. Unused donor shell-init/debug files and the disabled libtuba
+module have been removed.
 
 The kernel remains `kernel/oppo/mt6750`, configuration
 `oppo6750_15127_debug_defconfig`. Its DT mounts system in first-stage init.
@@ -25,11 +25,14 @@ GPU auxiliary library and gralloc replace those three donor components.
 32-bit and 64-bit isolated EGLImage/pixel-readback probes pass with this mix.
 The OPPO libstlport runtime is included because the stock GPU imports it.
 The donor HWC frame structs also differ from the retained kernel; the source
-composer in hwcomposer/ uses the actual kernel header. See the vendor's
+composer in mtk/graphics/hwcomposer/ uses the actual kernel header. See the vendor's
 firmware-provenance.json and graphics-provenance.json for exact sources.
 
-The compat/ modules supply the imported legacy C and graphics signatures. No
-global preload is used.
+The libshims/ modules supply imported legacy C, graphics, JPEG and native IMS
+signatures, grouped like Hermes under misc/, ui/, jpeg/ and ims/. Only each
+consumer declares its required shim through DT_NEEDED; no board linker
+injection or global preload is used. The vendor fixup script and hash manifest
+make the patchelf changes reproducible.
 Necessary platform changes are exported under patches/ with their reasons.
 SELinux is permissive during bring-up. Android reaches the Trebuchet desktop;
 physical display and touch were confirmed on 2026-11-20. USB ADB also works.
@@ -55,8 +58,8 @@ services available to Settings. The connected-devices dashboard also requires
 UsbManager. Debugfs is mounted for kernel wake-source statistics and the
 graphics memory HAL.
 
-Backlight uses lights/lights.c with the retained kernel 0–255 sysfs interface.
-The donor lights HAL, liblights-core and led_service are removed. Unsupported
+Backlight uses mtk/lights/lights.c with the retained kernel 0–255 sysfs interface.
+The donor lights HAL, liblights-core and led_service are removed.
 The white PMIC indicator is shared by notification and battery light IDs;
 keyboard, button and RGB-only light controls are not advertised.
 
@@ -74,7 +77,7 @@ A relative vendor/firmware -> etc/firmware link supports the donor connectivity
 launcher while retaining the single A37 firmware directory.
 
 Connectivity starts the Sony WMT loader/launcher against the firmware alias.
-The MediaTek Wi-Fi HAL is built from wifi/; its service needs privileged
+The MediaTek Wi-Fi HAL is built from mtk/wlan/wifi_hal/; its service needs privileged
 interface operations on this legacy kernel. Bluetooth retains the Sony vendor
 libraries, with complete H4 writes and a bounded extended-feature page query.
 The Wi-Fi HAL reads regulatory channels through nl80211 rather than the
@@ -94,7 +97,7 @@ Automatic brightness uses the physical ALS and the target lux/backlight curve;
 the donor disable flag is removed. The user confirmed changes in ambient light
 now adjust display brightness.
 
-Radio uses the Hermes/Daniel HK open-source MTK Oreo adapter in radio/, with
+Radio uses the Hermes/Daniel HK open-source MTK Oreo adapter in mtk/ril/, with
 its paired RIL/MAL binaries and the target modem firmware. CCCI initializes the
 modem and starts the serial multiplexer before the HIDL daemon. Both SIM slots
 share modem 1. Reading the real baseband version and SIM2 READY is established;
@@ -148,3 +151,25 @@ and SMS notification breathing on the physical device.
 
 Developer options avoid querying OEM lock services when OEM unlocking is not
 supported. The Settings patch is exported under patches/packages/apps/Settings/.
+
+The product configuration lives in device.mk: packages, HIDL adapters and
+configuration copies share short purpose headings in alphabetical order.
+manifest.xml records the corresponding interfaces. Active overlays share overlay/ and
+Lineage resources remain in overlay-lineage/. Unused platform/ donor scaffolding
+and duplicate configuration tables are removed. The kernel tree and firmware
+layout are unchanged by this reorganization.
+
+See HALS.md for the Hermes lineage-16.0 comparison, actual reuse decisions and
+vendor duplicates removed. FMRadio is excluded: DSP initialization could not
+be established on this board. Its application, custom library, ioctl patch,
+audio routes and device permissions are removed. FM50AF remains a camera lens
+actuator node and is unrelated to broadcast radio.
+
+proprietary-files.txt, extract-files.sh and setup-makefiles.sh follow the
+LineageOS wt88047 extraction workflow. The A.26 factory OTA is the stock
+reference: 63 matching files have no pin, and 462 donor/local files retain
+pinned SHA-1 hashes. Source-to-destination entries handle the move into vendor/.
+The extractor stages all files, verifies pinned hashes, and reapplies DT_NEEDED
+fixups before replacing proprietary/. A missing file or hash mismatch leaves
+the existing blob checkout intact. Donor init files can be extracted but are
+excluded from generated build rules. Existing provenance JSON files are retained.
