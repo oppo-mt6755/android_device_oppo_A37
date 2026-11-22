@@ -806,6 +806,24 @@ void clearPendingBuffer(BUF_FMTS bf, void *buf, size_t buflen)
     }
 }
 
+static void dispatchVendorRequest(int request, void *buf, size_t buflen,
+                                 RequestInfo *pRI)
+{
+    // This modem submits both CS and IMS GSM PDUs through SEND_SMS. Keep the
+    // framework token's original command so completion still uses sendImsSmsResponse.
+    if (request == RIL_REQUEST_IMS_SEND_SMS && buf &&
+            buflen >= sizeof(RIL_IMS_SMS_Message)) {
+        RIL_IMS_SMS_Message *sms = static_cast<RIL_IMS_SMS_Message *>(buf);
+        if (sms->tech == RADIO_TECH_3GPP && sms->message.gsmMessage) {
+            RLOGI("Submitting GSM IMS SMS through the vendor SMS interface");
+            s_callbacksSocket.onRequest(RIL_REQUEST_SEND_SMS, sms->message.gsmMessage,
+                    2 * sizeof(char *), pRI, pRI->socket_id);
+            return;
+        }
+    }
+    s_callbacksSocket.onRequest(request, buf, buflen, pRI, pRI->socket_id);
+}
+
 #ifdef RIL_CHANNEL_QUEUING
 void my_dequeue(int slot, RILChannelId cid)
 {
@@ -838,8 +856,8 @@ void my_dequeue(int slot, RILChannelId cid)
     if (p) {
         RLOGD("dequeue: send pending request %s to %s",
                 requestToString(p->pRI->pCI->requestNumber), proxyString(cid));
-        s_callbacksSocket.onRequest(p->pRI->pCI->requestNumber,
-                        p->buf, p->buflen, p->pRI, p->pRI->socket_id);
+        dispatchVendorRequest(p->pRI->pCI->requestNumber,
+                        p->buf, p->buflen, p->pRI);
         if ((p->bf != FMT_VOID) && (p->buflen != 0)) {
             clearPendingBuffer(p->bf, p->buf, p->buflen);
             free (p->buf);
@@ -926,7 +944,7 @@ void my_enqueue(int request, void *buf, size_t buflen, BUF_FMTS bf, RequestInfo 
 #endif
 #endif	// RIL_CHANNEL_QUEUING
     {
-        s_callbacksSocket.onRequest(request, buf, buflen, pRI, socket_id);
+        dispatchVendorRequest(request, buf, buflen, pRI);
         if (bf != FMT_IGNORE) { // cleanup the memory if not FMT_IGNORE
             clearPendingBuffer(bf, buf, buflen);
         }

@@ -2157,7 +2157,6 @@ bool dispatchImsGsmSms(const ImsSmsMessage& message, RequestInfo *pRI) {
     RIL_IMS_SMS_Message rism = {};
     char **pStrings;
     int countStrings = 2;
-    int dataLen = sizeof(char *) * countStrings;
 
     rism.tech = RADIO_TECH_3GPP;
     rism.retry = BOOL_TO_INT(message.retry);
@@ -2190,8 +2189,8 @@ bool dispatchImsGsmSms(const ImsSmsMessage& message, RequestInfo *pRI) {
 
     rism.message.gsmMessage = pStrings;
 
-    android::my_enqueue(pRI->pCI->requestNumber, &rism, sizeof(RIL_RadioTechnologyFamily) +
-            sizeof(uint8_t) + sizeof(int32_t) + dataLen, android::FMT_ImsSms, pRI);
+    android::my_enqueue(pRI->pCI->requestNumber, &rism, sizeof(rism),
+            android::FMT_ImsSms, pRI);
 /*
     for (int i = 0 ; i < countStrings ; i++) {
         memsetAndFreeStrings(1, pStrings[i]);

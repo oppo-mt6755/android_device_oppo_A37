@@ -27,3 +27,10 @@ The native codec requires a connected legacy radio notification subscriber befor
 it fans unsolicited bearer updates out to MAL. The HIDL adapter holds read-only
 subscriptions to rild/rild2 so that existing native notification handling remains
 active. They send no radio requests; the framework still uses HIDL.
+
+The modem RIL does not implement standard IMS_SEND_SMS. GSM IMS submissions
+are converted to its existing SEND_SMS payload at dispatch, retaining the
+framework IMS request token and response method. This lets the vendor choose
+the SMS transport and preserves its message reference and error result.
+CDMA submissions retain their existing dispatch. Queued GSM IMS messages use
+the native structure size, including alignment padding.
