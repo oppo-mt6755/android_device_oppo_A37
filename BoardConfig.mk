@@ -121,3 +121,44 @@ TARGET_LD_SHIM_LIBS += /system/vendor/lib/libsource.so|libmtk_ims_vt_compat.so
 TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcomutils.so|libmtk_ims_vt_compat.so
 TARGET_LD_SHIM_LIBS += /system/vendor/bin/mtkmal|libmtk_ims_sockets.so
 TARGET_LD_SHIM_LIBS += /system/vendor/bin/volte_imcb|libmtk_ims_sockets.so
+
+# Legacy MTK camera, following Hermes's HAL1 integration.
+TARGET_HAS_LEGACY_CAMERA_HAL1 := true
+TARGET_NEEDS_LEGACY_CAMERA_HAL1_DYN_NATIVE_HANDLE := true
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libCustomFeature.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libJpgEncPipe.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libJpgEncPipe.so|libmtk_jpeg_compat.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.camadapter.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.camnode.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.camshot.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.client.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.device1.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.device3.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.hal3a.v3.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.halsensor.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.iopipe.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.sdkclient.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.utils.cpuctrl.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam.utils.sensorlistener.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam3_app.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam3_hwnode.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam3_hwpipeline.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam3_pipeline.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam3_utils.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcam_utils.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcamdrv.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libcameracustom.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libfeatureio.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libfeatureiodrv.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libhdrproc.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libimageio.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libimageio_plat_drv.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libmmsdkservice.feature.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libmmsdkservice.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libmtk_mmutils.so|mtkui.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib/libpqservice.so|mtklog.so
+TARGET_LD_SHIM_LIBS += /system/vendor/lib64/libpqservice.so|mtklog.so
+PRODUCT_COPY_FILES := $(filter-out %:system/vendor/lib/libmtkjpeg.so,$(PRODUCT_COPY_FILES))
+
+# Legacy in-process camera reads system-owned calibration data.
+TARGET_USES_CUSTOM_MEDIASERVER_RC := true

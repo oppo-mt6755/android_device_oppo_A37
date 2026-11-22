@@ -121,3 +121,14 @@
 /dev/m_acc_misc 0660 system system
 /dev/m_alsps_misc 0660 system system
 /dev/msensor 0660 system system
+
+# Camera sensor, ISP, autofocus and flash interfaces.
+/dev/kd_camera_hw          0660 media camera
+/dev/camera-isp            0660 media camera
+/dev/camera-fdvt           0660 media camera
+/dev/kd_camera_flashlight  0660 media camera
+/dev/MAINAF                0660 media camera
+/dev/DW9714AF              0660 media camera
+/dev/CAM_CAL_DRV1          0660 media camera
+/dev/Vcodec                0660 media system
+/dev/MTK_SMI               0660 media camera

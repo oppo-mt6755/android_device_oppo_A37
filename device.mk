@@ -58,3 +58,9 @@ PRODUCT_PACKAGES += mtk-ril librilmtk mtkc mtklog
 PRODUCT_PACKAGES += ImsService libmtk_ims_bionic libmtk_ims_ifc \
     libmtk_ims_vt_compat libmtk_ims_sockets
 PRODUCT_COPY_FILES += device/oppo/A37/ims/init.mt6755.ims.rc:root/init.mt6755.ims.rc
+
+# Legacy MTK camera provider and narrow graphics compatibility imports.
+PRODUCT_PACKAGES += android.hardware.camera.provider@2.4-impl mtkui libmtk_jpeg_compat
+PRODUCT_COPY_FILES += device/oppo/A37/rootdir/pq.rc:system/vendor/etc/init/pq.rc
+PRODUCT_COPY_FILES += device/oppo/A37/rootdir/mediaserver.rc:system/etc/init/mediaserver.rc
+PRODUCT_COPY_FILES += device/oppo/A37/configs/media_profiles.xml:system/vendor/etc/media_profiles_V1_0.xml

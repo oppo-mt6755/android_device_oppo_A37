@@ -26,11 +26,12 @@ The donor HWC frame structs also differ from the retained kernel; the source
 composer in hwcomposer/ uses the actual kernel header. See the vendor's
 firmware-provenance.json and graphics-provenance.json for exact sources.
 
-Only one old atomic C symbol is supplied by compat/. No global preload is used.
+The compat/ modules supply the imported legacy C and graphics signatures. No
+global preload is used.
 Necessary platform changes are exported under patches/ with their reasons.
 SELinux is permissive during bring-up. Android reaches the Trebuchet desktop;
 physical display and touch were confirmed on 2026-11-20. USB ADB also works.
-Cameras and suspend remain under bring-up.
+Camera preview and JPEG capture are verified; long suspend remains under test.
 
 The Synaptics touch driver follows primary framebuffer blank events. Oreo
 autosleep and the display can bypass legacy early-suspend callbacks; relying
@@ -97,3 +98,20 @@ this alone does not validate calls, IMS or mobile data traffic.
 
 Charger rendering uses RGBX_8888 and the configured LED-class backlight restore
 after framebuffer unblank. System is already available from first-stage init.
+
+Camera follows the Hermes HAL1 arrangement: the platform provider runs in
+mediaserver through passthrough HIDL. Blobs stay in normal vendor/lib paths.
+A37 factory sensor, ISP, 3A and paired DP/PQ libraries replace incompatible
+Sony camera components; the Sony sensor listener remains compatible. The Hermes
+MM feature bridge uses the Oreo BufferItem ABI. No private copy of platform
+libui/libgui/libbinder/libutils/libc++ is included. Camera provenance records
+exact file hashes. The source shims forward old graphics calls to the current
+platform and route the factory JPEG encoder to libmtkjpeg's extended v62 ABI.
+PQ starts from a normal init service. The retained media UID gains the system
+and graphics groups for calibration and driver access. Camera platform changes
+are exported under patches/. Front/rear preview and JPEG passed after cold boot
+with ordinary service permissions on 2026-11-22; recording remains unverified.
+
+The stock Camera2 application starts with the packaged media profiles and saved
+a 2448x3264 JPEG. Video profiles are declared; recording has not been validated
+with this camera integration.

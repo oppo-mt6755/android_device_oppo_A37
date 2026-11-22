@@ -27,9 +27,20 @@ Android source root. Do not apply the former common tree's entire patch series.
   not be compared with Android elapsed time. Includes age and precedence tests.
 
 IMS integration lives in the device tree and requires no additional framework
-patches. Camera platform patches are not enabled.
+patches.
+
+- frameworks/av: Hermes MTK camera parameters and extended message handling for
+  the HAL1 camera BSP. The graphics signatures are supplied by the device shim;
+  no private framework or graphics runtime is copied into vendor.
 
 - hardware/ril: let the board provide the Hermes MTK Oreo daemon instead of
   building a second generic rild service. The adapter is under radio/.
 - system/core/healthd: restore the LED-class backlight after framebuffer resume
   in charger mode. The path and level are selected by the board configuration.
+
+- hardware/interfaces camera HAL1 adapter: preserve a camera-specific allocation
+  cookie when MTK passes null; supply real platform GraphicBuffers around HIDL
+  handles so the legacy DisplayClient can use the NativeWindowBuffer C ABI.
+  Both paths are enabled only by TARGET_HAS_LEGACY_CAMERA_HAL1.
+- frameworks/av mediaserver: allow a board init file so the in-process HAL1
+  camera can read system-owned calibration data and access graphics devices.

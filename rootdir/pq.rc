@@ -1,0 +1,4 @@
+service pq /vendor/bin/pq
+    class main
+    user system
+    group system graphics

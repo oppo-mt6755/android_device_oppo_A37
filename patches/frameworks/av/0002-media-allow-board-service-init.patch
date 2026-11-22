@@ -1,0 +1,27 @@
+From 41625a9c8afa8a7ce4152549e328d952f7f099a1 Mon Sep 17 00:00:00 2001
+From: affggh <879632264@qq.com>
+Date: Sun, 22 Nov 2026 15:21:01 +0800
+Subject: [PATCH] media: allow a board-specific mediaserver init service
+
+Change-Id: I37ee5218b9de5a757760aafae4b7e1e625e9e9a2
+---
+ media/mediaserver/Android.mk | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/media/mediaserver/Android.mk b/media/mediaserver/Android.mk
+index 72fd887..a527552 100644
+--- a/media/mediaserver/Android.mk
++++ b/media/mediaserver/Android.mk
+@@ -34,7 +34,9 @@ LOCAL_C_INCLUDES := \
+ LOCAL_MODULE:= mediaserver
+ LOCAL_32_BIT_ONLY := true
+ 
++ifneq ($(TARGET_USES_CUSTOM_MEDIASERVER_RC),true)
+ LOCAL_INIT_RC := mediaserver.rc
++endif
+ 
+ LOCAL_CFLAGS := -Werror -Wall
+ 
+-- 
+2.43.0
+

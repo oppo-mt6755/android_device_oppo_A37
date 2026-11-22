@@ -1,0 +1,216 @@
+From 71afc3a7fd242086fe374a37efc768ba4d06baf2 Mon Sep 17 00:00:00 2001
+From: affggh <879632264@qq.com>
+Date: Sun, 22 Nov 2026 15:21:01 +0800
+Subject: [PATCH] camera: retain HAL1 allocation cookies and native preview
+ buffers
+
+Change-Id: Iaac15f0bb4a8c19a61349f3ef6e2843de754eceb
+---
+ camera/device/1.0/default/Android.bp         |  4 ++
+ camera/device/1.0/default/CameraDevice.cpp   | 71 ++++++++++++++++++--
+ camera/device/1.0/default/CameraDevice_1_0.h | 19 ++++++
+ 3 files changed, 90 insertions(+), 4 deletions(-)
+
+diff --git a/camera/device/1.0/default/Android.bp b/camera/device/1.0/default/Android.bp
+index d25d548..2c5cb8c 100644
+--- a/camera/device/1.0/default/Android.bp
++++ b/camera/device/1.0/default/Android.bp
+@@ -11,6 +11,7 @@ cc_library_shared {
+         "libhidltransport",
+         "libhwbinder",
+         "libutils",
++        "libui",
+         "android.hardware.camera.device@1.0",
+         "android.hardware.camera.common@1.0",
+         "android.hardware.graphics.allocator@2.0",
+@@ -34,6 +35,9 @@ cc_library_shared {
+     ],
+     product_variables: {
+         lineage: {
++            has_legacy_camera_hal1: {
++                cflags: ["-DLEGACY_CAMERA_HAL1"],
++            },
+             uses_qti_camera_device: {
+                 cppflags: ["-DQTI_CAMERA_DEVICE"],
+                 shared_libs: ["vendor.qti.hardware.camera.device@1.0_vendor"],
+diff --git a/camera/device/1.0/default/CameraDevice.cpp b/camera/device/1.0/default/CameraDevice.cpp
+index 116963b..db74e42 100644
+--- a/camera/device/1.0/default/CameraDevice.cpp
++++ b/camera/device/1.0/default/CameraDevice.cpp
+@@ -36,6 +36,24 @@ using ::android::hardware::graphics::common::V1_0::PixelFormat;
+ 
+ HandleImporter CameraDevice::sHandleImporter;
+ 
++#ifdef LEGACY_CAMERA_HAL1
++Mutex CameraDevice::sLegacyMemoryLock;
++wp<CameraDevice> CameraDevice::sLegacyMemoryDevices[2];
++
++template <size_t Slot>
++camera_memory_t* CameraDevice::sGetLegacyMemory(
++        int fd, size_t size, uint_t count, void* user) {
++    if (user != nullptr) return sGetMemory(fd, size, count, user);
++    sp<CameraDevice> device;
++    {
++        Mutex::Autolock lock(sLegacyMemoryLock);
++        device = sLegacyMemoryDevices[Slot].promote();
++    }
++    if (device == nullptr) return nullptr;
++    return sGetMemory(fd, size, count, device.get());
++}
++#endif
++
+ Status CameraDevice::getHidlStatus(const int& status) {
+     switch (status) {
+         case 0: return Status::OK;
+@@ -142,6 +160,9 @@ void CameraDevice::CameraPreviewWindow::cleanUpCirculatingBuffers() {
+     }
+     mCirculatingBuffers.clear();
+     mBufferIdMap.clear();
++#ifdef LEGACY_CAMERA_HAL1
++    mNativeBuffers.clear();
++#endif
+ }
+ 
+ int CameraDevice::sDequeueBuffer(struct preview_stream_ops* w,
+@@ -175,7 +196,23 @@ int CameraDevice::sDequeueBuffer(struct preview_stream_ops* w,
+                         object->mBufferIdMap[&(object->mCirculatingBuffers[bufferId])] = bufferId;
+                     }
+                 }
++#ifdef LEGACY_CAMERA_HAL1
++                if (object->mNativeBuffers.count(bufferId) == 0) {
++                    sp<GraphicBuffer> native = new GraphicBuffer(
++                            object->mCirculatingBuffers[bufferId], GraphicBuffer::CLONE_HANDLE,
++                            object->mWidth, object->mHeight, object->mFormat, 1,
++                            static_cast<uint64_t>(object->mUsage), strd);
++                    if (native->initCheck() != OK) {
++                        s = Status::INTERNAL_ERROR;
++                        return;
++                    }
++                    object->mNativeBuffers[bufferId] = native;
++                    object->mBufferIdMap[&native->getNativeBuffer()->handle] = bufferId;
++                }
++                *buffer = &object->mNativeBuffers[bufferId]->getNativeBuffer()->handle;
++#else
+                 *buffer = &(object->mCirculatingBuffers[bufferId]);
++#endif
+                 *stride = strd;
+             }
+         });
+@@ -226,8 +263,16 @@ int CameraDevice::sSetBuffersGeometry(struct preview_stream_ops* w,
+     }
+ 
+     object->cleanUpCirculatingBuffers();
+-    return getStatusT(
++    int status = getStatusT(
+             object->mPreviewCallback->setBuffersGeometry(width, height, (PixelFormat) format));
++#ifdef LEGACY_CAMERA_HAL1
++    if (status == OK) {
++        object->mWidth = width;
++        object->mHeight = height;
++        object->mFormat = format;
++    }
++#endif
++    return status;
+ }
+ 
+ int CameraDevice::sSetCrop(struct preview_stream_ops *w,
+@@ -259,7 +304,11 @@ int CameraDevice::sSetUsage(struct preview_stream_ops* w, int usage) {
+     }
+ 
+     object->cleanUpCirculatingBuffers();
+-    return getStatusT(object->mPreviewCallback->setUsage((BufferUsage)usage));
++    int status = getStatusT(object->mPreviewCallback->setUsage((BufferUsage)usage));
++#ifdef LEGACY_CAMERA_HAL1
++    if (status == OK) object->mUsage = static_cast<uint32_t>(usage);
++#endif
++    return status;
+ }
+ 
+ int CameraDevice::sSetSwapInterval(struct preview_stream_ops *w, int interval) {
+@@ -362,7 +411,7 @@ CameraDevice::CameraHeapMemory::~CameraHeapMemory() {
+ camera_memory_t* CameraDevice::sGetMemory(int fd, size_t buf_size, uint_t num_bufs, void *user) {
+     ALOGV("%s", __FUNCTION__);
+     CameraDevice* object = static_cast<CameraDevice*>(user);
+-    if (object->mDeviceCallback == nullptr) {
++    if (object == nullptr || object->mDeviceCallback == nullptr) {
+         ALOGE("%s: camera HAL request memory while camera is not opened!", __FUNCTION__);
+         return nullptr;
+     }
+@@ -717,8 +766,16 @@ Return<Status> CameraDevice::open(const sp<ICameraDeviceCallback>& callback) {
+ #endif
+ 
+     if (mDevice->ops->set_callbacks) {
++        camera_request_memory allocator = sGetMemory;
++#ifdef LEGACY_CAMERA_HAL1
++        if (mCameraIdInt >= 0 && mCameraIdInt < 2) {
++            Mutex::Autolock lock(sLegacyMemoryLock);
++            sLegacyMemoryDevices[mCameraIdInt] = this;
++            allocator = mCameraIdInt == 0 ? sGetLegacyMemory<0> : sGetLegacyMemory<1>;
++        }
++#endif
+         mDevice->ops->set_callbacks(mDevice,
+-                sNotifyCb, sDataCb, sDataCbTimestamp, sGetMemory, this);
++                sNotifyCb, sDataCb, sDataCbTimestamp, allocator, this);
+     }
+ 
+     return getHidlStatus(rc);
+@@ -1059,6 +1116,12 @@ void CameraDevice::closeLocked() {
+             ALOGE("Could not close camera %s: %d", mCameraId.c_str(), rc);
+         }
+         mDevice = nullptr;
++#ifdef LEGACY_CAMERA_HAL1
++        if (mCameraIdInt >= 0 && mCameraIdInt < 2) {
++            Mutex::Autolock lock(sLegacyMemoryLock);
++            sLegacyMemoryDevices[mCameraIdInt].clear();
++        }
++#endif
+     }
+ }
+ 
+diff --git a/camera/device/1.0/default/CameraDevice_1_0.h b/camera/device/1.0/default/CameraDevice_1_0.h
+index 2b35a73..e6a1ce8 100644
+--- a/camera/device/1.0/default/CameraDevice_1_0.h
++++ b/camera/device/1.0/default/CameraDevice_1_0.h
+@@ -18,6 +18,9 @@
+ #define ANDROID_HARDWARE_CAMERA_DEVICE_V1_0_CAMERADEVICE_H
+ 
+ #include <unordered_map>
++#ifdef LEGACY_CAMERA_HAL1
++#include <ui/GraphicBuffer.h>
++#endif
+ #include "utils/Mutex.h"
+ #include "utils/SortedVector.h"
+ #include "CameraModule.h"
+@@ -156,6 +159,13 @@ private:
+         sp<ICameraDevicePreviewCallback> mPreviewCallback = nullptr;
+         std::unordered_map<uint64_t, buffer_handle_t> mCirculatingBuffers;
+         std::unordered_map<buffer_handle_t*, uint64_t> mBufferIdMap;
++#ifdef LEGACY_CAMERA_HAL1
++        // MTK derives ANativeWindowBuffer from the address of its handle.
++        // Keep a real platform object around each imported gralloc buffer.
++        std::unordered_map<uint64_t, sp<GraphicBuffer>> mNativeBuffers;
++        int mWidth = 0, mHeight = 0, mFormat = 0;
++        uint32_t mUsage = 0;
++#endif
+     } mHalPreviewWindow;
+ 
+     // gating access to mDevice, mInitFail, mDisconnected
+@@ -192,6 +202,15 @@ private:
+             MemoryId memId , unsigned index, native_handle_t* handle);
+     void releaseRecordingFrameLocked(uint32_t memId, uint32_t bufferIndex, const native_handle_t*);
+ 
++#ifdef LEGACY_CAMERA_HAL1
++    // Some MTK HAL1 callers omit the allocation cookie. Bind each callback to
++    // its camera slot rather than guessing the most recently opened device.
++    static Mutex sLegacyMemoryLock;
++    static wp<CameraDevice> sLegacyMemoryDevices[2];
++    template <size_t Slot>
++    static camera_memory_t* sGetLegacyMemory(int fd, size_t size, uint_t count, void* user);
++#endif
++
+     // shared memory methods
+     static camera_memory_t* sGetMemory(int fd, size_t buf_size, uint_t num_bufs, void *user);
+     static void sPutMemory(camera_memory_t *data);
+-- 
+2.43.0
+
