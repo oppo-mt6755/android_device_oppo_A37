@@ -3,6 +3,10 @@ set -eu
 cd "$(dirname "$0")/../../../.."
 export ANDROID_BUILD_TOP="$PWD"
 export OUT_DIR="${OUT_DIR:-out-sony-restart}"
+case "$OUT_DIR" in
+    /*) export OUT="$OUT_DIR/target/product/A37" ;;
+    *) export OUT="$PWD/$OUT_DIR/target/product/A37" ;;
+esac
 export LINEAGE_BUILD=A37 TARGET_PRODUCT=lineage_A37
 export TARGET_BUILD_VARIANT="${TARGET_BUILD_VARIANT:-userdebug}" TARGET_BUILD_TYPE=release
 export JAVA_HOME="$PWD/tools/a37-host/jdk8u512-b09"
