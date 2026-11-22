@@ -4,7 +4,7 @@ cd "$(dirname "$0")/../../../.."
 export ANDROID_BUILD_TOP="$PWD"
 export OUT_DIR="${OUT_DIR:-out-sony-restart}"
 export LINEAGE_BUILD=A37 TARGET_PRODUCT=lineage_A37
-export TARGET_BUILD_VARIANT=eng TARGET_BUILD_TYPE=release
+export TARGET_BUILD_VARIANT="${TARGET_BUILD_VARIANT:-userdebug}" TARGET_BUILD_TYPE=release
 export JAVA_HOME="$PWD/tools/a37-host/jdk8u512-b09"
 export PATH="$PWD/tools/a37-host/bin:$JAVA_HOME/bin:$PATH"
 export M4="$PWD/tools/a37-host/bin/m4"

@@ -6,7 +6,9 @@ The first target is Android boot with display, touch and USB ADB. Other hardware
 services are enabled only after checking the donor HAL against the target kernel.
 
 Build with `tools/build-android.sh bootimage systemimage` from this directory
-or invoke the script from the source root. The default output is
+or invoke the script from the source root. Run `tools/build-android.sh bacon`
+for a flashable full OTA ZIP. The default variant is userdebug; set
+`TARGET_BUILD_VARIANT=eng` to build an engineering variant. The default output is
 `out-sony-restart`, separate from the previous port. Android's init binary is
 used directly. Unused donor shell-init/debug files and the disabled libtuba
 module have been removed.
