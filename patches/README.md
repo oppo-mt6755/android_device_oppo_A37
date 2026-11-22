@@ -57,4 +57,8 @@ patches.
 
 - external/tinyalsa: reject presentation timestamp queries with null PCM/output
   pointers. The legacy audio HAL queries before stream open during first-boot
-  playback; returning EINVAL prevents the audio service from crashing.
+  playback; return EINVAL and a safe diagnostic string for an absent stream.
+
+- vendor/lineage: include the China Unicom IMS APN and scope its legacy WAP
+  profiles to Internet/SUPL. Untyped WAP profiles otherwise claim IMS capability
+  and connect without the required P-CSCF configuration after a clean install.

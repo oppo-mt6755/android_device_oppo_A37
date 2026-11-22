@@ -1,0 +1,28 @@
+From 693f0ae8c4bb0dc4c3f434d3a01f6c9700870116 Mon Sep 17 00:00:00 2001
+From: affggh <879632264@qq.com>
+Date: Sun, 22 Nov 2026 23:03:40 +0800
+Subject: [PATCH] Handle diagnostic queries for a missing PCM stream
+
+After rejecting the early timestamp query the legacy HAL logs pcm_get_error on the same absent handle. Return a static diagnostic string so the error path is safe as well. Verified with ASan/UBSan and stable audio service processes after live installation.
+
+Change-Id: I907d484e5ce610527fcb8fe1a5929378c67f9fed
+---
+ pcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pcm.c b/pcm.c
+index f278c9d..ab9e72d 100644
+--- a/pcm.c
++++ b/pcm.c
+@@ -266,7 +266,7 @@ unsigned int pcm_get_buffer_size(struct pcm *pcm)
+ 
+ const char* pcm_get_error(struct pcm *pcm)
+ {
+-    return pcm->error;
++    return pcm ? pcm->error : "PCM handle is null";
+ }
+ 
+ unsigned int pcm_get_subdevice(struct pcm *pcm)
+-- 
+2.43.0
+
