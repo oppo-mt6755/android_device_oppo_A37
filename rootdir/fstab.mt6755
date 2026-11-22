@@ -27,3 +27,6 @@
 /dev/block/mmcblk0p17       /md1img             emmc       defaults                                                      defaults
 /dev/block/mmcblk0p26         /tee1               emmc       defaults                                                      defaults
 /dev/block/mmcblk0p27         /tee2               emmc       defaults                                                      defaults
+
+# Compressed RAM swap; configured once by swapon_all after /system is available.
+/dev/block/zram0 none swap defaults zramsize=536870912,max_comp_streams=8,swapprio=32758
