@@ -1,3 +1,7 @@
+# Legacy ADB runs as shell in userdebug and needs the adb group.
+/dev/android_adb          0660  root        adb
+/dev/android_adb_enable   0660  root        adb
+
 # change partition permission
 /dev/block/mmcblk0                                              0660    root    system
 /dev/block/mmcblk0boot0                                         0660    root    system

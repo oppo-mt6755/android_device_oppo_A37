@@ -54,3 +54,7 @@ patches.
 - packages/apps/Settings: check OEM unlock support before querying oem_lock.
   This board has no OEM lock service; its lookup caused a fatal WTF in the
   developer options page on eng builds.
+
+- external/tinyalsa: reject presentation timestamp queries with null PCM/output
+  pointers. The legacy audio HAL queries before stream open during first-boot
+  playback; returning EINVAL prevents the audio service from crashing.
