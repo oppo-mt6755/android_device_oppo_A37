@@ -124,3 +124,23 @@ patches initialize the AGnss RIL callbacks before use and copy length-delimited
 NMEA buffers into terminated HIDL strings. The China MCC overlay uses the NTP
 server that responded on the test network. Satellite reception passed at the
 window; an actual position fix still requires verification with better sky view.
+
+Compressed swap is enabled through fstab and swapon_all at boot: one 512 MiB
+zram device, LZ4, eight compression streams. The kernel keeps its existing
+LZ4 implementation with Wingtech-derived fixes for unaligned buffer copies,
+compression-stream allocation failure, and scratch buffer initialization.
+An 8 MiB mixed-data round trip at a 512-byte offset passed byte-for-byte;
+compressed storage was 3,204,835 bytes. Swap was restored after the test and
+automatic activation was verified after reboot.
+
+Lineage-specific resources live in overlay-lineage/, following wt88047's
+layout but using the retained controller's Home/Back/Menu/volume keys (71),
+volume wake mask (64), and one non-RGB PMIC light (capability mask 72).
+Button backlight is absent. The lights HAL maps the white indicator to off=0,
+hardware breathing=1 and steady=255; 2..255 are the same hardware brightness.
+Notifications take priority over charging indication and clearing a notification
+restores the battery state. The owner confirmed charging cable insertion/removal
+and SMS notification breathing on the physical device.
+
+Developer options avoid querying OEM lock services when OEM unlocking is not
+supported. The Settings patch is exported under patches/packages/apps/Settings/.

@@ -50,3 +50,7 @@ patches.
   interface; leaving it uninitialized crashes the legacy HAL on first start.
 - hardware/interfaces: copy the legacy NMEA byte buffer into a terminated HIDL
   string. The callback length does not guarantee a zero byte after the payload.
+
+- packages/apps/Settings: check OEM unlock support before querying oem_lock.
+  This board has no OEM lock service; its lookup caused a fatal WTF in the
+  developer options page on eng builds.
