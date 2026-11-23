@@ -143,14 +143,11 @@ TARGET_NEEDS_LEGACY_CAMERA_HAL1_DYN_NATIVE_HANDLE := true
 # Legacy in-process camera reads system-owned calibration data.
 TARGET_USES_CUSTOM_MEDIASERVER_RC := true
 
-# Keep the existing non-Treble layout and legacy kernel.
+# Keep a ramdisk-based first-stage init with the existing non-Treble kernel.
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
 TARGET_FLATTEN_APEX := true
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := false
 
 TARGET_USES_CUSTOM_HAL_SERVICE_RC := true
 
-TARGET_USES_LEGACY_NON_SAR := true
 
-# First-stage init and second-stage root files share the legacy boot ramdisk.
-TARGET_COPY_OUT_RAMDISK := root

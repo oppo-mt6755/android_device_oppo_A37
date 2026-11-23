@@ -19,7 +19,7 @@ The patches were checked against these LineageOS 17.1 commits:
 
 Changes:
 
-- system/core: character-device USB ADB; retain root ramdisk for non-SAR;
+- system/core: character-device USB ADB;
   restore charger LED backlight after panel resume.
 - frameworks/base: retain Mali/GED descriptors during zygote EGL preload.
 - frameworks/av: legacy MTK camera parameters/messages and board service init.

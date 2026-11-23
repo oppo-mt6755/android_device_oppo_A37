@@ -13,10 +13,12 @@ Initial target: build Android 10, preserve USB ADB, boot with the existing kerne
 and display/touch drivers, then validate each hardware subsystem on the phone.
 
 The partition layout remains non-Treble with vendor under system/vendor and
-flattened APEX. First-stage init retains the root ramdisk after mounting system.
+flattened APEX. Android 10 packages the root directory in the system image;
+its standard first-stage init mounts that image and switches root before
+starting /system/bin/init. Boot contains only the first-stage ramdisk.
 The kernel DT fstab already mounts system by its controller by-name path.
-The first boot image passes a ramdisk content check; SELinux neverallow,
-file-type and compatibility checks pass. Phone boot is still unverified.
+SELinux neverallow, file-type and compatibility checks pass.
+Phone boot is still unverified.
 
 The old MTK camera and encoder require a 160-byte GraphicBuffer allocation on
 Android 10. Guarded blob instruction changes and DT_NEEDED additions are listed
