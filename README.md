@@ -58,7 +58,9 @@ The AGPS daemon's removed SSLv3 imports are renamed to the platform TLS methods
 in the vendor fixup manifest. It starts without the linker restart loop and
 exchanges settings and assistance requests with mnld. This verifies daemon
 compatibility; satellite fixes and successful network assistance are separate
-runtime checks.
+runtime checks. The MNL library's mutex-table cleanup also tolerates a repeated
+destroy while retaining locked-mutex errors. The instruction guard is confined
+to the vendor library, and the native destroy/reinitialize probe passes.
 
 The radio reads
 USIM records and attaches to LTE. IMS registration, outgoing calls, hangup,
