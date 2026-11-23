@@ -362,7 +362,7 @@ vendor/etc/firmware/WIFI_RAM_CODE_6755|74a27772f42d0f3908018538a0e7ea211d657a85
 
 # GPS
 vendor/bin/mnld|cf00beef553d71bca75bea45938804fc49d57994
-vendor/bin/mtk_agpsd|542e5c69ed5ceee8687bc5170d30bb149bd172c4
+vendor/bin/mtk_agpsd|82883927718dc1865a089b718dc6e559e379604d
 vendor/bin/wifi2agps|81f12115c29a260845a9ad95650b09d0d5371a93
 vendor/etc/agps_profiles_conf2.xml|2b5c46b97251c205c08a5d805b22cec35cd532e9
 vendor/lib/hw/gps.mt6755.so|96020a46f55dc1993551178ccc7d6118fa4c448f

@@ -54,6 +54,12 @@ queries then passed with all 40 gateway packets received and no disconnect;
 power save and IP reachability checks remain enabled. Longer real-world Wi-Fi
 stability still needs observation.
 
+The AGPS daemon's removed SSLv3 imports are renamed to the platform TLS methods
+in the vendor fixup manifest. It starts without the linker restart loop and
+exchanges settings and assistance requests with mnld. This verifies daemon
+compatibility; satellite fixes and successful network assistance are separate
+runtime checks.
+
 The radio reads
 USIM records and attaches to LTE. IMS registration, outgoing calls, hangup,
 two-way audio and dial keypad sound have passed user testing after adapting the Q
