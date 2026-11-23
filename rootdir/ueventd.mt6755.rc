@@ -132,5 +132,5 @@
 /dev/MAINAF                0660 media camera
 /dev/DW9714AF              0660 media camera
 /dev/CAM_CAL_DRV1          0660 media camera
-/dev/Vcodec                0660 media system
+/dev/Vcodec                0660 media camera
 /dev/MTK_SMI               0660 media camera

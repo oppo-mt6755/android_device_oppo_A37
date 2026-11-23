@@ -2,6 +2,9 @@
 #include <new>
 #include <ui/GraphicBuffer.h>
 
+// Keep the vendor camera allocation fix in sync with the platform object.
+static_assert(sizeof(android::GraphicBuffer) == 136, "Update the camera allocation fix");
+
 extern "C" void legacy_graphic_buffer(android::GraphicBuffer*, uint32_t,
         uint32_t, int, uint32_t) __asm__("_ZN7android13GraphicBufferC1Ejjij");
 extern "C" void legacy_graphic_buffer(android::GraphicBuffer* self,

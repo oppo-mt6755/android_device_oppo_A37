@@ -150,7 +150,7 @@ vendor/lib/libacdk.so|cab4fcd0cc22487683e2339a76a90a77fd2c7a14
 vendor/lib/libcam.camadapter.so|1c70daee77f644385591e6199887922081cbd03e
 vendor/lib/libcam.camnode.so|c6693b25084c05e9a4ae51acea6f6e7c12923e2d
 vendor/lib/libcam.camshot.so|16df7b73de98bcf94e95b3214605f53153f4cb56
-vendor/lib/libcam.client.so|964e5d040677013a387beb25c6401a051ec827ba
+vendor/lib/libcam.client.so|2fb44cc10f7a789e03e56453854bde34e7953b07
 vendor/lib/libcam.device1.so|4312cf5c1bf1a10147af3ea61dcff4b0aeef0a5c
 vendor/lib/libcam.exif.so|f7a85028effc1bb76134dcedc86c5c0d935922ce
 vendor/lib/libcam.exif.v3.so|4d249fc2607b94fab0a70d048e14f41b727279be
@@ -266,7 +266,7 @@ vendor/lib/libMtkOmxGsmDec.so|43f7da7e556a40a67d425d4987403c71788d0b91
 vendor/lib/libMtkOmxMp3Dec.so|1a981b5cb22ec251e10aa9bae08df67a3f341585
 vendor/lib/libMtkOmxRawDec.so|3f02d27d5e91fdfb925db414adb94a7ef1f33feb
 vendor/lib/libMtkOmxVdecEx.so|76e7b527c34a931517bf3752a6f689386ef1a139
-vendor/lib/libMtkOmxVenc.so|09c377bb8fcf61a1986da9dcf9989223728cfe8e
+vendor/lib/libMtkOmxVenc.so|510b2e7e37897eb6bec5b1fafe7f9027c1601444
 vendor/lib/libMtkOmxVorbisEnc.so|87e1d31f81cecbe605de7c7d44f5cb9abcece288
 vendor/lib/libstagefrighthw.so|29a2d6ad587a2f154decd588f6d8dc9c8d330993
 vendor/lib/libSwJpgCodec.so|0e8d4f4d82ca6a9e4c17a6a19bf969477f813af2

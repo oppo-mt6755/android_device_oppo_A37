@@ -65,9 +65,11 @@ The donor lights HAL, liblights-core and led_service are removed.
 The white PMIC indicator is shared by notification and battery light IDs;
 keyboard, button and RGB-only light controls are not advertised.
 
-Software codec registration is rooted at vendor/etc/media_codecs.xml so OGG
-ringtones can find OMX.google.vorbis.decoder. Settings ringtone playback was
-confirmed with the Sony primary HAL retained.
+Codec registration is rooted at vendor/etc/media_codecs.xml. MTK H.264 encoding
+uses the platform non-Treble OMX mode so its PQ client shares the system Binder;
+the camera group can access /dev/Vcodec. The encoder imports the existing mtkui
+shim through DT_NEEDED. The camera client allocation is enlarged to match the
+136-byte Oreo GraphicBuffer. Google audio codecs remain available for ringtones.
 
 Fuel gauging uses the Hermes Oreo loader and the matching A37 algorithm at
 /vendor/lib/libfgauge.so.
@@ -175,3 +177,7 @@ The extractor stages all files, verifies pinned hashes, and reapplies DT_NEEDED
 fixups before replacing proprietary/. A missing file or hash mismatch leaves
 the existing blob checkout intact. Donor init files can be extracted but are
 excluded from generated build rules. Existing provenance JSON files are retained.
+
+Legacy xlog defaults to warnings before formatting camera traces. Per-tag log.tag
+properties can restore verbose logs for diagnostics. Only MDP and face-detection
+frame traces use explicit warning thresholds; other platform logs keep defaults.

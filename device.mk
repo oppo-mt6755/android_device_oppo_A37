@@ -63,7 +63,7 @@ PRODUCT_PACKAGES += \
 
 # Codecs
 PRODUCT_COPY_FILES += \
-    $(DEVICE_PATH)/configs/media_codecs_software.xml:system/vendor/etc/media_codecs.xml \
+    $(DEVICE_PATH)/configs/media_codecs.xml:system/vendor/etc/media_codecs.xml \
     $(DEVICE_PATH)/seccomp/mediacodec.policy:system/vendor/etc/seccomp_policy/mediacodec.policy \
     $(DEVICE_PATH)/seccomp/mediaextractor.policy:system/vendor/etc/seccomp_policy/mediaextractor.policy \
     frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/vendor/etc/media_codecs_google_audio.xml \

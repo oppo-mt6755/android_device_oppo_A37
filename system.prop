@@ -41,3 +41,10 @@ ro.mtk_volte_support=1
 persist.mtk_ims_support=1
 persist.mtk_volte_support=1
 persist.volte_enabled_by_hw=1
+
+# Legacy MTK codecs access the PQ service through the system Binder.
+persist.media.treble_omx=false
+
+# Per-frame legacy camera traces can stall the preview pipeline.
+log.tag.mHalFDVT=W
+log.tag.MDP=W
