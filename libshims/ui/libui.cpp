@@ -3,7 +3,7 @@
 #include <ui/GraphicBuffer.h>
 
 // Keep the vendor camera allocation fix in sync with the platform object.
-static_assert(sizeof(android::GraphicBuffer) == 136, "Update the camera allocation fix");
+static_assert(sizeof(android::GraphicBuffer) == 160, "Update the camera allocation fix");
 
 extern "C" void legacy_graphic_buffer(android::GraphicBuffer*, uint32_t,
         uint32_t, int, uint32_t) __asm__("_ZN7android13GraphicBufferC1Ejjij");
@@ -62,4 +62,18 @@ extern "C" int legacy_mapper_lock(android::GraphicBufferMapper*, buffer_handle_t
 extern "C" int legacy_mapper_lock(android::GraphicBufferMapper* self,
         buffer_handle_t handle, int usage, const android::Rect& bounds, void** data) {
     return self->lock(handle, static_cast<uint32_t>(usage), bounds, data);
+}
+
+extern "C" int legacy_graphic_buffer_lock(android::GraphicBuffer*, uint32_t, void**)
+        __asm__("_ZN7android13GraphicBuffer4lockEjPPv");
+extern "C" int legacy_graphic_buffer_lock(android::GraphicBuffer* self,
+        uint32_t usage, void** data) {
+    return self->lock(usage, data);
+}
+
+extern "C" void legacy_buffer_item_name(android::BufferItemConsumer*, const android::String8&)
+        __asm__("_ZN7android18BufferItemConsumer7setNameERKNS_7String8E");
+extern "C" void legacy_buffer_item_name(android::BufferItemConsumer* self,
+        const android::String8& name) {
+    self->setName(name);
 }

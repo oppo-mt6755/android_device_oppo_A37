@@ -83,6 +83,8 @@ LOCAL_CLANG := true
 
 LOCAL_SANITIZE := integer
 
+# The retained MTK ELF has a legacy symbol table rejected by LLD.
+LOCAL_USE_CLANG_LLD := false
 include $(BUILD_SHARED_LIBRARY)
 
 endif # BOARD_PROVIDES_LIBRIL

@@ -1,0 +1,205 @@
+diff --git a/adb/daemon/main.cpp b/adb/daemon/main.cpp
+index 8521b5f..d5755ca 100644
+--- a/adb/daemon/main.cpp
++++ b/adb/daemon/main.cpp
+@@ -220,7 +220,7 @@ int adbd_main(int server_port) {
+     bool is_usb = false;
+ 
+ #if defined(__ANDROID__)
+-    if (access(USB_FFS_ADB_EP0, F_OK) == 0) {
++    if (access(USB_FFS_ADB_EP0, F_OK) == 0 || access("/dev/android_adb", F_OK) == 0) {
+         // Listen on USB.
+         usb_init();
+         is_usb = true;
+diff --git a/adb/daemon/usb.cpp b/adb/daemon/usb.cpp
+index 1abae87..a4a0cb6 100644
+--- a/adb/daemon/usb.cpp
++++ b/adb/daemon/usb.cpp
+@@ -738,6 +738,10 @@ static void usb_ffs_open_thread() {
+ }
+ 
+ void usb_init() {
++    if (access("/dev/android_adb", F_OK) == 0) {
++        usb_init_legacy();
++        return;
++    }
+     bool use_nonblocking = android::base::GetBoolProperty(
+             "persist.adb.nonblocking_ffs",
+             android::base::GetBoolProperty("ro.adb.nonblocking_ffs", true));
+diff --git a/adb/daemon/usb_legacy.cpp b/adb/daemon/usb_legacy.cpp
+index fe80e7d..8a8abb9 100644
+--- a/adb/daemon/usb_legacy.cpp
++++ b/adb/daemon/usb_legacy.cpp
+@@ -296,11 +296,67 @@ usb_handle* create_usb_handle(unsigned num_bufs, unsigned io_size) {
+     return h;
+ }
+ 
++// Character-device transport used by pre-FunctionFS Android USB gadgets.
++static int usb_character_read(usb_handle* h, void* data, int len, bool allow_partial) {
++    const int original = len;
++    char* cursor = static_cast<char*>(data);
++    while (len > 0) {
++        const int chunk = std::min(len, 4096);
++        const int count = adb_read(h->bulk_out.get(), cursor, chunk);
++        if (count <= 0 || h->kicked) return -1;
++        cursor += count;
++        len -= count;
++        if (allow_partial && count < chunk) break;
++    }
++    return original - len;
++}
++
++static int usb_character_write(usb_handle* h, const void* data, int len) {
++    const int count = adb_write(h->bulk_in.get(), data, len);
++    return count == len && !h->kicked ? count : -1;
++}
++
++static void usb_character_kick(usb_handle* h) {
++    h->kicked = true;
++    TEMP_FAILURE_RETRY(dup2(dummy_fd.get(), h->bulk_out.get()));
++    TEMP_FAILURE_RETRY(dup2(dummy_fd.get(), h->bulk_in.get()));
++}
++
++static void usb_character_open_thread(usb_handle* h) {
++    adb_thread_setname("usb character open");
++    for (;;) {
++        std::unique_lock<std::mutex> lock(h->lock);
++        h->notify.wait(lock, [h] { return h->open_new_connection; });
++        h->open_new_connection = false;
++        lock.unlock();
++        for (;;) {
++            h->bulk_out.reset(adb_open("/dev/android_adb", O_RDWR | O_CLOEXEC));
++            if (h->bulk_out.get() >= 0) break;
++            std::this_thread::sleep_for(1s);
++        }
++        h->bulk_in.reset(dup(h->bulk_out.get()));
++        if (h->bulk_in.get() < 0) LOG(FATAL) << "Cannot duplicate USB character device";
++        close_on_exec(h->bulk_in.get());
++        register_usb_transport(h, nullptr, nullptr, 1);
++    }
++}
++
+ void usb_init_legacy() {
+     D("[ usb_init - using legacy FunctionFS ]");
+     dummy_fd.reset(adb_open("/dev/null", O_WRONLY | O_CLOEXEC));
+     CHECK_NE(-1, dummy_fd.get());
+ 
++    if (access("/dev/android_adb", F_OK) == 0) {
++        auto* h = new usb_handle();
++        h->write = usb_character_write;
++        h->read = usb_character_read;
++        h->kick = usb_character_kick;
++        h->close = usb_ffs_close;
++        h->control.reset(adb_open("/dev/android_adb_enable", O_RDWR | O_CLOEXEC));
++        std::thread(usb_character_open_thread, h).detach();
++        return;
++    }
++
+     std::thread(usb_legacy_ffs_open_thread, create_usb_handle(USB_FFS_NUM_BUFS, USB_FFS_BULK_SIZE))
+             .detach();
+ }
+diff --git a/healthd/Android.mk b/healthd/Android.mk
+index 4eb98da..f83809c 100644
+--- a/healthd/Android.mk
++++ b/healthd/Android.mk
+@@ -11,6 +11,10 @@ LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)
+ LOCAL_STATIC_LIBRARIES := libminui
+ LOCAL_SHARED_LIBRARIES := libbase
+ LOCAL_SRC_FILES := healthd_draw.cpp
++ifneq ($(BACKLIGHT_PATH),)
++LOCAL_CFLAGS += -DHEALTHD_BACKLIGHT_PATH=\"$(BACKLIGHT_PATH)\"
++LOCAL_CFLAGS += -DHEALTHD_BACKLIGHT_LEVEL=$(HEALTHD_BACKLIGHT_LEVEL)
++endif
+ 
+ ifneq ($(TARGET_HEALTHD_DRAW_SPLIT_SCREEN),)
+ LOCAL_CFLAGS += -DHEALTHD_DRAW_SPLIT_SCREEN=$(TARGET_HEALTHD_DRAW_SPLIT_SCREEN)
+diff --git a/healthd/healthd_draw.cpp b/healthd/healthd_draw.cpp
+index 3da8bda..5c4bb96 100644
+--- a/healthd/healthd_draw.cpp
++++ b/healthd/healthd_draw.cpp
+@@ -15,6 +15,10 @@
+  */
+ 
+ #include <android-base/stringprintf.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <string.h>
++#include <unistd.h>
+ #include <batteryservice/BatteryService.h>
+ #include <cutils/klog.h>
+ 
+@@ -72,9 +76,31 @@ void HealthdDraw::redraw_screen(const animation* batt_anim, GRSurface* surf_unkn
+     gr_flip();
+ }
+ 
++#ifdef HEALTHD_BACKLIGHT_PATH
++static void set_backlight(bool on) {
++    const std::string value = std::to_string(on ? HEALTHD_BACKLIGHT_LEVEL : 0);
++    const int fd = open(HEALTHD_BACKLIGHT_PATH, O_WRONLY | O_CLOEXEC);
++    if (fd < 0) {
++        LOGE("Cannot open charger backlight: %s\n", strerror(errno));
++        return;
++    }
++    if (TEMP_FAILURE_RETRY(write(fd, value.data(), value.size())) !=
++            static_cast<ssize_t>(value.size())) {
++        LOGE("Cannot set charger backlight: %s\n", strerror(errno));
++    }
++    close(fd);
++}
++#endif
++
+ void HealthdDraw::blank_screen(bool blank) {
+     if (!graphics_available) return;
++#ifdef HEALTHD_BACKLIGHT_PATH
++    if (blank) set_backlight(false);
++#endif
+     gr_fb_blank(blank);
++#ifdef HEALTHD_BACKLIGHT_PATH
++    if (!blank) set_backlight(true);
++#endif
+ }
+ 
+ void HealthdDraw::clear_screen(void) {
+diff --git a/init/Android.mk b/init/Android.mk
+index c4f7d34..c5de2cd 100644
+--- a/init/Android.mk
++++ b/init/Android.mk
+@@ -57,6 +57,10 @@ LOCAL_SRC_FILES := \
+     uevent_listener.cpp \
+     util.cpp \
+ 
++ifeq ($(TARGET_USES_LEGACY_NON_SAR),true)
++LOCAL_CPPFLAGS += -DLEGACY_NON_SAR
++endif
++
+ LOCAL_MODULE := init_first_stage
+ LOCAL_MODULE_STEM := init
+ 
+diff --git a/init/first_stage_mount.cpp b/init/first_stage_mount.cpp
+index 3e76556..71a6b6a 100644
+--- a/init/first_stage_mount.cpp
++++ b/init/first_stage_mount.cpp
+@@ -515,7 +515,9 @@ bool FirstStageMount::TrySwitchSystemAsRoot() {
+             LOG(ERROR) << "check_most_at_once forbidden on external media";
+             return false;
+         }
++#ifndef LEGACY_NON_SAR
+         SwitchRoot("/system");
++#endif
+     } else {
+         PLOG(ERROR) << "Failed to mount /system";
+         return false;
+diff --git a/rootdir/Android.mk b/rootdir/Android.mk
+index 24b3999..422a487 100644
+--- a/rootdir/Android.mk
++++ b/rootdir/Android.mk
+@@ -12,7 +12,9 @@ LOCAL_REQUIRED_MODULES := fsverity_init
+ 
+ # The init symlink must be a post install command of a file that is to TARGET_ROOT_OUT.
+ # Since init.rc is required for init and satisfies that requirement, we hijack it to create the symlink.
++ifneq ($(TARGET_USES_LEGACY_NON_SAR),true)
+ LOCAL_POST_INSTALL_CMD := ln -sf /system/bin/init $(TARGET_ROOT_OUT)/init
++endif
+ 
+ include $(BUILD_PREBUILT)
+ 

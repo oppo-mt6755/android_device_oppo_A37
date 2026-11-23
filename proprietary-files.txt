@@ -66,7 +66,7 @@ vendor/etc/audio_param/VolumeGainMap_ParamUnitDesc.xml|63f9cb71eca4396cf6f17246c
 vendor/lib/hw/audio.primary.mt6755.so|bdafaaca7605e3311738827ede31d610f380eede
 vendor/lib/libaudio_param_parser.so|1e1d8ead1e167a923f0a193a1b34e5b5acedc27a
 vendor/lib/libaudiocompensationfilter.so|ae8d3da61f4ec6744538b0b64c9512aa4b53fa96
-vendor/lib/libaudiocomponentengine.so|4bcd91d25edcdc33d6f14485e1450b238c22c7bc
+vendor/lib/libaudiocomponentengine.so|b60ed1ab30bf16c02776c030db0f5c65d1b9a1db
 vendor/lib/libaudiocustparam.so|6af82087cef9f515922494c624bac7c8161ea283
 vendor/lib/libaudiodcrflt.so|bad377b830a42c4aea970a201de7679162cab199
 vendor/lib/libaudiomtkdcremoval.so|f9b22a88643884ee7786bfd35f7a0d1351ed82f6
@@ -84,7 +84,7 @@ vendor/lib/libspeech_enh_lib.so|daa55234181f3ef58b9a9b672ebb8d0980713c2b
 vendor/lib64/hw/audio.primary.mt6755.so|13a3275fbe0a587a1f1aa1320285a324e408bb25
 vendor/lib64/libaudio_param_parser.so|54628b9753ad55bf46b950305367ae2f9644fc15
 vendor/lib64/libaudiocompensationfilter.so|f1ff8986c44326e2ba2af5ca4131c9e621f1ed71
-vendor/lib64/libaudiocomponentengine.so|0b9d3a71512d27e018f5ad9095f508c0ae667f9c
+vendor/lib64/libaudiocomponentengine.so|b3214027b964272e27878b2cea7ec907e4e8c6fc
 vendor/lib64/libaudiocustparam.so|f6bb34905dfe4ad71357bb0b06bba30d6e85ed45
 vendor/lib64/libaudiodcrflt.so|3ea9b38222e6911ccbea68bc3c65ae2a9a6a24c1
 vendor/lib64/libaudioprimarydevicehalifclient.so|1d696730c2bb1144f41acc47eef84e477d85baf7
@@ -150,7 +150,7 @@ vendor/lib/libacdk.so|cab4fcd0cc22487683e2339a76a90a77fd2c7a14
 vendor/lib/libcam.camadapter.so|1c70daee77f644385591e6199887922081cbd03e
 vendor/lib/libcam.camnode.so|c6693b25084c05e9a4ae51acea6f6e7c12923e2d
 vendor/lib/libcam.camshot.so|16df7b73de98bcf94e95b3214605f53153f4cb56
-vendor/lib/libcam.client.so|2fb44cc10f7a789e03e56453854bde34e7953b07
+vendor/lib/libcam.client.so|fd8ec18793e1313e22610bfa247bdbdc5eaea63e
 vendor/lib/libcam.device1.so|4312cf5c1bf1a10147af3ea61dcff4b0aeef0a5c
 vendor/lib/libcam.exif.so|f7a85028effc1bb76134dcedc86c5c0d935922ce
 vendor/lib/libcam.exif.v3.so|4d249fc2607b94fab0a70d048e14f41b727279be
@@ -165,7 +165,7 @@ vendor/lib/libcam3_hwnode.so|0a276ed4e26b7862aba2f73b6119dce531cd9b5d
 vendor/lib/libcam3_hwpipeline.so|edea3fff6c9b18727c21480a232c3f2de3b431ad
 vendor/lib/libcam_hwutils.so|e675a53bba23ef3a63036067cad059af059b977a
 vendor/lib/libcam_platform.so|14f9184f2f0d806df4d4a8dafe2fb98414f87820
-vendor/lib/libcam_utils.so|a06137c95bce5b8f16c315ebdbd27f37160f6e8b
+vendor/lib/libcam_utils.so|ed00661af74ab40dea9f4044d88517a4a4859616
 vendor/lib/libcamalgo.so|dd22ab3e6e88109cf940d2885897e038060bf0b1
 vendor/lib/libcamdrv.so|7c7d4d0d639394f139b7282b13ff0f42f2e5c2c8
 vendor/lib/libcamera_client_mtk.so|f5f1536a327f23fe257311f9a0cc74327219dfc3
@@ -186,7 +186,7 @@ vendor/lib/libmmsdkservice.feature.so|be47543776a50e81e0d0bc93dc111aba5afb124f
 vendor/lib/libmtk_mmutils.so|aa24c6f61a039d736bbd490dcb2f647e7a072008
 vendor/lib/libmtkcam_fwkutils.so|74332fc48b31edf93aa2484e7188a60271c5aa9d
 vendor/lib/libmtkcam_metadata.so|aee0e81dfd2e89135885235ba82d0b36063e0062
-vendor/lib/libmtkcam_stdutils.so|7f7c01588195662c49c8aa5a1fe741a38aefd41a
+vendor/lib/libmtkcam_stdutils.so|9253420872cd08790d3d08404b21fb5d5ad5326d
 -vendor/lib/libmtkjpeg.so|143be9a0f999ad45033b5c9174045b2218b0fcc5
 vendor/lib/libn3d3a.so|bdea43cc0d8ab8afc7f31aad15bfc8b7ed05c4f5
 vendor/lib/libSonyIMX230PdafLibrary.so|e0f5c6d854d72f872d589b67e455210ab5900a41
@@ -223,7 +223,7 @@ vendor/lib64/libcam3_utils.so|5cdadc1b6cba362c6afcddd465960d7b39696a15
 vendor/lib64/libcam_hwutils.so|bcc5d7b12efc546bf2e475b0223c557fa1948f38
 vendor/lib64/libcam_mmp.so|237e71f8a1aed326dac04ba56b31f6df870fb052
 vendor/lib64/libcam_platform.so|1f91aee54f8c3c7626cfd34baa86a7e54b8abccb
-vendor/lib64/libcam_utils.so|5699ac83ec51c4a4a1a6416545ec0ff6f2842f82
+vendor/lib64/libcam_utils.so|830ca71f4310cd5c1991ad4e792ec969e3e26c5b
 vendor/lib64/libcamalgo.so|fe0311bb7d5b5d14e05c90b3cebf55668688ea41
 vendor/lib64/libcamdrv.so|8d7c8b85743418e1a93cfe21bcd757a7fbdb796b
 vendor/lib64/libcameracustom.so|6fd28e0b75e3027eb30570db83dd92ce2e11aa74
@@ -242,7 +242,7 @@ vendor/lib64/libJpgEncPipe.so|87d02df87e831d9a7f44930cf14b9f77fddd7131
 vendor/lib64/libmtk_mmutils.so|6898cd42c47ee74d67b83af2ea0cde9bac6d69d3
 vendor/lib64/libmtkcam_fwkutils.so|5b43922160994d0124b8da4e8260454e2a100ff4
 vendor/lib64/libmtkcam_metadata.so|5b5d0da109790e1d5c61542e80284a1a826b8ab5
-vendor/lib64/libmtkcam_stdutils.so|e1b95913a6081ef271a2ae9c71df4e5df7fb7336
+vendor/lib64/libmtkcam_stdutils.so|cf632a9d86f2187fbb5be123e163506bc12581e4
 vendor/lib64/libmtkjpeg.so|a50a97df799c3dd2a29b0876392e72033d1d2d84
 vendor/lib64/libn3d3a.so|251e89c1d18df1171acbc390ed8f1784dc5ac9b0
 vendor/lib64/libSonyIMX230PdafLibrary.so|730e5dbdff01e2791d68f0ff038fdd47844aa1bc
@@ -266,7 +266,7 @@ vendor/lib/libMtkOmxGsmDec.so|43f7da7e556a40a67d425d4987403c71788d0b91
 vendor/lib/libMtkOmxMp3Dec.so|1a981b5cb22ec251e10aa9bae08df67a3f341585
 vendor/lib/libMtkOmxRawDec.so|3f02d27d5e91fdfb925db414adb94a7ef1f33feb
 vendor/lib/libMtkOmxVdecEx.so|76e7b527c34a931517bf3752a6f689386ef1a139
-vendor/lib/libMtkOmxVenc.so|510b2e7e37897eb6bec5b1fafe7f9027c1601444
+vendor/lib/libMtkOmxVenc.so|ea47fd3669e1c747217fabdeb263f5ad421bb57b
 vendor/lib/libMtkOmxVorbisEnc.so|87e1d31f81cecbe605de7c7d44f5cb9abcece288
 vendor/lib/libstagefrighthw.so|29a2d6ad587a2f154decd588f6d8dc9c8d330993
 vendor/lib/libSwJpgCodec.so|0e8d4f4d82ca6a9e4c17a6a19bf969477f813af2
@@ -372,8 +372,8 @@ vendor/lib64/hw/gps.mt6755.so|508cb249b8a6aac2be1d6bd30fd99b429631b615
 # Graphics
 lib/egl/egl.cfg:vendor/lib/egl/egl.cfg
 vendor/lib/egl/libGLES_android.so|bfd0570cde3ca9d85528268da1f30507a1bb2e03
-vendor/lib/egl/libGLES_mali.so|130a686973f71b40da14e6f2a3415ecc0dae1b0d
-vendor/lib/hw/gralloc.mt6755.so|b2dcec83a6287e9785fc94e908e6d3be6ae63bc6
+vendor/lib/egl/libGLES_mali.so|d574ce881ebe657fbd314c239f278255937f5541
+vendor/lib/hw/gralloc.mt6755.so|34aa7e6d05cbc50b5e8ecb4dc8acd84fae832542
 vendor/lib/hw/memtrack.mt6755.so|b7c3c5c08986b7410cd80a80e5a7702ec4fbbcfe
 vendor/lib/libaal.so|f417c1a0cd6ed350b25a43674103b22f65d736a2
 vendor/lib/libbwc.so|09b5354525b29bddfe1c036eaf6c5ed5ef184359
@@ -388,13 +388,13 @@ vendor/lib/libperfservice.so|32cffe22a7cfb8b3a9ade980ddc4025f4deb0b93
 vendor/lib/libperfservicenative.so|0f76891d3a6e5c0ab299b3f8c2a18f4f0bf451f7
 vendor/lib/libpq_cust.so|d90666b7f1d2ea14481734ae4cb2298c8427ac81
 vendor/lib/libpq_prot.so|e63b4176335f52b7044c62785cc62ba7dc6d04ce
-vendor/lib/libpqservice.so|dd56de9443e5a89c8ec3e1f8985e31d91222355b
+vendor/lib/libpqservice.so|bbd566cb70ba91d700a1376c755e1157f1d67d56
 vendor/lib/libstlport.so|12214b7b72da945e066ed1a616def897f1e5165f
 vendor/lib/libui_ext.so|468f9ee0aab967590702359f50d0b8a1b23be912
 vendor/lib/vendor.mediatek.hardware.pq@2.0.so|e08701f50188a3582a400fbf799baac8e8978e20
 vendor/lib64/egl/libGLES_android.so|cba2d3d82ed807eceb31f5ae3b7b254ee21cbf57
-vendor/lib64/egl/libGLES_mali.so|249d2f8b16b42d626d1d42e5f0e9da3f15895924
-vendor/lib64/hw/gralloc.mt6755.so|6855082a921c2e523081b3affd8f151886b97a16
+vendor/lib64/egl/libGLES_mali.so|831af0a92f6f7804362cd43ba45eaff4b78fef5e
+vendor/lib64/hw/gralloc.mt6755.so|738ca8eff7a4b23a17227f95fd945183df70d514
 vendor/lib64/hw/memtrack.mt6755.so|b6507d3d88fe4b74b907f41d2d710a79dbd8ae6e
 vendor/lib64/libaal.so|aea4d5d5106103702046deb73b5741c814e6f29a
 vendor/lib64/libbwc.so|da136d617fbd6a15bb6b36527ae38d93c8585768
@@ -409,7 +409,7 @@ vendor/lib64/libperfservice.so|7d55ca0eafc80663619f3807b21ce4109d924c52
 vendor/lib64/libperfservicenative.so|0e04f35350c0073eec2827aaaba0de447008554e
 vendor/lib64/libpq_cust.so|7fe6eed8016ac8e9bd0ace1e9c52ca56b60f8aa6
 vendor/lib64/libpq_prot.so|4a588576c24cf82e8c6dbbd85a6d76bc20faa6f4
-vendor/lib64/libpqservice.so|a97e274fdb27f54048452fb63b0d7cd9cc64cc66
+vendor/lib64/libpqservice.so|2869bff4bf845d639f93e8c615cc3cc108771df2
 vendor/lib64/libstlport.so|a24e9f14377a0da0de63106cb95b1e8284db2842
 vendor/lib64/libui_ext.so|57df9eb1a1911dcaeaf89f08de139fb5c7e669c5
 vendor/lib64/vendor.mediatek.hardware.pq@2.0.so|1e78f5094ef44bc44ce4749112c54fa5d4ef5a29
@@ -440,7 +440,7 @@ vendor/lib/libmdfx.so|60cddf823dc3b4b5dced484231bb24f0e626e687
 vendor/lib/libmtk_vt_service.so|3792b464a97a16f936506364256a9acdc26c549b
 vendor/lib/libmtk_vt_utils.so|3f316b3ce7a2c19cc998217ad0b1d5cd735cc4d8
 vendor/lib/libsink.so|0444798634b17b1093e802c5c49e2cd98db6972f
-vendor/lib/libsource.so|f68b10e5d535cabb8d35689db870cfb76a17faba
+vendor/lib/libsource.so|44277bda3d70a4b7cbbad2d96950b4d1a5b01098
 vendor/lib/libvt_avsync.so|2d0b90f8746bf926f75ee2817aef6dc3dd4521ca
 vendor/lib/libvt_custom.so|05afb7c041440cafb69ed9b3252e68b99d256b89
 vendor/lib/libvt_socketbind.so|8f299164f571b1d2732a1f0cb4802cd2134fbd78
@@ -529,7 +529,7 @@ vendor/lib/librilproxyutils.so|56e73f2a9ffdc587fed940edc14623a05abb1798
 vendor/lib/librilutilsmtk.so|bb15127f490955b78fb823890e3a24e4d961c06d
 vendor/lib/librrc.so|8da0984e9789a7549b08b8cbe32bba38c8d6f02c
 -vendor/lib/mtk-ril.so|768bec705b1a378751c9335bad693394fe1dcc64
-vendor/lib/mtk-rilproxy.so|40df4e6b68cb798d0b64d7af0f2d6b8486a162c7
+vendor/lib/mtk-rilproxy.so|b20c5cbb165d884baf71cc06a8b425ee12b8d8b7
 vendor/lib/vendor.mediatek.hardware.radio.deprecated@1.1.so|d2c8dd075f4a5e1c1df3535618f2f506ead1e199
 vendor/lib/vendor.mediatek.hardware.radio@1.1.so|519bc453854df3126c0b6278a42f93f8f9e94a6f
 vendor/lib64/libccci_util.so|b7952f95bf176fa0c2f52a32fa5e26ef9c8cf60e
@@ -541,7 +541,7 @@ vendor/lib64/librilproxyutils.so|232cc82a4c4aa3956652f32bb4afffc035737032
 vendor/lib64/librilutilsmtk.so|4e19c5d9a9a5dde79dd0f5887fb6325746adddb0
 vendor/lib64/librrc.so|8f238d240db8ad441de13a89181bcda17aede10a
 -vendor/lib64/mtk-ril.so|e1fb0552b85f923e1f0cf0e7951d96b986ce52d1
-vendor/lib64/mtk-rilproxy.so|4dfaf74423050eeccceee65819ba64c1dd50d6d6
+vendor/lib64/mtk-rilproxy.so|e7e24c296bdb648aa984919d7bc7c42ca904a3da
 vendor/lib64/vendor.mediatek.hardware.radio.deprecated@1.1.so|a54c56c48b4eeb310acb56ec1d2e7b7efe0c83a6
 vendor/lib64/vendor.mediatek.hardware.radio@1.1.so|7f7d9e1808a286b24444ed6584fc3063fe812ada
 

@@ -57,7 +57,7 @@ LOCAL_C_INCLUDES += $(DEVICE_PATH)/mtk/ril/include hardware/ril/include
 
 # Temporary hack for broken vendor RILs
 LOCAL_WHOLE_STATIC_LIBRARIES := \
-    librilutils_static
+    librilutils
 
 LOCAL_CFLAGS := -DRIL_SHLIB
 
@@ -66,6 +66,8 @@ LOCAL_PROPRIETARY_MODULE := true
 LOCAL_MODULE := rild
 #LOCAL_INIT_RC := rild.rc
 
+# The retained MTK ELF has a legacy symbol table rejected by LLD.
+LOCAL_USE_CLANG_LLD := false
 include $(BUILD_EXECUTABLE)
 
 endif # ENABLE_VENDOR_RIL_SERVICE

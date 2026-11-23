@@ -1,0 +1,15 @@
+diff --git a/legacy-common/public/legacy-camera-hal1/mediaserver.te b/legacy-common/public/legacy-camera-hal1/mediaserver.te
+index ffd5c57..b78d2c1 100644
+--- a/legacy-common/public/legacy-camera-hal1/mediaserver.te
++++ b/legacy-common/public/legacy-camera-hal1/mediaserver.te
+@@ -1,8 +1,7 @@
+ # Legacy camera HAL1
+-add_service(mediaserver, cameraserver_service)
+-add_hwservice(mediaserver, fwk_camera_hwservice)
++typeattribute mediaserver camera_service_server;
+ 
+ allow mediaserver { cameraproxy_service sensor_privacy_service }:service_manager find;
+-allow mediaserver hal_camera_hwservice:hwservice_manager find;
++hal_client_domain(mediaserver, hal_camera)
+ 
+ hal_client_domain(mediaserver, hal_lineage_camera_motor)

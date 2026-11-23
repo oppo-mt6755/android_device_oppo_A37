@@ -8,6 +8,15 @@ LOCAL_SHARED_LIBRARIES := libc
 LOCAL_PROPRIETARY_MODULE := true
 include $(BUILD_SHARED_LIBRARY)
 
+# Binder instance method used by the legacy PQ service.
+include $(CLEAR_VARS)
+LOCAL_MODULE := libshim_binder
+LOCAL_SRC_FILES := misc/binder.cpp
+LOCAL_SHARED_LIBRARIES := libbinder libutils
+LOCAL_MULTILIB := both
+LOCAL_PROPRIETARY_MODULE := true
+include $(BUILD_SHARED_LIBRARY)
+
 include $(CLEAR_VARS)
 LOCAL_MODULE := mtklog
 LOCAL_SRC_FILES := misc/liblog.c

@@ -1,0 +1,36 @@
+diff --git a/device/src/controller.cc b/device/src/controller.cc
+index 6525c14..fc7d644 100644
+--- a/device/src/controller.cc
++++ b/device/src/controller.cc
+@@ -29,6 +29,7 @@
+ #include "btcore/include/version.h"
+ #include "hcimsgs.h"
+ #include "osi/include/future.h"
++#include "osi/include/properties.h"
+ #include "stack/include/btm_ble_api.h"
+ 
+ const bt_event_mask_t BLE_EVENT_MASK = {{0x00, 0x00, 0x00, 0x00, 0x00, 0x02,
+@@ -140,6 +141,14 @@ static future_t* start_up(void) {
+       response, &page_number, &last_features_classic_page_index,
+       features_classic, MAX_FEATURES_CLASSIC_PAGE_COUNT);
+ 
++  // The retained MTK controller advertises page 2 but rejects that command.
++  const int32_t feature_page_limit = osi_property_get_int32(
++      "ro.bluetooth.max_feature_page", MAX_FEATURES_CLASSIC_PAGE_COUNT - 1);
++  const bool limit_feature_pages = feature_page_limit >= 0 &&
++      feature_page_limit < MAX_FEATURES_CLASSIC_PAGE_COUNT;
++  if (limit_feature_pages && last_features_classic_page_index > feature_page_limit)
++    last_features_classic_page_index = feature_page_limit;
++
+   CHECK(page_number == 0);
+   page_number++;
+ 
+@@ -180,6 +189,8 @@ static future_t* start_up(void) {
+         response, &page_number, &last_features_classic_page_index,
+         features_classic, MAX_FEATURES_CLASSIC_PAGE_COUNT);
+ 
++    if (limit_feature_pages && last_features_classic_page_index > feature_page_limit)
++      last_features_classic_page_index = feature_page_limit;
+     page_number++;
+   }
+ 

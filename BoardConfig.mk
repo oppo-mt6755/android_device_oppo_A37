@@ -56,7 +56,7 @@ TARGET_CPU_ABI2 :=
 TARGET_CPU_VARIANT := cortex-a53
 
 TARGET_2ND_ARCH := arm
-TARGET_2ND_ARCH_VARIANT := armv7-a-neon
+TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a53
@@ -142,3 +142,15 @@ TARGET_NEEDS_LEGACY_CAMERA_HAL1_DYN_NATIVE_HANDLE := true
 
 # Legacy in-process camera reads system-owned calibration data.
 TARGET_USES_CUSTOM_MEDIASERVER_RC := true
+
+# Keep the existing non-Treble layout and legacy kernel.
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
+TARGET_FLATTEN_APEX := true
+BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := false
+
+TARGET_USES_CUSTOM_HAL_SERVICE_RC := true
+
+TARGET_USES_LEGACY_NON_SAR := true
+
+# First-stage init and second-stage root files share the legacy boot ramdisk.
+TARGET_COPY_OUT_RAMDISK := root

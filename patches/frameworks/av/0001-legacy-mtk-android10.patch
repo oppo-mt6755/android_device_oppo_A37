@@ -1,35 +1,8 @@
-From 640ad1e85c63ca271b95fa86b584898cfb63ada9 Mon Sep 17 00:00:00 2001
-From: bilux <i.bilux@gmail.com>
-Date: Sun, 22 Mar 2020 22:58:33 +0100
-Subject: [PATCH] MTK camera support
-
-1. add extra camera parameters.
-2. Add deprecated function definitions which the old blobs required.
-3. Handle extra MTK camera messages
-
-Signed-off-by: bilux <i.bilux@gmail.com>
----
- camera/Android.bp                             |   3 +
- camera/CameraParameters.cpp                   |  28 +
- camera/MtkCamera.cpp                          | 212 ++++++
- camera/MtkCameraParameters.cpp                | 515 ++++++++++++++
- camera/include/camera/CameraParameters.h      |  22 +
- camera/include/camera/MtkCamera.h             | 333 +++++++++
- camera/include/camera/MtkCameraParameters.h   | 651 ++++++++++++++++++
- services/camera/libcameraservice/Android.mk   |   2 +-
- .../libcameraservice/api1/CameraClient.cpp    | 342 ++++++++-
- .../libcameraservice/api1/CameraClient.h      |  27 +
- 10 files changed, 2133 insertions(+), 2 deletions(-)
- create mode 100644 camera/MtkCamera.cpp
- create mode 100644 camera/MtkCameraParameters.cpp
- create mode 100644 camera/include/camera/MtkCamera.h
- create mode 100644 camera/include/camera/MtkCameraParameters.h
-
 diff --git a/camera/Android.bp b/camera/Android.bp
-index 58cc622..6042b66 100644
+index 68ba155..afe12fd 100644
 --- a/camera/Android.bp
 +++ b/camera/Android.bp
-@@ -71,6 +71,8 @@ cc_library_shared {
+@@ -66,6 +66,8 @@ cc_library_shared {
          "CameraBase.cpp",
          "CameraUtils.cpp",
          "VendorTagDescriptor.cpp",
@@ -38,7 +11,7 @@ index 58cc622..6042b66 100644
      ],
  
      product_variables: {
-@@ -108,6 +110,7 @@ cc_library_shared {
+@@ -103,6 +105,7 @@ cc_library_shared {
          "-Werror",
          "-Wall",
          "-Wextra",
@@ -1916,40 +1889,41 @@ index 0000000..42f0a3f
 +}; // namespace android
 +
 +#endif
-diff --git a/services/camera/libcameraservice/Android.mk b/services/camera/libcameraservice/Android.mk
-index 7629594..93245f5 100644
---- a/services/camera/libcameraservice/Android.mk
-+++ b/services/camera/libcameraservice/Android.mk
-@@ -95,7 +95,7 @@ LOCAL_C_INCLUDES += \
- LOCAL_EXPORT_C_INCLUDE_DIRS := \
-     frameworks/av/services/camera/libcameraservice
+diff --git a/media/mediaserver/Android.bp b/media/mediaserver/Android.bp
+index cc950cb..9e6f203 100644
+--- a/media/mediaserver/Android.bp
++++ b/media/mediaserver/Android.bp
+@@ -36,7 +36,7 @@ cc_binary {
+     // back to 32-bit, b/126502613
+     compile_multilib: "32",
  
--LOCAL_CFLAGS += -Wall -Wextra -Werror
-+LOCAL_CFLAGS += -Wall -Wextra -Wno-narrowing
+-    init_rc: ["mediaserver.rc"],
++
  
- # Workaround for invalid unused-lambda-capture warning http://b/38349491
- LOCAL_CLANG_CFLAGS += -Wno-error=unused-lambda-capture
+     cflags: [
+         "-Werror",
+@@ -45,6 +45,7 @@ cc_binary {
+ 
+     product_variables: {
+         lineage: {
++            uses_default_hal_service_rc: { init_rc: ["mediaserver.rc"] },
+             has_legacy_camera_hal1: {
+                 overrides: ["cameraserver"],
+                 cflags: ["-DNO_CAMERA_SERVER"],
 diff --git a/services/camera/libcameraservice/api1/CameraClient.cpp b/services/camera/libcameraservice/api1/CameraClient.cpp
-index 48757ac..f876932 100644
+index 40c8e19..9c28a14 100644
 --- a/services/camera/libcameraservice/api1/CameraClient.cpp
 +++ b/services/camera/libcameraservice/api1/CameraClient.cpp
-@@ -26,6 +26,15 @@
+@@ -26,6 +26,8 @@
  #include "device1/CameraHardwareInterface.h"
  #include "CameraService.h"
+ #include "utils/CameraThreadState.h"
++#include <camera/MtkCamera.h>
++#include <camera/MtkCameraParameters.h>
  
-+#ifndef MTK_HARDWARE
-+#define MTK_HARDWARE
-+#endif
-+
-+#ifdef MTK_HARDWARE
-+    #include <camera/MtkCamera.h>
-+    #include <camera/MtkCameraParameters.h>
-+#endif
-+
  namespace android {
  
- #define LOG1(...) ALOGD_IF(gLogLevel >= 1, __VA_ARGS__);
-@@ -96,9 +105,14 @@ status_t CameraClient::initialize(sp<CameraProviderManager> manager) {
+@@ -93,9 +95,14 @@ status_t CameraClient::initialize(sp<CameraProviderManager> manager,
              (void *)(uintptr_t)mCameraId);
  
      // Enable zoom, error, focus, and metadata messages by default
@@ -1965,7 +1939,7 @@ index 48757ac..f876932 100644
      LOG1("CameraClient::initialize X (pid %d, id %d)", callingPid, mCameraId);
      return OK;
  }
-@@ -311,6 +325,12 @@ status_t CameraClient::setPreviewWindow(const sp<IBinder>& binder,
+@@ -315,6 +322,12 @@ status_t CameraClient::setPreviewWindow(const sp<IBinder>& binder,
          }
      }
  
@@ -1978,36 +1952,7 @@ index 48757ac..f876932 100644
      if (result == NO_ERROR) {
          // Everything has succeeded.  Disconnect the old window and remember the
          // new window.
-@@ -368,14 +388,18 @@ status_t CameraClient::setPreviewCallbackTarget(
- 
- // start preview mode
- status_t CameraClient::startPreview() {
-+#ifndef MTK_HARDWARE
-     Mutex::Autolock lock(mLock);
-+#endif
-     LOG1("startPreview (pid %d)", getCallingPid());
-     return startCameraMode(CAMERA_PREVIEW_MODE);
- }
- 
- // start recording mode
- status_t CameraClient::startRecording() {
-+#ifndef MTK_HARDWARE
-     Mutex::Autolock lock(mLock);
-+#endif
-     LOG1("startRecording (pid %d)", getCallingPid());
-     return startCameraMode(CAMERA_RECORDING_MODE);
- }
-@@ -383,6 +407,9 @@ status_t CameraClient::startRecording() {
- // start preview or recording
- status_t CameraClient::startCameraMode(camera_mode mode) {
-     LOG1("startCameraMode(%d)", mode);
-+#ifdef MTK_HARDWARE
-+    Mutex::Autolock lock(mLock);
-+#endif
-     status_t result = checkPidAndHardware();
-     if (result != NO_ERROR) return result;
- 
-@@ -801,6 +828,10 @@ void CameraClient::disableMsgType(int32_t msgType) {
+@@ -795,6 +808,10 @@ void CameraClient::disableMsgType(int32_t msgType) {
  
  #define CHECK_MESSAGE_INTERVAL 10 // 10ms
  bool CameraClient::lockIfMessageWanted(int32_t msgType) {
@@ -2018,7 +1963,7 @@ index 48757ac..f876932 100644
      int sleepCount = 0;
      while (mMsgEnabled & msgType) {
          if (mLock.tryLock() == NO_ERROR) {
-@@ -824,6 +855,7 @@ bool CameraClient::lockIfMessageWanted(int32_t msgType) {
+@@ -818,6 +835,7 @@ bool CameraClient::lockIfMessageWanted(int32_t msgType) {
      }
      ALOGW("lockIfMessageWanted(%d): dropped unwanted message", msgType);
      return false;
@@ -2026,7 +1971,7 @@ index 48757ac..f876932 100644
  }
  
  sp<CameraClient> CameraClient::getClientFromCookie(void* user) {
-@@ -861,6 +893,11 @@ void CameraClient::notifyCallback(int32_t msgType, int32_t ext1,
+@@ -855,6 +873,11 @@ void CameraClient::notifyCallback(int32_t msgType, int32_t ext1,
      if (!client->lockIfMessageWanted(msgType)) return;
  
      switch (msgType) {
@@ -2038,7 +1983,7 @@ index 48757ac..f876932 100644
          case CAMERA_MSG_SHUTTER:
              // ext1 is the dimension of the yuv picture.
              client->handleShutter();
-@@ -885,6 +922,11 @@ void CameraClient::dataCallback(int32_t msgType,
+@@ -879,6 +902,11 @@ void CameraClient::dataCallback(int32_t msgType,
          return;
      }
  
@@ -2050,7 +1995,7 @@ index 48757ac..f876932 100644
      switch (msgType & ~CAMERA_MSG_PREVIEW_METADATA) {
          case CAMERA_MSG_PREVIEW_FRAME:
              client->handlePreviewData(msgType, dataPtr, metadata);
-@@ -1205,4 +1247,302 @@ status_t CameraClient::setVideoTarget(const sp<IGraphicBufferProducer>& bufferPr
+@@ -1200,4 +1228,302 @@ status_t CameraClient::setVideoTarget(const sp<IGraphicBufferProducer>& bufferPr
      return INVALID_OPERATION;
  }
  
@@ -2354,7 +2299,7 @@ index 48757ac..f876932 100644
 +
  }; // namespace android
 diff --git a/services/camera/libcameraservice/api1/CameraClient.h b/services/camera/libcameraservice/api1/CameraClient.h
-index a0d9d0a..c7399b6 100644
+index 16627cc..1bbd4df 100644
 --- a/services/camera/libcameraservice/api1/CameraClient.h
 +++ b/services/camera/libcameraservice/api1/CameraClient.h
 @@ -19,6 +19,10 @@
@@ -2398,6 +2343,3 @@ index a0d9d0a..c7399b6 100644
      bool                 mLongshotEnabled;
      int                  mBurstCnt;
  };
--- 
-2.26.1
-

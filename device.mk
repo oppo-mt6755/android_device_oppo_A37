@@ -2,13 +2,10 @@ DEVICE_PATH := device/oppo/A37
 
 # Audio
 PRODUCT_PACKAGES += \
-    audio.a2dp.default \
     audio.r_submix.default \
     audio.usb.default \
-    audio_policy.default \
     libtinyalsa \
     libtinycompress \
-    libtinymix \
     libtinyxml
 PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/configs/audio/a2dp_audio_policy_configuration.xml:system/vendor/etc/a2dp_audio_policy_configuration.xml \
@@ -102,7 +99,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     hwcomposer.mt6755 \
     libgralloc_extra \
-    libion
+    libion \
+    libutilscallstack
 
 # Graphics HIDL
 PRODUCT_PACKAGES += \
@@ -183,13 +181,14 @@ PRODUCT_PACKAGES += \
 # Shims
 PRODUCT_PACKAGES += \
     libshim_atomic \
+    libshim_binder \
     mtkc \
     mtklog
 
 # Storage
 PRODUCT_PACKAGES += \
     e2fsck \
-    make_ext4fs
+    mke2fs
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.sys.sdcardfs=true
 

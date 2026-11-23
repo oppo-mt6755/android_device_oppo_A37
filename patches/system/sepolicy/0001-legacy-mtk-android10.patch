@@ -1,0 +1,28 @@
+diff --git a/prebuilts/api/29.0/public/cameraserver.te b/prebuilts/api/29.0/public/cameraserver.te
+index 13ef1f7..6640c80 100644
+--- a/prebuilts/api/29.0/public/cameraserver.te
++++ b/prebuilts/api/29.0/public/cameraserver.te
+@@ -17,8 +17,7 @@ allow cameraserver ion_device:chr_file rw_file_perms;
+ # Talk with graphics composer fences
+ allow cameraserver hal_graphics_composer:fd use;
+ 
+-add_service(cameraserver, cameraserver_service)
+-add_hwservice(cameraserver, fwk_camera_hwservice)
++add_service(camera_service_server, cameraserver_service)
+ 
+ allow cameraserver activity_service:service_manager find;
+ allow cameraserver appops_service:service_manager find;
+diff --git a/public/cameraserver.te b/public/cameraserver.te
+index 13ef1f7..6640c80 100644
+--- a/public/cameraserver.te
++++ b/public/cameraserver.te
+@@ -17,8 +17,7 @@ allow cameraserver ion_device:chr_file rw_file_perms;
+ # Talk with graphics composer fences
+ allow cameraserver hal_graphics_composer:fd use;
+ 
+-add_service(cameraserver, cameraserver_service)
+-add_hwservice(cameraserver, fwk_camera_hwservice)
++add_service(camera_service_server, cameraserver_service)
+ 
+ allow cameraserver activity_service:service_manager find;
+ allow cameraserver appops_service:service_manager find;

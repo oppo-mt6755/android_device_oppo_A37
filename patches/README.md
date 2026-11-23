@@ -1,64 +1,39 @@
-# Platform changes required by this kernel/userspace combination
+# LineageOS 17.1 platform patches
 
-Apply these patches to the original LineageOS 15.1 project baselines using
-`git apply --check` followed by `git apply`. Each directory is relative to the
-Android source root. Do not apply the former common tree's entire patch series.
+Apply each patch from its corresponding source project using `git apply`.
+The patches were checked against these LineageOS 17.1 commits:
 
-- system/core: compile-time option for the kernel's `/dev/android_adb` USB
-  character device, instead of FunctionFS. Required to keep USB ADB available.
-- external/tinycompress: isolate exported sound UAPI headers. The original
-  makefile incorrectly injects ARM64 signal headers into the 32-bit build;
-  the fresh build reproduced the `__uint128_t` compilation failure.
-- frameworks/base: allow `/dev/mali0` and `/proc/ged` descriptors retained
-  by the selected OPPO GPU driver during zygote EGL preload.
+- `system/core`: `6d27634866be5b646a8cea1f9abeae902fd831e5`
+- `hardware/interfaces`: `02951860e9c95f19384fa07522925537d8c17a18`
+- `frameworks/av`: `c2725f53d8e9d6dfa5b853124d21249d2db106da`
+- `frameworks/base`: `2fd409fbf482fb0ec2bc9507dd9daa8b773fb40d`
+- `external/tinyalsa`: `b4b3a6d4dd962994e595ae6f8fcdcb5d77a3c6b0`
+- `external/tinycompress`: `848ec3ad67cc414294d18776a2b4d644be95fd64`
+- `system/bt`: `a15831c01596b53d57482812678bcc8276f3c401`
+- `system/connectivity/wificond`: `b680ee54032549388cf5d7b9a2d076241c2f6f10`
+- `vendor/lineage`: `e85694867b50377d7cfc82edd7417dde0b5ac386`
 
-- hardware/interfaces: allow the audio service init script to be supplied by
-  the device tree. The retained calibration files require the system group.
+- `system/sepolicy`: `b052c214f3ca11d2bbe09b6d34e0ce693fdc8d92`
 
-- hardware/interfaces: support the legacy sensor 1.1 interface without reading
-  callbacks added by newer versions; normalize legacy sensor flags. Allow board
-  service init files for the Wi-Fi, Bluetooth and sensor daemons. Send a full
-  H4 packet with one write on character transports.
-- system/bt: allow limiting extended feature pages for a controller that rejects
-  page 2 with HCI status 0x30. Enabled only by ro.bluetooth.max_feature_page.
+- `device/lineage/sepolicy`: `72049da6bc559ad5e57a2824b975fba5102258a0`
 
-- system/connectivity/wificond: derive scan timestamps from local BSS age
-  when the legacy kernel omits LAST_SEEN_BOOTTIME. Remote AP TSF clocks must
-  not be compared with Android elapsed time. Includes age and precedence tests.
+Changes:
 
-IMS integration lives in the device tree and requires no additional framework
-patches.
+- system/core: character-device USB ADB; retain root ramdisk for non-SAR;
+  restore charger LED backlight after panel resume.
+- frameworks/base: retain Mali/GED descriptors during zygote EGL preload.
+- frameworks/av: legacy MTK camera parameters/messages and board service init.
+- hardware/interfaces: HAL1 buffers, sensor 1.1, NMEA termination,
+  complete H4 character-device writes and board service init.
+- system/sepolicy and device/lineage/sepolicy: register the in-process HAL1
+  service through the existing camera-service attribute without conflicting
+  exclusive registration rules.
+- vendor/lineage: board service-init option and China Unicom IMS APN.
+- external/tinyalsa: validate absent PCM handles before timestamp queries.
+- external/tinycompress: export only the legacy sound UAPI headers.
+- system/bt: limit feature queries for the older Bluetooth controller.
+- system/connectivity/wificond: convert local BSS age to boot-relative time.
 
-- frameworks/av: Hermes MTK camera parameters and extended message handling for
-  the HAL1 camera BSP. The graphics signatures are supplied by the device shim;
-  no private framework or graphics runtime is copied into vendor.
-
-- hardware/ril: let the board provide the Hermes MTK Oreo daemon instead of
-  building a second generic rild service. The adapter is under mtk/ril/.
-- system/core/healthd: restore the LED-class backlight after framebuffer resume
-  in charger mode. The path and level are selected by the board configuration.
-
-- hardware/interfaces camera HAL1 adapter: preserve a camera-specific allocation
-  cookie when MTK passes null; supply real platform GraphicBuffers around HIDL
-  handles so the legacy DisplayClient can use the NativeWindowBuffer C ABI.
-  Both paths are enabled only by TARGET_HAS_LEGACY_CAMERA_HAL1.
-- frameworks/av mediaserver: allow a board init file so the in-process HAL1
-  camera can read system-owned calibration data and access graphics devices.
-
-- frameworks/base: initialize the AGnss RIL callback interface during GNSS
-  startup. MTK requests the subscriber/reference information through this
-  interface; leaving it uninitialized crashes the legacy HAL on first start.
-- hardware/interfaces: copy the legacy NMEA byte buffer into a terminated HIDL
-  string. The callback length does not guarantee a zero byte after the payload.
-
-- packages/apps/Settings: check OEM unlock support before querying oem_lock.
-  This board has no OEM lock service; its lookup caused a fatal WTF in the
-  developer options page on eng builds.
-
-- external/tinyalsa: reject presentation timestamp queries with null PCM/output
-  pointers. The legacy audio HAL queries before stream open during first-boot
-  playback; return EINVAL and a safe diagnostic string for an absent stream.
-
-- vendor/lineage: include the China Unicom IMS APN and scope its legacy WAP
-  profiles to Internet/SUPL. Untyped WAP profiles otherwise claim IMS capability
-  and connect without the required P-CSCF configuration after a clean install.
+Compile and hardware validation are ongoing; no Android 10 phone boot has
+been verified yet. The earlier Android 8.1 patch set remains in the original
+LineageOS 15.1 device branch.

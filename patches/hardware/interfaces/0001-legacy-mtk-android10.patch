@@ -1,0 +1,419 @@
+diff --git a/audio/common/all-versions/default/service/Android.mk b/audio/common/all-versions/default/service/Android.mk
+index b57a1ae..4c40ad8 100644
+--- a/audio/common/all-versions/default/service/Android.mk
++++ b/audio/common/all-versions/default/service/Android.mk
+@@ -22,7 +22,9 @@ LOCAL_PATH := $(call my-dir)
+ 
+ include $(CLEAR_VARS)
+ LOCAL_MODULE := android.hardware.audio@2.0-service
++ifneq ($(TARGET_USES_CUSTOM_AUDIO_SERVICE_RC),true)
+ LOCAL_INIT_RC := android.hardware.audio@2.0-service.rc
++endif
+ LOCAL_MODULE_RELATIVE_PATH := hw
+ LOCAL_PROPRIETARY_MODULE := true
+ LOCAL_SRC_FILES := \
+diff --git a/bluetooth/1.0/default/Android.bp b/bluetooth/1.0/default/Android.bp
+index f4b1e7b..8ee0606 100644
+--- a/bluetooth/1.0/default/Android.bp
++++ b/bluetooth/1.0/default/Android.bp
+@@ -119,7 +119,13 @@ cc_binary {
+     defaults: ["hidl_defaults"],
+     relative_install_path: "hw",
+     vendor: true,
+-    init_rc: ["android.hardware.bluetooth@1.0-service.rc"],
++    product_variables: {
++        lineage: {
++            uses_default_hal_service_rc: {
++                init_rc: ["android.hardware.bluetooth@1.0-service.rc"],
++            },
++        },
++    },
+     srcs: ["service.cpp"],
+ 
+     shared_libs: [
+diff --git a/bluetooth/1.0/default/h4_protocol.cc b/bluetooth/1.0/default/h4_protocol.cc
+index 98e3273..fe40e41 100644
+--- a/bluetooth/1.0/default/h4_protocol.cc
++++ b/bluetooth/1.0/default/h4_protocol.cc
+@@ -22,6 +22,8 @@
+ #include <fcntl.h>
+ #include <log/log.h>
+ #include <sys/uio.h>
++#include <sys/stat.h>
++#include <vector>
+ #include <unistd.h>
+ 
+ namespace android {
+@@ -32,10 +34,19 @@ namespace hci {
+ size_t H4Protocol::Send(uint8_t type, const uint8_t* data, size_t length) {
+   struct iovec iov[] = {{&type, sizeof(type)},
+                         {const_cast<uint8_t*>(data), length}};
++  struct stat status;
++  const bool character_device = fstat(uart_fd_, &status) == 0 && S_ISCHR(status.st_mode);
++  std::vector<uint8_t> packet;
++  if (character_device) {
++    packet.reserve(length + 1);
++    packet.push_back(type);
++    packet.insert(packet.end(), data, data + length);
++  }
+   ssize_t ret = 0;
+   do {
+-    ret =
+-        TEMP_FAILURE_RETRY(writev(uart_fd_, iov, sizeof(iov) / sizeof(iov[0])));
++    ret = character_device
++        ? TEMP_FAILURE_RETRY(write(uart_fd_, packet.data(), packet.size()))
++        : TEMP_FAILURE_RETRY(writev(uart_fd_, iov, sizeof(iov) / sizeof(iov[0])));
+   } while (-1 == ret && EAGAIN == errno);
+ 
+   if (ret == -1) {
+diff --git a/camera/device/1.0/default/Android.bp b/camera/device/1.0/default/Android.bp
+index 45722cf..12160b3 100644
+--- a/camera/device/1.0/default/Android.bp
++++ b/camera/device/1.0/default/Android.bp
+@@ -11,6 +11,7 @@ cc_library_shared {
+         "libhidltransport",
+         "libhwbinder",
+         "libutils",
++        "libui",
+         "android.hardware.camera.device@1.0",
+         "android.hardware.camera.common@1.0",
+         "android.hardware.graphics.allocator@2.0",
+@@ -32,6 +33,7 @@ cc_library_shared {
+     ],
+     product_variables: {
+         lineage: {
++            has_legacy_camera_hal1: { cflags: ["-DLEGACY_CAMERA_HAL1"] },
+             uses_qti_camera_device: {
+                 cppflags: ["-DQTI_CAMERA_DEVICE"],
+                 shared_libs: ["vendor.qti.hardware.camera.device@1.0"],
+diff --git a/camera/device/1.0/default/CameraDevice.cpp b/camera/device/1.0/default/CameraDevice.cpp
+index a1f1830..5f757dd 100644
+--- a/camera/device/1.0/default/CameraDevice.cpp
++++ b/camera/device/1.0/default/CameraDevice.cpp
+@@ -36,6 +36,24 @@ using ::android::hardware::graphics::common::V1_0::PixelFormat;
+ 
+ HandleImporter CameraDevice::sHandleImporter;
+ 
++#ifdef LEGACY_CAMERA_HAL1
++Mutex CameraDevice::sLegacyMemoryLock;
++wp<CameraDevice> CameraDevice::sLegacyMemoryDevices[2];
++
++template <size_t Slot>
++camera_memory_t* CameraDevice::sGetLegacyMemory(
++        int fd, size_t size, uint_t count, void* user) {
++    if (user != nullptr) return sGetMemory(fd, size, count, user);
++    sp<CameraDevice> device;
++    {
++        Mutex::Autolock lock(sLegacyMemoryLock);
++        device = sLegacyMemoryDevices[Slot].promote();
++    }
++    if (device == nullptr) return nullptr;
++    return sGetMemory(fd, size, count, device.get());
++}
++#endif
++
+ Status CameraDevice::getHidlStatus(const int& status) {
+     switch (status) {
+         case 0: return Status::OK;
+@@ -142,6 +160,9 @@ void CameraDevice::CameraPreviewWindow::cleanUpCirculatingBuffers() {
+     }
+     mCirculatingBuffers.clear();
+     mBufferIdMap.clear();
++#ifdef LEGACY_CAMERA_HAL1
++    mNativeBuffers.clear();
++#endif
+ }
+ 
+ int CameraDevice::sDequeueBuffer(struct preview_stream_ops* w,
+@@ -175,7 +196,23 @@ int CameraDevice::sDequeueBuffer(struct preview_stream_ops* w,
+                         object->mBufferIdMap[&(object->mCirculatingBuffers[bufferId])] = bufferId;
+                     }
+                 }
++#ifdef LEGACY_CAMERA_HAL1
++                if (object->mNativeBuffers.count(bufferId) == 0) {
++                    sp<GraphicBuffer> native = new GraphicBuffer(
++                            object->mCirculatingBuffers[bufferId], GraphicBuffer::CLONE_HANDLE,
++                            object->mWidth, object->mHeight, object->mFormat, 1,
++                            static_cast<uint64_t>(object->mUsage), strd);
++                    if (native->initCheck() != OK) {
++                        s = Status::INTERNAL_ERROR;
++                        return;
++                    }
++                    object->mNativeBuffers[bufferId] = native;
++                    object->mBufferIdMap[&native->getNativeBuffer()->handle] = bufferId;
++                }
++                *buffer = &object->mNativeBuffers[bufferId]->getNativeBuffer()->handle;
++#else
+                 *buffer = &(object->mCirculatingBuffers[bufferId]);
++#endif
+                 *stride = strd;
+             }
+         });
+@@ -226,8 +263,16 @@ int CameraDevice::sSetBuffersGeometry(struct preview_stream_ops* w,
+     }
+ 
+     object->cleanUpCirculatingBuffers();
+-    return getStatusT(
++    int status = getStatusT(
+             object->mPreviewCallback->setBuffersGeometry(width, height, (PixelFormat) format));
++#ifdef LEGACY_CAMERA_HAL1
++    if (status == OK) {
++        object->mWidth = width;
++        object->mHeight = height;
++        object->mFormat = format;
++    }
++#endif
++    return status;
+ }
+ 
+ int CameraDevice::sSetCrop(struct preview_stream_ops *w,
+@@ -259,7 +304,11 @@ int CameraDevice::sSetUsage(struct preview_stream_ops* w, int usage) {
+     }
+ 
+     object->cleanUpCirculatingBuffers();
+-    return getStatusT(object->mPreviewCallback->setUsage((BufferUsage)usage));
++    int status = getStatusT(object->mPreviewCallback->setUsage((BufferUsage)usage));
++#ifdef LEGACY_CAMERA_HAL1
++    if (status == OK) object->mUsage = static_cast<uint32_t>(usage);
++#endif
++    return status;
+ }
+ 
+ int CameraDevice::sSetSwapInterval(struct preview_stream_ops *w, int interval) {
+@@ -362,7 +411,7 @@ CameraDevice::CameraHeapMemory::~CameraHeapMemory() {
+ camera_memory_t* CameraDevice::sGetMemory(int fd, size_t buf_size, uint_t num_bufs, void *user) {
+     ALOGV("%s", __FUNCTION__);
+     CameraDevice* object = static_cast<CameraDevice*>(user);
+-    if (object->mDeviceCallback == nullptr) {
++    if (object == nullptr || object->mDeviceCallback == nullptr) {
+         ALOGE("%s: camera HAL request memory while camera is not opened!", __FUNCTION__);
+         return nullptr;
+     }
+@@ -718,8 +767,16 @@ Return<Status> CameraDevice::open(const sp<ICameraDeviceCallback>& callback) {
+ #endif
+ 
+     if (mDevice->ops->set_callbacks) {
++        camera_request_memory allocator = sGetMemory;
++#ifdef LEGACY_CAMERA_HAL1
++        if (mCameraIdInt >= 0 && mCameraIdInt < 2) {
++            Mutex::Autolock lock(sLegacyMemoryLock);
++            sLegacyMemoryDevices[mCameraIdInt] = this;
++            allocator = mCameraIdInt == 0 ? sGetLegacyMemory<0> : sGetLegacyMemory<1>;
++        }
++#endif
+         mDevice->ops->set_callbacks(mDevice,
+-                sNotifyCb, sDataCb, sDataCbTimestamp, sGetMemory, this);
++                sNotifyCb, sDataCb, sDataCbTimestamp, allocator, this);
+     }
+ 
+     return getHidlStatus(rc);
+@@ -1060,6 +1117,12 @@ void CameraDevice::closeLocked() {
+             ALOGE("Could not close camera %s: %d", mCameraId.c_str(), rc);
+         }
+         mDevice = nullptr;
++#ifdef LEGACY_CAMERA_HAL1
++        if (mCameraIdInt >= 0 && mCameraIdInt < 2) {
++            Mutex::Autolock lock(sLegacyMemoryLock);
++            sLegacyMemoryDevices[mCameraIdInt].clear();
++        }
++#endif
+     }
+ }
+ 
+diff --git a/camera/device/1.0/default/CameraDevice_1_0.h b/camera/device/1.0/default/CameraDevice_1_0.h
+index 2b35a73..e6a1ce8 100644
+--- a/camera/device/1.0/default/CameraDevice_1_0.h
++++ b/camera/device/1.0/default/CameraDevice_1_0.h
+@@ -18,6 +18,9 @@
+ #define ANDROID_HARDWARE_CAMERA_DEVICE_V1_0_CAMERADEVICE_H
+ 
+ #include <unordered_map>
++#ifdef LEGACY_CAMERA_HAL1
++#include <ui/GraphicBuffer.h>
++#endif
+ #include "utils/Mutex.h"
+ #include "utils/SortedVector.h"
+ #include "CameraModule.h"
+@@ -156,6 +159,13 @@ private:
+         sp<ICameraDevicePreviewCallback> mPreviewCallback = nullptr;
+         std::unordered_map<uint64_t, buffer_handle_t> mCirculatingBuffers;
+         std::unordered_map<buffer_handle_t*, uint64_t> mBufferIdMap;
++#ifdef LEGACY_CAMERA_HAL1
++        // MTK derives ANativeWindowBuffer from the address of its handle.
++        // Keep a real platform object around each imported gralloc buffer.
++        std::unordered_map<uint64_t, sp<GraphicBuffer>> mNativeBuffers;
++        int mWidth = 0, mHeight = 0, mFormat = 0;
++        uint32_t mUsage = 0;
++#endif
+     } mHalPreviewWindow;
+ 
+     // gating access to mDevice, mInitFail, mDisconnected
+@@ -192,6 +202,15 @@ private:
+             MemoryId memId , unsigned index, native_handle_t* handle);
+     void releaseRecordingFrameLocked(uint32_t memId, uint32_t bufferIndex, const native_handle_t*);
+ 
++#ifdef LEGACY_CAMERA_HAL1
++    // Some MTK HAL1 callers omit the allocation cookie. Bind each callback to
++    // its camera slot rather than guessing the most recently opened device.
++    static Mutex sLegacyMemoryLock;
++    static wp<CameraDevice> sLegacyMemoryDevices[2];
++    template <size_t Slot>
++    static camera_memory_t* sGetLegacyMemory(int fd, size_t size, uint_t count, void* user);
++#endif
++
+     // shared memory methods
+     static camera_memory_t* sGetMemory(int fd, size_t buf_size, uint_t num_bufs, void *user);
+     static void sPutMemory(camera_memory_t *data);
+diff --git a/gnss/1.0/default/Gnss.cpp b/gnss/1.0/default/Gnss.cpp
+index 32c131c..f7817e6 100644
+--- a/gnss/1.0/default/Gnss.cpp
++++ b/gnss/1.0/default/Gnss.cpp
+@@ -260,8 +260,13 @@ void Gnss::nmeaCb(GpsUtcTime timestamp, const char* nmea, int length) {
+         return;
+     }
+ 
+-    android::hardware::hidl_string nmeaString;
+-    nmeaString.setToExternal(nmea, length);
++    if (nmea == nullptr || length <= 0) {
++        ALOGE("%s: Invalid NMEA buffer", __func__);
++        return;
++    }
++
++    // The legacy callback supplies a byte count, not a terminated string.
++    android::hardware::hidl_string nmeaString(nmea, static_cast<size_t>(length));
+     auto ret = sGnssCbIface->gnssNmeaCb(timestamp, nmeaString);
+     if (!ret.isOk()) {
+         ALOGE("%s: Unable to invoke callback", __func__);
+diff --git a/sensors/1.0/default/Android.bp b/sensors/1.0/default/Android.bp
+index 2485b05..0517b8f 100644
+--- a/sensors/1.0/default/Android.bp
++++ b/sensors/1.0/default/Android.bp
+@@ -10,6 +10,7 @@ cc_library_shared {
+         "libhardware",
+         "libbase",
+         "libutils",
++        "libsensor",
+         "libhidlbase",
+         "libhidltransport",
+         "android.hardware.sensors@1.0",
+@@ -47,7 +48,13 @@ cc_binary {
+     name: "android.hardware.sensors@1.0-service",
+     relative_install_path: "hw",
+     vendor: true,
+-    init_rc: ["android.hardware.sensors@1.0-service.rc"],
++    product_variables: {
++        lineage: {
++            uses_default_hal_service_rc: {
++                init_rc: ["android.hardware.sensors@1.0-service.rc"],
++            },
++        },
++    },
+     srcs: ["service.cpp"],
+ 
+     shared_libs: [
+diff --git a/sensors/1.0/default/Sensors.cpp b/sensors/1.0/default/Sensors.cpp
+index 1100dd6..5495fd5 100644
+--- a/sensors/1.0/default/Sensors.cpp
++++ b/sensors/1.0/default/Sensors.cpp
+@@ -15,6 +15,7 @@
+  */
+ 
+ #include "Sensors.h"
++#include <sensor/Sensor.h>
+ #include "convert.h"
+ #include "multihal.h"
+ 
+@@ -95,7 +96,9 @@ Sensors::Sensors()
+ 
+     // Require all the old HAL APIs to be present except for injection, which
+     // is considered optional.
+-    CHECK_GE(getHalDeviceVersion(), SENSORS_DEVICE_API_VERSION_1_3);
++    // legacy MTK uses the legacy 1.1 device. Optional operations below must not read
++    // callbacks appended by newer HAL versions.
++    CHECK_GE(getHalDeviceVersion(), SENSORS_DEVICE_API_VERSION_1_1);
+ 
+     if (getHalDeviceVersion() == SENSORS_DEVICE_API_VERSION_1_4) {
+         if (mSensorDevice->inject_sensor_data == nullptr) {
+@@ -125,6 +128,15 @@ Return<void> Sensors::getSensorsList(getSensorsList_cb _hidl_cb) {
+         SensorInfo *dst = &out[i];
+ 
+         convertFromSensor(*src, dst);
++        if (getHalDeviceVersion() < SENSORS_DEVICE_API_VERSION_1_3) {
++            // HIDL otherwise makes SensorService treat this as a modern HAL.
++            // Preserve the platform's legacy reporting-mode and wake-up rules.
++            const ::android::Sensor normalized(src, getHalDeviceVersion());
++            dst->flags = normalized.getFlags();
++            dst->maxDelay = normalized.getMaxDelay();
++            dst->typeAsString = normalized.getStringType().c_str();
++            dst->requiredPermission = normalized.getRequiredPermission().c_str();
++        }
+     }
+ 
+     _hidl_cb(out);
+@@ -235,6 +247,13 @@ Return<Result> Sensors::batch(
+         int32_t sensor_handle,
+         int64_t sampling_period_ns,
+         int64_t max_report_latency_ns) {
++    if (mSensorDevice->batch == nullptr) {
++        if (max_report_latency_ns != 0 || mSensorDevice->setDelay == nullptr)
++            return Result::INVALID_OPERATION;
++        return ResultFromStatus(mSensorDevice->setDelay(
++                reinterpret_cast<sensors_poll_device_t*>(mSensorDevice),
++                sensor_handle, sampling_period_ns));
++    }
+     return ResultFromStatus(
+             mSensorDevice->batch(
+                 mSensorDevice,
+@@ -245,6 +264,8 @@ Return<Result> Sensors::batch(
+ }
+ 
+ Return<Result> Sensors::flush(int32_t sensor_handle) {
++    if (getHalDeviceVersion() < SENSORS_DEVICE_API_VERSION_1_2 ||
++            mSensorDevice->flush == nullptr) return Result::INVALID_OPERATION;
+     return ResultFromStatus(mSensorDevice->flush(mSensorDevice, sensor_handle));
+ }
+ 
+@@ -263,7 +284,8 @@ Return<Result> Sensors::injectSensorData(const Event& event) {
+ 
+ Return<void> Sensors::registerDirectChannel(
+         const SharedMemInfo& mem, registerDirectChannel_cb _hidl_cb) {
+-    if (mSensorDevice->register_direct_channel == nullptr
++    if (getHalDeviceVersion() < SENSORS_DEVICE_API_VERSION_1_4
++            || mSensorDevice->register_direct_channel == nullptr
+             || mSensorDevice->config_direct_report == nullptr) {
+         // HAL does not support
+         _hidl_cb(Result::INVALID_OPERATION, -1);
+@@ -288,7 +310,8 @@ Return<void> Sensors::registerDirectChannel(
+ }
+ 
+ Return<Result> Sensors::unregisterDirectChannel(int32_t channelHandle) {
+-    if (mSensorDevice->register_direct_channel == nullptr
++    if (getHalDeviceVersion() < SENSORS_DEVICE_API_VERSION_1_4
++            || mSensorDevice->register_direct_channel == nullptr
+             || mSensorDevice->config_direct_report == nullptr) {
+         // HAL does not support
+         return Result::INVALID_OPERATION;
+@@ -302,7 +325,8 @@ Return<Result> Sensors::unregisterDirectChannel(int32_t channelHandle) {
+ Return<void> Sensors::configDirectReport(
+         int32_t sensorHandle, int32_t channelHandle, RateLevel rate,
+         configDirectReport_cb _hidl_cb) {
+-    if (mSensorDevice->register_direct_channel == nullptr
++    if (getHalDeviceVersion() < SENSORS_DEVICE_API_VERSION_1_4
++            || mSensorDevice->register_direct_channel == nullptr
+             || mSensorDevice->config_direct_report == nullptr) {
+         // HAL does not support
+         _hidl_cb(Result::INVALID_OPERATION, -1);
+diff --git a/wifi/1.3/default/Android.mk b/wifi/1.3/default/Android.mk
+index 0fb4217..b7c2630 100644
+--- a/wifi/1.3/default/Android.mk
++++ b/wifi/1.3/default/Android.mk
+@@ -101,7 +101,9 @@ LOCAL_SHARED_LIBRARIES := \
+     android.hardware.wifi@1.3
+ LOCAL_STATIC_LIBRARIES := \
+     android.hardware.wifi@1.0-service-lib
++ifneq ($(TARGET_USES_CUSTOM_WIFI_SERVICE_RC),true)
+ LOCAL_INIT_RC := android.hardware.wifi@1.0-service.rc
++endif
+ include $(BUILD_EXECUTABLE)
+ 
+ ###

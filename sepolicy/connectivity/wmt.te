@@ -1,8 +1,8 @@
 type mtk_wmt_loader, domain;
-type mtk_wmt_loader_exec, exec_type, file_type;
+type mtk_wmt_loader_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(mtk_wmt_loader)
 type mtk_wmt_launcher, domain;
-type mtk_wmt_launcher_exec, exec_type, file_type;
+type mtk_wmt_launcher_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(mtk_wmt_launcher)
 type mtk_wmt_device, dev_type;
 allow mtk_wmt_loader mtk_wmt_device:chr_file rw_file_perms;

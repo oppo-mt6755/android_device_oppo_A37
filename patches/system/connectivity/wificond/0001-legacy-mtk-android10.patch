@@ -1,29 +1,16 @@
-From 04f218d58e2231f74956060ba8cbcd3474f945db Mon Sep 17 00:00:00 2001
-From: affggh <879632264@qq.com>
-Date: Sat, 21 Nov 2026 19:17:59 +0800
-Subject: [PATCH] scan: Use local BSS age before falling back to AP timestamps
-
-Older kernels expose SEEN_MS_AGO without LAST_SEEN_BOOTTIME. Convert that local age to boot time so an AP timestamp is not treated as a stale local observation. Preserve the explicit boottime attribute and clamp observations older than boot. Validate clock precedence and underflow.
-
-Change-Id: I67a6ffb9e18de3c32fbf7da5591b5fb9b97b9403
----
- scanning/scan_utils.cpp       | 13 +++++++++++++
- tests/scan_utils_unittest.cpp | 28 ++++++++++++++++++++++++++++
- 2 files changed, 41 insertions(+)
-
 diff --git a/scanning/scan_utils.cpp b/scanning/scan_utils.cpp
-index dfd051c..37cbfd9 100644
+index 65f8f8c..b669e33 100644
 --- a/scanning/scan_utils.cpp
 +++ b/scanning/scan_utils.cpp
-@@ -17,6 +17,7 @@
- #include "wificond/scanning/scan_utils.h"
+@@ -19,6 +19,7 @@
  
+ #include <array>
  #include <vector>
 +#include <time.h>
  
  #include <linux/netlink.h>
- #include <linux/nl80211.h>
-@@ -196,6 +197,18 @@ bool ScanUtils::GetBssTimestamp(const NL80211NestedAttr& bss,
+ #include <linux/if_ether.h>
+@@ -204,6 +205,18 @@ bool ScanUtils::GetBssTimestamp(const NL80211NestedAttr& bss,
                              &last_seen_since_boot_nanoseconds)) {
      *last_seen_since_boot_microseconds = last_seen_since_boot_nanoseconds / 1000;
    } else {
@@ -43,7 +30,7 @@ index dfd051c..37cbfd9 100644
      // attribute.
      if (!bss.GetAttributeValue(NL80211_BSS_TSF, last_seen_since_boot_microseconds)) {
 diff --git a/tests/scan_utils_unittest.cpp b/tests/scan_utils_unittest.cpp
-index 28ea283..a3e24b3 100644
+index f8ec523..2221fb6 100644
 --- a/tests/scan_utils_unittest.cpp
 +++ b/tests/scan_utils_unittest.cpp
 @@ -17,6 +17,7 @@
@@ -53,8 +40,8 @@ index 28ea283..a3e24b3 100644
 +#include <time.h>
  
  #include <linux/netlink.h>
- #include <linux/nl80211.h>
-@@ -246,6 +247,33 @@ TEST_F(ScanUtilsTest, CanPrioritizeLastSeenSinceBootNetlinkAttribute) {
+ 
+@@ -389,6 +390,33 @@ TEST_F(ScanUtilsTest, CanPrioritizeLastSeenSinceBootNetlinkAttribute) {
    EXPECT_EQ(kLastSeenTimestampNanoSeconds/1000, timestamp_microseconds);
  }
  
@@ -88,6 +75,3 @@ index 28ea283..a3e24b3 100644
  TEST_F(ScanUtilsTest, CanHandleMissingLastSeenSinceBootNetlinkAttribute) {
    constexpr uint64_t kBssTsfTimestampMicroSeconds = 654321;
    NL80211NestedAttr bss(NL80211_ATTR_BSS);
--- 
-2.43.0
-

@@ -1,0 +1,14 @@
+diff --git a/core/jni/fd_utils.cpp b/core/jni/fd_utils.cpp
+index 8ba2559e..18c89955 100644
+--- a/core/jni/fd_utils.cpp
++++ b/core/jni/fd_utils.cpp
+@@ -47,6 +47,9 @@ static const char* kPathWhitelist[] = {
+   "/system/framework/org.lineageos.platform-res.apk",
+   "/dev/urandom",
+   "/dev/ion",
++  // Descriptors retained by legacy MTK Mali during EGL preload.
++  "/proc/ged",
++  "/dev/mali0",
+   "/dev/dri/renderD129", // Fixes b/31172436
+ };
+ 

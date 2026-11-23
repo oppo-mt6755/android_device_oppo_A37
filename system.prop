@@ -5,7 +5,6 @@ ro.sf.hwrotation=0
 debug.hwui.render_dirty_regions=false
 qemu.hw.mainkeys=1
 persist.sys.usb.config=mtp,adb
-service.adb.root=1
 ro.sys.sdcardfs=true
 
 # Use the platform implementations for virtual and USB audio devices.
@@ -48,3 +47,6 @@ persist.media.treble_omx=false
 # Per-frame legacy camera traces can stall the preview pipeline.
 log.tag.mHalFDVT=W
 log.tag.MDP=W
+
+# The pre-FunctionFS gadget uses the synchronous USB transport.
+ro.adb.nonblocking_ffs=false
