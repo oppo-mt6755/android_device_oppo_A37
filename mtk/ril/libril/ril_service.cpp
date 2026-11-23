@@ -3871,6 +3871,17 @@ int radio::getOperatorResponse(int slotId,
             longName = convertCharPtrToHidlString(resp[0]);
             shortName = (numStrings > 1) ? convertCharPtrToHidlString(resp[1]) : longName;
             numeric = (numStrings > 2) ? convertCharPtrToHidlString(resp[2]) : shortName;
+            // Old modem firmware may return the PLMN in place of both names.
+            // Preserve real network-provided names and keep the numeric ID intact.
+            bool validPlmn = numeric.size() == 5 || numeric.size() == 6;
+            for (size_t i = 0; validPlmn && i < numeric.size(); ++i) {
+                validPlmn = numeric.c_str()[i] >= '0' && numeric.c_str()[i] <= '9';
+            }
+            const char* fallback = validPlmn ? getname(atoi(numeric.c_str())) : nullptr;
+            if (fallback != nullptr) {
+                if (longName.empty() || longName == numeric) longName = fallback;
+                if (shortName.empty() || shortName == numeric) shortName = fallback;
+            }
         }
         Return<void> retStatus = radioService[slotId]->mRadioResponse->getOperatorResponse(
                 responseInfo, longName, shortName, numeric);
