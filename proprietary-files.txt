@@ -485,6 +485,7 @@ vendor/lib/libtouchfilter.so|8437ae12cfe49c2f6953140dd80aa1aa86f99ca4
 vendor/lib64/libtouchfilter.so|54655afaf79b7542f43d31842ef8fbde019b5478
 vendor/usr/keylayout/ACCDET.kl|8adff1e73dffd905fb8269a295c637bf0fa64a36
 vendor/usr/keylayout/mtk-tpd-kpd.kl|8fb9e2eaedf345f303970fb86d71961c056cce34
+vendor/usr/keylayout/mtk-tpd.kl|9250656b95368341cb42bfc4c3f402590876c727
 
 # Misc
 vendor/etc/custom.conf|dfa00a77c92aa8459098a73936701e419b7125d1
