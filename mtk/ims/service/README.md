@@ -87,3 +87,7 @@ Voice feature updates also send the native VoLTE and IMS voice requests; changin
 the cached property alone does not update a modem that initialized with voice
 disabled. Registration callbacks survive the end of a framework adapter session;
 dead remote callbacks are removed by `RemoteCallbackList`.
+
+Service publication also notifies the phone package again at boot completion.
+The initial notification can precede the framework's legacy receiver/feature
+connection, leaving it without an IMS phone until the next lifecycle update.

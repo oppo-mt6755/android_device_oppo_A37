@@ -3,6 +3,7 @@ package com.mediatek.ims.compat;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.content.Intent;
+import android.content.Context;
 import android.os.Handler;
 import android.telephony.DataFailCause;
 import android.telephony.PreciseDataConnectionState;
@@ -25,6 +26,13 @@ import java.lang.reflect.Method;
 /* Stand-ins for MediaTek framework members that the AOSP framework does not have. */
 public final class ImsCompat {
     private ImsCompat() {}
+
+    public static void notifyImsServiceUp(Context context) {
+        if (android.os.ServiceManager.checkService("ims") != null) {
+            context.sendBroadcast(new Intent("com.android.ims.IMS_SERVICE_UP")
+                    .setPackage("com.android.phone"));
+        }
+    }
 
     public static void completeFeatureSet(ImsConfigListener listener, int feature, int network,
             int value) throws RemoteException {

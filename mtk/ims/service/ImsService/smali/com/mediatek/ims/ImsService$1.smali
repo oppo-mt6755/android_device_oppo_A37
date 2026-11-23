@@ -233,6 +233,12 @@
 
     if-eqz v19, :cond_f0
 
+    # Publication can precede Phone's legacy receiver/feature connection.
+    # Boot completion is a lifecycle checkpoint after those are initialized.
+    move-object/from16 v0, p1
+
+    invoke-static {v0}, Lcom/mediatek/ims/compat/ImsCompat;->notifyImsServiceUp(Landroid/content/Context;)V
+
     .line 196
     invoke-static {}, Lcom/mediatek/ims/ImsService;->-get10()Lcom/mediatek/wfo/IWifiOffloadService;
 

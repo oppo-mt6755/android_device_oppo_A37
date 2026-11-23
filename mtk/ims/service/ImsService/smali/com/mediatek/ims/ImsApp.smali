@@ -56,10 +56,7 @@
     invoke-static {v1, v2, v3}, Landroid/os/ServiceManager;->addService(Ljava/lang/String;Landroid/os/IBinder;Z)V
 
     # Legacy binding listens for service publication after Phone has started.
-    new-instance v1, Landroid/content/Intent;
-    const-string v2, "com.android.ims.IMS_SERVICE_UP"
-    invoke-direct {v1, v2}, Landroid/content/Intent;-><init>(Ljava/lang/String;)V
-    invoke-virtual {p0, v1}, Lcom/mediatek/ims/ImsApp;->sendBroadcast(Landroid/content/Intent;)V
+    invoke-static {p0}, Lcom/mediatek/ims/compat/ImsCompat;->notifyImsServiceUp(Landroid/content/Context;)V
 
     .line 65
     const-string/jumbo v1, "ImsApp"
