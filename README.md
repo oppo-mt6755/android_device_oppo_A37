@@ -29,6 +29,11 @@ can resolve their own /proc/self/fd from worker threads.
 The audio policy routes UI effects through primary DL1 output: the stock
 kernel has no MultiMedia2_PLayback PCM for the HAL fast-output handler.
 
+LiveDisplay owns day/night color temperature through the existing color-matrix
+backend. The separate Android Night Display is disabled so it does not suppress
+Lineage's temperature controller. Day/night switching and display wake have
+passed user testing.
+
 The old MTK camera and encoder require a 160-byte GraphicBuffer allocation on
 Android 10. Guarded blob instruction changes and DT_NEEDED additions are listed
 in vendor/oppo/A37/shim-dependencies.json; the UI shim asserts the expected size.

@@ -232,7 +232,8 @@
     <bool name="config_enableAutoPowerModes">true</bool>
 
     <!-- Control whether Night display is available. -->
-    <bool name="config_nightDisplayAvailable">true</bool>
+    <!-- Let Lineage LiveDisplay own day/night color temperature on this panel. -->
+    <bool name="config_nightDisplayAvailable">false</bool>
 
     <!-- Indicate whether closing the lid causes the device to go to sleep and opening
          it causes the device to wake up.
