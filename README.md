@@ -18,8 +18,9 @@ its standard first-stage init mounts that image and switches root before
 starting /system/bin/init. Boot contains only the first-stage ramdisk.
 The kernel DT fstab already mounts system by its controller by-name path.
 SELinux neverallow, file-type and compatibility checks pass.
-Android 10 reaches boot animation and starts SystemUI. Full boot completion
-and physical touch/display acceptance are still pending. Logd, JIT and primary
+Android 10 completes boot and enters the system. The initial storage-mount
+panic is fixed; normal reboot and Binder/storage regression checks pass.
+Other hardware subsystems still need Android 10 runtime validation. Logd, JIT and primary
 audio now start after ambient-capability, memfd and legacy audio-layout fixes.
 
 The old MTK camera and encoder require a 160-byte GraphicBuffer allocation on
@@ -41,3 +42,9 @@ shipping a general-use build.
 
 Kernel memfd currently supports anonymous shared mappings and CLOEXEC, as
 needed by ART. MFD_ALLOW_SEALING is rejected until file sealing is backported.
+
+Binder and sdcardfs now use the A6010 lineage-17.1 implementation at
+`f7d8195672d653c66eff51066123f46977100f86`, adapted for the retained ARM64
+OPPO kernel. See kernel Documentation/android.txt for provenance and differences.
+The VFS mount failure path must free per-mount data only once: unsupported
+sdcardfs mount options previously triggered a double free and kernel panic.
