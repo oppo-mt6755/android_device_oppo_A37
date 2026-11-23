@@ -31,6 +31,32 @@ index a1af3c4..e0c8902 100644
      shared_libs: [
          "android.hardware.audio@2.0",
          "android.hardware.audio.common@2.0",
+diff --git a/audio/core/all-versions/default/Device.cpp b/audio/core/all-versions/default/Device.cpp
+index bec22df..d088cce 100644
+--- a/audio/core/all-versions/default/Device.cpp
++++ b/audio/core/all-versions/default/Device.cpp
+@@ -352,7 +352,7 @@ Return<void> Device::debugDump(const hidl_handle& fd) {
+ #endif
+ 
+ Return<void> Device::debug(const hidl_handle& fd, const hidl_vec<hidl_string>& /* options */) {
+-    if (fd.getNativeHandle() != nullptr && fd->numFds == 1) {
++    if (fd.getNativeHandle() != nullptr && fd->numFds == 1 && mDevice->dump != nullptr) {
+         analyzeStatus("dump", mDevice->dump(mDevice, fd->data[0]));
+     }
+     return Void();
+diff --git a/audio/core/all-versions/default/Stream.cpp b/audio/core/all-versions/default/Stream.cpp
+index b995657..e40869e 100644
+--- a/audio/core/all-versions/default/Stream.cpp
++++ b/audio/core/all-versions/default/Stream.cpp
+@@ -312,7 +312,7 @@ Return<Result> Stream::close() {
+ }
+ 
+ Return<void> Stream::debug(const hidl_handle& fd, const hidl_vec<hidl_string>& /* options */) {
+-    if (fd.getNativeHandle() != nullptr && fd->numFds == 1) {
++    if (fd.getNativeHandle() != nullptr && fd->numFds == 1 && mStream->dump != nullptr) {
+         analyzeStatus("dump", mStream->dump(mStream, fd->data[0]));
+     }
+     return Void();
 diff --git a/bluetooth/1.0/default/Android.bp b/bluetooth/1.0/default/Android.bp
 index f4b1e7b..8ee0606 100644
 --- a/bluetooth/1.0/default/Android.bp

@@ -26,7 +26,7 @@ Changes:
 - frameworks/base: retain Mali/GED descriptors during zygote EGL preload.
 - frameworks/av: legacy MTK camera parameters/messages and board service init.
 - hardware/interfaces: HAL1 buffers, sensor 1.1, NMEA termination,
-  complete H4 character-device writes and board service init.
+  complete H4 character-device writes, optional audio debug callbacks and board service init.
 - system/sepolicy and device/lineage/sepolicy: register the in-process HAL1
   service through the existing camera-service attribute without conflicting
   exclusive registration rules.
