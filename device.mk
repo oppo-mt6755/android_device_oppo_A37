@@ -43,7 +43,9 @@ PRODUCT_COPY_FILES += \
 
 # Camera
 PRODUCT_PACKAGES += \
+    Snap \
     libshim_jpeg \
+    libshim_perf \
     mtkui
 PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/configs/media_profiles.xml:system/vendor/etc/media_profiles_V1_0.xml \
@@ -64,7 +66,7 @@ PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/seccomp/mediacodec.policy:system/vendor/etc/seccomp_policy/mediacodec.policy \
     $(DEVICE_PATH)/seccomp/mediaextractor.policy:system/vendor/etc/seccomp_policy/mediaextractor.policy \
     frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/vendor/etc/media_codecs_google_audio.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_video_le.xml:system/vendor/etc/media_codecs_google_video_le.xml
+    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/vendor/etc/media_codecs_google_video.xml
 
 # Connectivity
 PRODUCT_COPY_FILES += \
@@ -122,6 +124,7 @@ PRODUCT_PACKAGES += \
     libmtk_ims_sockets \
     libshim_ims_vt
 PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.telephony.ims.xml:system/etc/permissions/android.hardware.telephony.ims.xml \
     $(DEVICE_PATH)/configs/privapp-permissions-ims.xml:system/etc/permissions/privapp-permissions-ims.xml \
     $(DEVICE_PATH)/mtk/ims/init.mt6755.ims.rc:root/init.mt6755.ims.rc
 

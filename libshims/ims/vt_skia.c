@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-/* Skia APIs removed in Oreo that libvtmal uses for video call snapshots. */
+/* Unsupported video-call snapshots must fail without using the old Skia ABI. */
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdarg.h>
+#include <log/log.h>
+
+void _Z8SkDebugfPKcz(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    __android_log_vprint(ANDROID_LOG_VERBOSE, "VT", format, args);
+    va_end(args);
+}
 
 /* SkImageDecoder::DecodeFile(const char*, SkBitmap*, SkColorType, Mode, Format*) */
 bool _ZN14SkImageDecoder10DecodeFileEPKcP8SkBitmap11SkColorTypeNS_4ModeEPNS_6FormatE(
@@ -56,4 +66,50 @@ bool _ZN8SkBitmap14tryAllocPixelsEPNS_9AllocatorEP12SkColorTable(
 {
     (void)thiz; (void)allocator; (void)ctable;
     return false;
+}
+
+bool _ZN8SkBitmap7setInfoERK11SkImageInfoj(void *thiz, const void *info, unsigned rowBytes)
+{
+    (void)thiz; (void)info; (void)rowBytes;
+    return false;
+}
+
+/* No Skia object is constructed: all allocation/decoding entry points fail. */
+#define EMPTY_OBJECT(symbol) void symbol(void *thiz) { (void)thiz; }
+EMPTY_OBJECT(_ZN7SkPaintC1Ev)
+EMPTY_OBJECT(_ZN7SkPaintD1Ev)
+EMPTY_OBJECT(_ZN8SkBitmapC1Ev)
+EMPTY_OBJECT(_ZN8SkBitmapD1Ev)
+EMPTY_OBJECT(_ZN8SkCanvasD1Ev)
+EMPTY_OBJECT(_ZN9SkWStreamD2Ev)
+
+void _ZN8SkCanvasC1ERK8SkBitmap(void *thiz, const void *bitmap)
+{
+    (void)thiz; (void)bitmap;
+}
+
+void _ZN8SkCanvas10drawBitmapERK8SkBitmapffPK7SkPaint(
+        void *thiz, const void *bitmap, float x, float y, const void *paint)
+{
+    (void)thiz; (void)bitmap; (void)x; (void)y; (void)paint;
+}
+
+void _ZN8SkCanvas5scaleEff(void *thiz, float x, float y)
+{
+    (void)thiz; (void)x; (void)y;
+}
+
+void _ZN8SkCanvas6concatERK8SkMatrix(void *thiz, const void *matrix)
+{
+    (void)thiz; (void)matrix;
+}
+
+void _ZN8SkMatrix8setScaleEffff(void *thiz, float x, float y, float px, float py)
+{
+    (void)thiz; (void)x; (void)y; (void)px; (void)py;
+}
+
+void _ZNK8SkBitmap10eraseColorEj(const void *thiz, unsigned color)
+{
+    (void)thiz; (void)color;
 }

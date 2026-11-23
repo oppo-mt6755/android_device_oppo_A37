@@ -1627,13 +1627,13 @@
 
     .prologue
     .line 928
-    invoke-virtual {p1}, Landroid/telephony/PreciseDataConnectionState;->getDataConnectionAPNType()Ljava/lang/String;
+    invoke-static {p1}, Lcom/mediatek/ims/compat/ImsCompat;->getDataConnectionApnType(Landroid/telephony/PreciseDataConnectionState;)Ljava/lang/String;
 
     move-result-object v2
 
     .line 929
     .local v2, "apnType":Ljava/lang/String;
-    invoke-virtual {p1}, Landroid/telephony/PreciseDataConnectionState;->getDataConnectionFailCause()Ljava/lang/String;
+    invoke-static {p1}, Lcom/mediatek/ims/compat/ImsCompat;->getDataConnectionFailCause(Landroid/telephony/PreciseDataConnectionState;)Ljava/lang/String;
 
     move-result-object v4
 
@@ -2294,11 +2294,7 @@
     if-nez v1, :cond_69
 
     .line 858
-    sget-object v1, Lcom/android/internal/telephony/dataconnection/DcFailCause;->LOST_CONNECTION:Lcom/android/internal/telephony/dataconnection/DcFailCause;
-
-    invoke-virtual {v1}, Lcom/android/internal/telephony/dataconnection/DcFailCause;->toString()Ljava/lang/String;
-
-    move-result-object v1
+    const-string/jumbo v1, "LOST_CONNECTION"
 
     invoke-virtual {v1, p1}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
 

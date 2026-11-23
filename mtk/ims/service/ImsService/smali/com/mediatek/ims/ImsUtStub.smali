@@ -78,12 +78,12 @@
     return-object v0
 .end method
 
-.method static synthetic -wrap0(Lcom/mediatek/ims/ImsUtStub;Lcom/android/internal/telephony/CallForwardInfo;)Lcom/android/ims/ImsCallForwardInfo;
+.method static synthetic -wrap0(Lcom/mediatek/ims/ImsUtStub;Lcom/android/internal/telephony/CallForwardInfo;)Landroid/telephony/ims/ImsCallForwardInfo;
     .registers 3
     .param p1, "info"    # Lcom/android/internal/telephony/CallForwardInfo;
 
     .prologue
-    invoke-direct {p0, p1}, Lcom/mediatek/ims/ImsUtStub;->getImsCallForwardInfo(Lcom/android/internal/telephony/CallForwardInfo;)Lcom/android/ims/ImsCallForwardInfo;
+    invoke-direct {p0, p1}, Lcom/mediatek/ims/ImsUtStub;->getImsCallForwardInfo(Lcom/android/internal/telephony/CallForwardInfo;)Landroid/telephony/ims/ImsCallForwardInfo;
 
     move-result-object v0
 
@@ -454,45 +454,45 @@
     .end packed-switch
 .end method
 
-.method private getImsCallForwardInfo(Lcom/android/internal/telephony/CallForwardInfo;)Lcom/android/ims/ImsCallForwardInfo;
+.method private getImsCallForwardInfo(Lcom/android/internal/telephony/CallForwardInfo;)Landroid/telephony/ims/ImsCallForwardInfo;
     .registers 4
     .param p1, "info"    # Lcom/android/internal/telephony/CallForwardInfo;
 
     .prologue
     .line 710
-    new-instance v0, Lcom/android/ims/ImsCallForwardInfo;
+    new-instance v0, Landroid/telephony/ims/ImsCallForwardInfo;
 
-    invoke-direct {v0}, Lcom/android/ims/ImsCallForwardInfo;-><init>()V
+    invoke-direct {v0}, Landroid/telephony/ims/ImsCallForwardInfo;-><init>()V
 
     .line 711
-    .local v0, "imsCfInfo":Lcom/android/ims/ImsCallForwardInfo;
+    .local v0, "imsCfInfo":Landroid/telephony/ims/ImsCallForwardInfo;
     iget v1, p1, Lcom/android/internal/telephony/CallForwardInfo;->reason:I
 
     invoke-direct {p0, v1}, Lcom/mediatek/ims/ImsUtStub;->getConditionFromCFReason(I)I
 
     move-result v1
 
-    iput v1, v0, Lcom/android/ims/ImsCallForwardInfo;->mCondition:I
+    iput v1, v0, Landroid/telephony/ims/ImsCallForwardInfo;->mCondition:I
 
     .line 712
     iget v1, p1, Lcom/android/internal/telephony/CallForwardInfo;->status:I
 
-    iput v1, v0, Lcom/android/ims/ImsCallForwardInfo;->mStatus:I
+    iput v1, v0, Landroid/telephony/ims/ImsCallForwardInfo;->mStatus:I
 
     .line 714
     iget v1, p1, Lcom/android/internal/telephony/CallForwardInfo;->toa:I
 
-    iput v1, v0, Lcom/android/ims/ImsCallForwardInfo;->mToA:I
+    iput v1, v0, Landroid/telephony/ims/ImsCallForwardInfo;->mToA:I
 
     .line 715
     iget-object v1, p1, Lcom/android/internal/telephony/CallForwardInfo;->number:Ljava/lang/String;
 
-    iput-object v1, v0, Lcom/android/ims/ImsCallForwardInfo;->mNumber:Ljava/lang/String;
+    iput-object v1, v0, Landroid/telephony/ims/ImsCallForwardInfo;->mNumber:Ljava/lang/String;
 
     .line 716
     iget v1, p1, Lcom/android/internal/telephony/CallForwardInfo;->timeSeconds:I
 
-    iput v1, v0, Lcom/android/ims/ImsCallForwardInfo;->mTimeSeconds:I
+    iput v1, v0, Landroid/telephony/ims/ImsCallForwardInfo;->mTimeSeconds:I
 
     .line 717
     return-object v0
@@ -2000,7 +2000,7 @@
     throw v2
 .end method
 
-.method xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Lcom/android/ims/ImsReasonInfo;
+.method xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Landroid/telephony/ims/ImsReasonInfo;
     .registers 7
     .param p1, "xcapEx"    # Lcom/mediatek/simservs/xcap/XcapException;
 
@@ -2088,19 +2088,19 @@
     if-ne v1, v2, :cond_51
 
     .line 1082
-    new-instance v0, Lcom/android/ims/ImsReasonInfo;
+    new-instance v0, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v1, 0x33e
 
-    invoke-direct {v0, v1, v4}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct {v0, v1, v4}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 1091
-    .local v0, "reason":Lcom/android/ims/ImsReasonInfo;
+    .local v0, "reason":Landroid/telephony/ims/ImsReasonInfo;
     :goto_50
     return-object v0
 
     .line 1083
-    .end local v0    # "reason":Lcom/android/ims/ImsReasonInfo;
+    .end local v0    # "reason":Landroid/telephony/ims/ImsReasonInfo;
     :cond_51
     if-eqz p1, :cond_63
 
@@ -2113,18 +2113,18 @@
     if-ne v1, v2, :cond_63
 
     .line 1084
-    new-instance v0, Lcom/android/ims/ImsReasonInfo;
+    new-instance v0, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v1, 0x340
 
-    invoke-direct {v0, v1, v4}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct {v0, v1, v4}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 1083
-    .restart local v0    # "reason":Lcom/android/ims/ImsReasonInfo;
+    .restart local v0    # "reason":Landroid/telephony/ims/ImsReasonInfo;
     goto :goto_50
 
     .line 1085
-    .end local v0    # "reason":Lcom/android/ims/ImsReasonInfo;
+    .end local v0    # "reason":Landroid/telephony/ims/ImsReasonInfo;
     :cond_63
     if-eqz p1, :cond_75
 
@@ -2137,26 +2137,26 @@
     if-ne v1, v2, :cond_75
 
     .line 1086
-    new-instance v0, Lcom/android/ims/ImsReasonInfo;
+    new-instance v0, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v1, 0x341
 
-    invoke-direct {v0, v1, v4}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct {v0, v1, v4}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 1085
-    .restart local v0    # "reason":Lcom/android/ims/ImsReasonInfo;
+    .restart local v0    # "reason":Landroid/telephony/ims/ImsReasonInfo;
     goto :goto_50
 
     .line 1088
-    .end local v0    # "reason":Lcom/android/ims/ImsReasonInfo;
+    .end local v0    # "reason":Landroid/telephony/ims/ImsReasonInfo;
     :cond_75
-    new-instance v0, Lcom/android/ims/ImsReasonInfo;
+    new-instance v0, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v1, 0x324
 
-    invoke-direct {v0, v1, v4}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct {v0, v1, v4}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
-    .restart local v0    # "reason":Lcom/android/ims/ImsReasonInfo;
+    .restart local v0    # "reason":Landroid/telephony/ims/ImsReasonInfo;
     goto :goto_50
 .end method
 

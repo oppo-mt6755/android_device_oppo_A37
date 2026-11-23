@@ -85,7 +85,7 @@
 
 .field private mCallNumber:Ljava/lang/String;
 
-.field private mCallProfile:Lcom/android/ims/ImsCallProfile;
+.field private mCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
 .field private mConfParticipantsUri:Ljava/util/LinkedHashMap;
 
@@ -117,7 +117,7 @@
 
 .field private mListener:Lcom/android/ims/internal/IImsCallSessionListener;
 
-.field private mLocalCallProfile:Lcom/android/ims/ImsCallProfile;
+.field private mLocalCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
 .field private mMergeCallId:Ljava/lang/String;
 
@@ -137,7 +137,7 @@
 
 .field private mRatType:I
 
-.field private mRemoteCallProfile:Lcom/android/ims/ImsCallProfile;
+.field private mRemoteCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
 .field private final mServiceHandler:Landroid/os/Handler;
 
@@ -241,10 +241,10 @@
     return-object v0
 .end method
 
-.method static synthetic -get19(Lcom/mediatek/ims/ImsCallSessionProxy;)Lcom/android/ims/ImsCallProfile;
+.method static synthetic -get19(Lcom/mediatek/ims/ImsCallSessionProxy;)Landroid/telephony/ims/ImsCallProfile;
     .registers 2
 
-    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mLocalCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mLocalCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
     return-object v0
 .end method
@@ -313,10 +313,10 @@
     return v0
 .end method
 
-.method static synthetic -get27(Lcom/mediatek/ims/ImsCallSessionProxy;)Lcom/android/ims/ImsCallProfile;
+.method static synthetic -get27(Lcom/mediatek/ims/ImsCallSessionProxy;)Landroid/telephony/ims/ImsCallProfile;
     .registers 2
 
-    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mRemoteCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mRemoteCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
     return-object v0
 .end method
@@ -337,10 +337,10 @@
     return v0
 .end method
 
-.method static synthetic -get3(Lcom/mediatek/ims/ImsCallSessionProxy;)Lcom/android/ims/ImsCallProfile;
+.method static synthetic -get3(Lcom/mediatek/ims/ImsCallSessionProxy;)Landroid/telephony/ims/ImsCallProfile;
     .registers 2
 
-    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
     return-object v0
 .end method
@@ -601,10 +601,10 @@
     return-void
 .end method
 
-.method constructor <init>(Landroid/content/Context;Lcom/android/ims/ImsCallProfile;Lcom/android/ims/internal/IImsCallSessionListener;Lcom/mediatek/ims/ImsService;Landroid/os/Handler;Lcom/mediatek/ims/ImsRILAdapter;)V
+.method constructor <init>(Landroid/content/Context;Landroid/telephony/ims/ImsCallProfile;Lcom/android/ims/internal/IImsCallSessionListener;Lcom/mediatek/ims/ImsService;Landroid/os/Handler;Lcom/mediatek/ims/ImsRILAdapter;)V
     .registers 15
     .param p1, "context"    # Landroid/content/Context;
-    .param p2, "profile"    # Lcom/android/ims/ImsCallProfile;
+    .param p2, "profile"    # Landroid/telephony/ims/ImsCallProfile;
     .param p3, "listener"    # Lcom/android/ims/internal/IImsCallSessionListener;
     .param p4, "imsService"    # Lcom/mediatek/ims/ImsService;
     .param p5, "handler"    # Landroid/os/Handler;
@@ -628,7 +628,7 @@
 
     move-object v6, p6
 
-    invoke-direct/range {v0 .. v7}, Lcom/mediatek/ims/ImsCallSessionProxy;-><init>(Landroid/content/Context;Lcom/android/ims/ImsCallProfile;Lcom/android/ims/internal/IImsCallSessionListener;Lcom/mediatek/ims/ImsService;Landroid/os/Handler;Lcom/mediatek/ims/ImsRILAdapter;Ljava/lang/String;)V
+    invoke-direct/range {v0 .. v7}, Lcom/mediatek/ims/ImsCallSessionProxy;-><init>(Landroid/content/Context;Landroid/telephony/ims/ImsCallProfile;Lcom/android/ims/internal/IImsCallSessionListener;Lcom/mediatek/ims/ImsService;Landroid/os/Handler;Lcom/mediatek/ims/ImsRILAdapter;Ljava/lang/String;)V
 
     .line 275
     const-string/jumbo v0, "ImsCallSessionProxy"
@@ -657,10 +657,10 @@
     return-void
 .end method
 
-.method constructor <init>(Landroid/content/Context;Lcom/android/ims/ImsCallProfile;Lcom/android/ims/internal/IImsCallSessionListener;Lcom/mediatek/ims/ImsService;Landroid/os/Handler;Lcom/mediatek/ims/ImsRILAdapter;Ljava/lang/String;)V
+.method constructor <init>(Landroid/content/Context;Landroid/telephony/ims/ImsCallProfile;Lcom/android/ims/internal/IImsCallSessionListener;Lcom/mediatek/ims/ImsService;Landroid/os/Handler;Lcom/mediatek/ims/ImsRILAdapter;Ljava/lang/String;)V
     .registers 15
     .param p1, "context"    # Landroid/content/Context;
-    .param p2, "profile"    # Lcom/android/ims/ImsCallProfile;
+    .param p2, "profile"    # Landroid/telephony/ims/ImsCallProfile;
     .param p3, "listener"    # Lcom/android/ims/internal/IImsCallSessionListener;
     .param p4, "imsService"    # Lcom/mediatek/ims/ImsService;
     .param p5, "handler"    # Landroid/os/Handler;
@@ -824,35 +824,35 @@
     iput-object p1, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mContext:Landroid/content/Context;
 
     .line 217
-    iput-object p2, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Lcom/android/ims/ImsCallProfile;
+    iput-object p2, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
     const-string/jumbo v3, "oir"
 
     const/4 v4, 0x2
 
-    invoke-virtual {p2, v3, v4}, Lcom/android/ims/ImsCallProfile;->setCallExtraInt(Ljava/lang/String;I)V
+    invoke-virtual {p2, v3, v4}, Landroid/telephony/ims/ImsCallProfile;->setCallExtraInt(Ljava/lang/String;I)V
 
     .line 218
-    new-instance v3, Lcom/android/ims/ImsCallProfile;
+    new-instance v3, Landroid/telephony/ims/ImsCallProfile;
 
-    iget v4, p2, Lcom/android/ims/ImsCallProfile;->mServiceType:I
+    iget v4, p2, Landroid/telephony/ims/ImsCallProfile;->mServiceType:I
 
-    iget v5, p2, Lcom/android/ims/ImsCallProfile;->mCallType:I
+    iget v5, p2, Landroid/telephony/ims/ImsCallProfile;->mCallType:I
 
-    invoke-direct {v3, v4, v5}, Lcom/android/ims/ImsCallProfile;-><init>(II)V
+    invoke-direct {v3, v4, v5}, Landroid/telephony/ims/ImsCallProfile;-><init>(II)V
 
-    iput-object v3, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mLocalCallProfile:Lcom/android/ims/ImsCallProfile;
+    iput-object v3, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mLocalCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
     .line 219
-    new-instance v3, Lcom/android/ims/ImsCallProfile;
+    new-instance v3, Landroid/telephony/ims/ImsCallProfile;
 
-    iget v4, p2, Lcom/android/ims/ImsCallProfile;->mServiceType:I
+    iget v4, p2, Landroid/telephony/ims/ImsCallProfile;->mServiceType:I
 
-    iget v5, p2, Lcom/android/ims/ImsCallProfile;->mCallType:I
+    iget v5, p2, Landroid/telephony/ims/ImsCallProfile;->mCallType:I
 
-    invoke-direct {v3, v4, v5}, Lcom/android/ims/ImsCallProfile;-><init>(II)V
+    invoke-direct {v3, v4, v5}, Landroid/telephony/ims/ImsCallProfile;-><init>(II)V
 
-    iput-object v3, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mRemoteCallProfile:Lcom/android/ims/ImsCallProfile;
+    iput-object v3, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mRemoteCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
     .line 220
     iput-object p3, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mListener:Lcom/android/ims/internal/IImsCallSessionListener;
@@ -1335,12 +1335,12 @@
     iget-object v1, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mListener:Lcom/android/ims/internal/IImsCallSessionListener;
 
     .line 2201
-    new-instance v2, Lcom/android/ims/ImsReasonInfo;
+    new-instance v2, Landroid/telephony/ims/ImsReasonInfo;
 
-    invoke-direct {v2}, Lcom/android/ims/ImsReasonInfo;-><init>()V
+    invoke-direct {v2}, Landroid/telephony/ims/ImsReasonInfo;-><init>()V
 
     .line 2200
-    invoke-interface {v1, p0, v2}, Lcom/android/ims/internal/IImsCallSessionListener;->callSessionMergeFailed(Lcom/android/ims/internal/IImsCallSession;Lcom/android/ims/ImsReasonInfo;)V
+    invoke-interface {v1, p0, v2}, Lcom/android/ims/internal/IImsCallSessionListener;->callSessionMergeFailed(Lcom/android/ims/internal/IImsCallSession;Landroid/telephony/ims/ImsReasonInfo;)V
     :try_end_10
     .catch Landroid/os/RemoteException; {:try_start_6 .. :try_end_10} :catch_36
 
@@ -1679,18 +1679,18 @@
 
     .line 2367
     .local v1, "callType":I
-    iget-object v4, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v4, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
-    iget v4, v4, Lcom/android/ims/ImsCallProfile;->mCallType:I
+    iget v4, v4, Landroid/telephony/ims/ImsCallProfile;->mCallType:I
 
     const/4 v5, 0x2
 
     if-eq v4, v5, :cond_31
 
     .line 2368
-    iget-object v4, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v4, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
-    iget v4, v4, Lcom/android/ims/ImsCallProfile;->mCallType:I
+    iget v4, v4, Landroid/telephony/ims/ImsCallProfile;->mCallType:I
 
     const/4 v5, 0x1
 
@@ -1803,10 +1803,10 @@
 
 
 # virtual methods
-.method public accept(ILcom/android/ims/ImsStreamMediaProfile;)V
+.method public accept(ILandroid/telephony/ims/ImsStreamMediaProfile;)V
     .registers 7
     .param p1, "callType"    # I
-    .param p2, "profile"    # Lcom/android/ims/ImsStreamMediaProfile;
+    .param p2, "profile"    # Landroid/telephony/ims/ImsStreamMediaProfile;
 
     .prologue
     .line 401
@@ -1822,9 +1822,9 @@
 
     move-result-object v2
 
-    iget-object v3, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v3, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
-    iget v3, v3, Lcom/android/ims/ImsCallProfile;->mCallType:I
+    iget v3, v3, Landroid/telephony/ims/ImsCallProfile;->mCallType:I
 
     invoke-virtual {v2, v3}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
 
@@ -1849,9 +1849,9 @@
     invoke-static {v1, v2}, Landroid/telephony/Rlog;->d(Ljava/lang/String;Ljava/lang/String;)I
 
     .line 403
-    iget-object v1, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v1, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
-    iget v1, v1, Lcom/android/ims/ImsCallProfile;->mCallType:I
+    iget v1, v1, Landroid/telephony/ims/ImsCallProfile;->mCallType:I
 
     const/4 v2, 0x2
 
@@ -2068,22 +2068,22 @@
     return-object v0
 .end method
 
-.method public getCallProfile()Lcom/android/ims/ImsCallProfile;
+.method public getCallProfile()Landroid/telephony/ims/ImsCallProfile;
     .registers 2
 
     .prologue
     .line 316
-    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
     return-object v0
 .end method
 
-.method public getLocalCallProfile()Lcom/android/ims/ImsCallProfile;
+.method public getLocalCallProfile()Landroid/telephony/ims/ImsCallProfile;
     .registers 2
 
     .prologue
     .line 321
-    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mLocalCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mLocalCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
     return-object v0
 .end method
@@ -2094,21 +2094,21 @@
 
     .prologue
     .line 331
-    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
-    invoke-virtual {v0, p1}, Lcom/android/ims/ImsCallProfile;->getCallExtra(Ljava/lang/String;)Ljava/lang/String;
+    invoke-virtual {v0, p1}, Landroid/telephony/ims/ImsCallProfile;->getCallExtra(Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v0
 
     return-object v0
 .end method
 
-.method public getRemoteCallProfile()Lcom/android/ims/ImsCallProfile;
+.method public getRemoteCallProfile()Landroid/telephony/ims/ImsCallProfile;
     .registers 2
 
     .prologue
     .line 326
-    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mRemoteCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mRemoteCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
     return-object v0
 .end method
@@ -2173,9 +2173,9 @@
     return-object v3
 .end method
 
-.method public hold(Lcom/android/ims/ImsStreamMediaProfile;)V
+.method public hold(Landroid/telephony/ims/ImsStreamMediaProfile;)V
     .registers 5
-    .param p1, "profile"    # Lcom/android/ims/ImsStreamMediaProfile;
+    .param p1, "profile"    # Landroid/telephony/ims/ImsStreamMediaProfile;
 
     .prologue
     .line 457
@@ -2319,12 +2319,12 @@
     iget-object v2, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mListener:Lcom/android/ims/internal/IImsCallSessionListener;
 
     .line 590
-    new-instance v3, Lcom/android/ims/ImsReasonInfo;
+    new-instance v3, Landroid/telephony/ims/ImsReasonInfo;
 
-    invoke-direct {v3}, Lcom/android/ims/ImsReasonInfo;-><init>()V
+    invoke-direct {v3}, Landroid/telephony/ims/ImsReasonInfo;-><init>()V
 
     .line 589
-    invoke-interface {v2, p0, v3}, Lcom/android/ims/internal/IImsCallSessionListener;->callSessionInviteParticipantsRequestFailed(Lcom/android/ims/internal/IImsCallSession;Lcom/android/ims/ImsReasonInfo;)V
+    invoke-interface {v2, p0, v3}, Lcom/android/ims/internal/IImsCallSessionListener;->callSessionInviteParticipantsRequestFailed(Lcom/android/ims/internal/IImsCallSession;Landroid/telephony/ims/ImsReasonInfo;)V
     :try_end_61
     .catch Landroid/os/RemoteException; {:try_start_57 .. :try_end_61} :catch_62
 
@@ -2364,11 +2364,11 @@
     const/4 v1, 0x0
 
     .line 675
-    iget-object v2, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v2, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
     const-string/jumbo v3, "incoming_mpty"
 
-    invoke-virtual {v2, v3, v1}, Lcom/android/ims/ImsCallProfile;->getCallExtraInt(Ljava/lang/String;I)I
+    invoke-virtual {v2, v3, v1}, Landroid/telephony/ims/ImsCallProfile;->getCallExtraInt(Ljava/lang/String;I)I
 
     move-result v2
 
@@ -2392,11 +2392,11 @@
     const/4 v1, 0x0
 
     .line 670
-    iget-object v2, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v2, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
     const-string/jumbo v3, "mpty"
 
-    invoke-virtual {v2, v3, v1}, Lcom/android/ims/ImsCallProfile;->getCallExtraInt(Ljava/lang/String;I)I
+    invoke-virtual {v2, v3, v1}, Landroid/telephony/ims/ImsCallProfile;->getCallExtraInt(Ljava/lang/String;I)I
 
     move-result v2
 
@@ -3247,12 +3247,12 @@
     iget-object v4, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mListener:Lcom/android/ims/internal/IImsCallSessionListener;
 
     .line 619
-    new-instance v5, Lcom/android/ims/ImsReasonInfo;
+    new-instance v5, Landroid/telephony/ims/ImsReasonInfo;
 
-    invoke-direct {v5}, Lcom/android/ims/ImsReasonInfo;-><init>()V
+    invoke-direct {v5}, Landroid/telephony/ims/ImsReasonInfo;-><init>()V
 
     .line 618
-    invoke-interface {v4, p0, v5}, Lcom/android/ims/internal/IImsCallSessionListener;->callSessionRemoveParticipantsRequestFailed(Lcom/android/ims/internal/IImsCallSession;Lcom/android/ims/ImsReasonInfo;)V
+    invoke-interface {v4, p0, v5}, Lcom/android/ims/internal/IImsCallSessionListener;->callSessionRemoveParticipantsRequestFailed(Lcom/android/ims/internal/IImsCallSession;Landroid/telephony/ims/ImsReasonInfo;)V
     :try_end_6c
     .catch Landroid/os/RemoteException; {:try_start_62 .. :try_end_6c} :catch_6d
 
@@ -3273,9 +3273,9 @@
     goto :goto_34
 .end method
 
-.method public resume(Lcom/android/ims/ImsStreamMediaProfile;)V
+.method public resume(Landroid/telephony/ims/ImsStreamMediaProfile;)V
     .registers 5
-    .param p1, "profile"    # Lcom/android/ims/ImsStreamMediaProfile;
+    .param p1, "profile"    # Landroid/telephony/ims/ImsStreamMediaProfile;
 
     .prologue
     .line 463
@@ -3387,29 +3387,29 @@
     return-void
 .end method
 
-.method public start(Ljava/lang/String;Lcom/android/ims/ImsCallProfile;)V
+.method public start(Ljava/lang/String;Landroid/telephony/ims/ImsCallProfile;)V
     .registers 15
     .param p1, "callee"    # Ljava/lang/String;
-    .param p2, "profile"    # Lcom/android/ims/ImsCallProfile;
+    .param p2, "profile"    # Landroid/telephony/ims/ImsCallProfile;
 
     .prologue
-    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Lcom/android/ims/ImsCallProfile;
+    iget-object v0, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mCallProfile:Landroid/telephony/ims/ImsCallProfile;
 
     const-string/jumbo v1, "oi"
 
-    invoke-virtual {v0, v1, p1}, Lcom/android/ims/ImsCallProfile;->setCallExtra(Ljava/lang/String;Ljava/lang/String;)V
+    invoke-virtual {v0, v1, p1}, Landroid/telephony/ims/ImsCallProfile;->setCallExtra(Ljava/lang/String;Ljava/lang/String;)V
 
     const-string/jumbo v1, "oir"
 
     const/4 v2, 0x2
 
-    invoke-virtual {v0, v1, v2}, Lcom/android/ims/ImsCallProfile;->setCallExtraInt(Ljava/lang/String;I)V
+    invoke-virtual {v0, v1, v2}, Landroid/telephony/ims/ImsCallProfile;->setCallExtraInt(Ljava/lang/String;I)V
 
     iget-object v1, p0, Lcom/mediatek/ims/ImsCallSessionProxy;->mListener:Lcom/android/ims/internal/IImsCallSessionListener;
 
     if-eqz v1, :cond_start_profile_sent
 
-    invoke-interface {v1, p0, v0}, Lcom/android/ims/internal/IImsCallSessionListener;->callSessionUpdated(Lcom/android/ims/internal/IImsCallSession;Lcom/android/ims/ImsCallProfile;)V
+    invoke-interface {v1, p0, v0}, Lcom/android/ims/internal/IImsCallSessionListener;->callSessionUpdated(Lcom/android/ims/internal/IImsCallSession;Landroid/telephony/ims/ImsCallProfile;)V
 
     :cond_start_profile_sent
 
@@ -3422,7 +3422,7 @@
     .line 356
     const-string/jumbo v0, "oir"
 
-    invoke-virtual {p2, v0, v9}, Lcom/android/ims/ImsCallProfile;->getCallExtraInt(Ljava/lang/String;I)I
+    invoke-virtual {p2, v0, v9}, Landroid/telephony/ims/ImsCallProfile;->getCallExtraInt(Ljava/lang/String;I)I
 
     move-result v2
 
@@ -3585,7 +3585,7 @@
 
     .line 372
     .local v5, "result":Landroid/os/Message;
-    iget v0, p2, Lcom/android/ims/ImsCallProfile;->mServiceType:I
+    iget v0, p2, Landroid/telephony/ims/ImsCallProfile;->mServiceType:I
 
     if-ne v0, v11, :cond_a4
 
@@ -3594,7 +3594,7 @@
 
     .line 376
     :cond_a4
-    invoke-static {p2}, Lcom/android/ims/ImsCallProfile;->getVideoStateFromImsCallProfile(Lcom/android/ims/ImsCallProfile;)I
+    invoke-static {p2}, Landroid/telephony/ims/ImsCallProfile;->getVideoStateFromImsCallProfile(Landroid/telephony/ims/ImsCallProfile;)I
 
     move-result v0
 
@@ -3621,10 +3621,10 @@
     return-void
 .end method
 
-.method public startConference([Ljava/lang/String;Lcom/android/ims/ImsCallProfile;)V
+.method public startConference([Ljava/lang/String;Landroid/telephony/ims/ImsCallProfile;)V
     .registers 8
     .param p1, "participants"    # [Ljava/lang/String;
-    .param p2, "profile"    # Lcom/android/ims/ImsCallProfile;
+    .param p2, "profile"    # Landroid/telephony/ims/ImsCallProfile;
 
     .prologue
     const/4 v4, 0x0
@@ -3632,7 +3632,7 @@
     .line 387
     const-string/jumbo v3, "oir"
 
-    invoke-virtual {p2, v3, v4}, Lcom/android/ims/ImsCallProfile;->getCallExtraInt(Ljava/lang/String;I)I
+    invoke-virtual {p2, v3, v4}, Landroid/telephony/ims/ImsCallProfile;->getCallExtraInt(Ljava/lang/String;I)I
 
     move-result v0
 
@@ -3652,7 +3652,7 @@
 
     .line 391
     .local v2, "result":Landroid/os/Message;
-    invoke-static {p2}, Lcom/android/ims/ImsCallProfile;->getVideoStateFromImsCallProfile(Lcom/android/ims/ImsCallProfile;)I
+    invoke-static {p2}, Landroid/telephony/ims/ImsCallProfile;->getVideoStateFromImsCallProfile(Landroid/telephony/ims/ImsCallProfile;)I
 
     move-result v3
 
@@ -3746,12 +3746,24 @@
     goto :goto_11
 .end method
 
-.method public update(ILcom/android/ims/ImsStreamMediaProfile;)V
+.method public update(ILandroid/telephony/ims/ImsStreamMediaProfile;)V
     .registers 3
     .param p1, "callType"    # I
-    .param p2, "profile"    # Lcom/android/ims/ImsStreamMediaProfile;
+    .param p2, "profile"    # Landroid/telephony/ims/ImsStreamMediaProfile;
 
     .prologue
     .line 566
+    return-void
+.end method
+
+.method public setListener(Landroid/telephony/ims/aidl/IImsCallSessionListener;)V
+    .registers 3
+
+    invoke-static {p1}, Lcom/mediatek/ims/compat/CallSessionListener;->wrap(Landroid/telephony/ims/aidl/IImsCallSessionListener;)Lcom/android/ims/internal/IImsCallSessionListener;
+
+    move-result-object v0
+
+    invoke-virtual {p0, v0}, Lcom/mediatek/ims/ImsCallSessionProxy;->setListener(Lcom/android/ims/internal/IImsCallSessionListener;)V
+
     return-void
 .end method

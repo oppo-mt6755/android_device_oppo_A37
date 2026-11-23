@@ -1,0 +1,32 @@
+diff --git a/bluetooth/1.0/default/bluetooth_address.cc b/bluetooth/1.0/default/bluetooth_address.cc
+index 93a5469..4bdc166 100644
+--- a/bluetooth/1.0/default/bluetooth_address.cc
++++ b/bluetooth/1.0/default/bluetooth_address.cc
+@@ -87,6 +87,27 @@ bool BluetoothAddress::get_local_address(uint8_t* local_addr) {
+     return true;
+   }
+ 
++  // Some legacy vendors keep the factory address as the first six NVRAM bytes.
++  if (property_get("ro.vendor.bluetooth.nvram_path", property, NULL)) {
++    int addr_fd = open(property, O_RDONLY | O_CLOEXEC);
++    if (addr_fd >= 0) {
++      uint8_t address[kBytes];
++      ssize_t bytes_read;
++      do {
++        bytes_read = read(addr_fd, address, sizeof(address));
++      } while (bytes_read < 0 && errno == EINTR);
++      close(addr_fd);
++      const uint8_t zero[kBytes] = {};
++      const uint8_t invalid[kBytes] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
++      if (bytes_read == kBytes && !(address[0] & 1) &&
++          memcmp(address, zero, kBytes) != 0 && memcmp(address, invalid, kBytes) != 0) {
++        memcpy(local_addr, address, kBytes);
++        return true;
++      }
++      ALOGE("%s: Invalid factory Bluetooth NVRAM record", __func__);
++    }
++  }
++
+   return false;
+ }
+ 

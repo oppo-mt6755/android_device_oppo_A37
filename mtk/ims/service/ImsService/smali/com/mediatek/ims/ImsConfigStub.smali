@@ -506,10 +506,25 @@
     .param p3, "listener"    # Lcom/android/ims/ImsConfigListener;
 
     .prologue
+    invoke-static {}, Lcom/mediatek/ims/ImsAdapter$Util;->getDefaultVoltePhoneId()I
+
+    move-result v0
+
+    iget v1, p0, Lcom/mediatek/ims/ImsConfigStub;->mPhoneId:I
+
+    if-eq v0, v1, :cond_active_config
+
+    invoke-static {p3, p1, p2}, Lcom/mediatek/ims/compat/ImsCompat;->unsupportedFeatureGet(Lcom/android/ims/ImsConfigListener;II)V
+
+    return-void
+
+    :cond_active_config
     const/4 v6, 0x0
 
     .line 138
     packed-switch p1, :pswitch_data_62
+
+    invoke-static {p3, p1, p2}, Lcom/mediatek/ims/compat/ImsCompat;->unsupportedFeatureGet(Lcom/android/ims/ImsConfigListener;II)V
 
     .line 137
     :cond_4
@@ -750,6 +765,39 @@
     .param p4, "listener"    # Lcom/android/ims/ImsConfigListener;
 
     .prologue
+    invoke-static {}, Lcom/mediatek/ims/ImsAdapter$Util;->getDefaultVoltePhoneId()I
+
+    move-result v0
+
+    iget v1, p0, Lcom/mediatek/ims/ImsConfigStub;->mPhoneId:I
+
+    if-eq v0, v1, :cond_active_config
+
+    invoke-static {p4, p1, p2, p3}, Lcom/mediatek/ims/compat/ImsCompat;->completeFeatureSet(Lcom/android/ims/ImsConfigListener;III)V
+
+    return-void
+
+    :cond_active_config
+    if-nez p1, :cond_voice_config_done
+
+    iget-object v0, p0, Lcom/mediatek/ims/ImsConfigStub;->mRilAdapter:Lcom/mediatek/ims/ImsRILAdapter;
+
+    const/4 v1, 0x0
+
+    if-eqz p3, :cond_voice_config_off
+
+    invoke-virtual {v0, v1}, Lcom/mediatek/ims/ImsRILAdapter;->turnOnVolte(Landroid/os/Message;)V
+
+    invoke-virtual {v0, v1}, Lcom/mediatek/ims/ImsRILAdapter;->turnOnImsVoice(Landroid/os/Message;)V
+
+    goto :cond_voice_config_done
+
+    :cond_voice_config_off
+    invoke-virtual {v0, v1}, Lcom/mediatek/ims/ImsRILAdapter;->turnOffImsVoice(Landroid/os/Message;)V
+
+    invoke-virtual {v0, v1}, Lcom/mediatek/ims/ImsRILAdapter;->turnOffVolte(Landroid/os/Message;)V
+
+    :cond_voice_config_done
     const/4 v7, 0x1
 
     const/4 v6, 0x0
@@ -760,6 +808,8 @@
     .line 198
     :cond_5
     :goto_5
+    invoke-static {p4, p1, p2, p3}, Lcom/mediatek/ims/compat/ImsCompat;->completeFeatureSet(Lcom/android/ims/ImsConfigListener;III)V
+
     return-void
 
     .line 203

@@ -806,9 +806,32 @@ void clearPendingBuffer(BUF_FMTS bf, void *buf, size_t buflen)
     }
 }
 
+// Re-query card type if RIL started after the modem's one-shot EUSIM URC.
+// The existing vendor parser owns card selection and publishes UICC properties.
+struct AtLine { AtLine *next; char *line; };
+struct AtResponse { int success; char *finalResponse; AtLine *intermediates; };
+extern "C" void *getDefaultChannelCtx(RIL_SOCKET_ID);
+extern "C" int at_send_command_singleline(const char *, const char *, AtResponse **, void *);
+extern "C" void at_response_free(AtResponse *);
+extern "C" void onUsimDetected(const char *, RIL_SOCKET_ID);
+
+static void restoreCardType(RIL_SOCKET_ID slot) {
+    char type[PROPERTY_VALUE_MAX];
+    const char *key = slot == RIL_SOCKET_1 ? "gsm.ril.uicctype" : "gsm.ril.uicctype.2";
+    if (property_get(key, type, "") > 0) return;
+    AtResponse *response = nullptr;
+    if (at_send_command_singleline("AT+EUSIM?", "+EUSIM:", &response,
+                                  getDefaultChannelCtx(slot)) == 0 && response &&
+            response->success && response->intermediates) {
+        onUsimDetected(response->intermediates->line, slot);
+    }
+    at_response_free(response);
+}
+
 static void dispatchVendorRequest(int request, void *buf, size_t buflen,
                                  RequestInfo *pRI)
 {
+    if (request == RIL_REQUEST_GET_SIM_STATUS) restoreCardType(pRI->socket_id);
     // This modem submits both CS and IMS GSM PDUs through SEND_SMS. Keep the
     // framework token's original command so completion still uses sendImsSmsResponse.
     if (request == RIL_REQUEST_IMS_SEND_SMS && buf &&
@@ -822,6 +845,18 @@ static void dispatchVendorRequest(int request, void *buf, size_t buflen,
         }
     }
     s_callbacksSocket.onRequest(request, buf, buflen, pRI, pRI->socket_id);
+}
+
+struct DataAllowedRequest {
+    RequestInfo *request;
+    int allowed;
+};
+
+static void dispatchDataAllowed(void *param) {
+    auto *pending = static_cast<DataAllowedRequest *>(param);
+    dispatchVendorRequest(RIL_REQUEST_ALLOW_DATA, &pending->allowed,
+                          sizeof(pending->allowed), pending->request);
+    delete pending;
 }
 
 #ifdef RIL_CHANNEL_QUEUING
@@ -869,6 +904,14 @@ void my_dequeue(int slot, RILChannelId cid)
 
 void my_enqueue(int request, void *buf, size_t buflen, BUF_FMTS bf, RequestInfo *pRI)
 {
+    // This vendor can wait for data attachment synchronously. Keep the HIDL
+    // thread available for SIM and registration queries during that wait.
+    if (request == RIL_REQUEST_ALLOW_DATA && buf && buflen == sizeof(int)) {
+        auto *pending = new DataAllowedRequest{pRI, *static_cast<int *>(buf)};
+        RIL_requestProxyTimedCallback(dispatchDataAllowed, pending, nullptr, pRI->cid);
+        if (bf != FMT_IGNORE) clearPendingBuffer(bf, buf, buflen);
+        return;
+    }
     ProxyReqInfo *p = NULL;
     RIL_SOCKET_ID socket_id = pRI->socket_id;
     RILChannelId proxyId = pRI->pCI->proxyId;

@@ -85,6 +85,12 @@
 
     if-eqz v10, :cond_1a9
 
+    invoke-static/range {p2 .. p2}, Lcom/mediatek/ims/compat/ImsCompat;->shouldHandleDataState(Landroid/content/Intent;)Z
+
+    move-result v10
+
+    if-eqz v10, :cond_db
+
     .line 168
     const-string/jumbo v10, "state"
 
@@ -148,23 +154,21 @@
 
     .line 175
     .local v9, "mReason":Ljava/lang/String;
-    const-string/jumbo v10, "failCause"
-
-    move-object/from16 v0, p2
-
-    invoke-virtual {v0, v10}, Landroid/content/Intent;->getStringExtra(Ljava/lang/String;)Ljava/lang/String;
+    invoke-static/range {p2 .. p2}, Lcom/mediatek/ims/compat/ImsCompat;->getDataConnectionFailure(Landroid/content/Intent;)Ljava/lang/String;
 
     move-result-object v11
 
     .line 177
     .local v11, "mFailCause":Ljava/lang/String;
-    new-instance v4, Landroid/telephony/PreciseDataConnectionState;
+
 
     .line 178
     const/4 v10, 0x0
 
     .line 177
-    invoke-direct/range {v4 .. v11}, Landroid/telephony/PreciseDataConnectionState;-><init>(IILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/net/LinkProperties;Ljava/lang/String;)V
+    invoke-static/range {p2 .. p2}, Lcom/mediatek/ims/compat/ImsCompat;->createDataConnectionState(Landroid/content/Intent;)Landroid/telephony/PreciseDataConnectionState;
+
+    move-result-object v4
 
     .line 180
     .local v4, "state":Landroid/telephony/PreciseDataConnectionState;

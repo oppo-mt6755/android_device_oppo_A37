@@ -99,12 +99,12 @@
     move-result v3
 
     .line 2269
-    new-instance v4, Lcom/android/ims/ImsReasonInfo;
+    new-instance v4, Landroid/telephony/ims/ImsReasonInfo;
 
-    invoke-direct {v4}, Lcom/android/ims/ImsReasonInfo;-><init>()V
+    invoke-direct {v4}, Landroid/telephony/ims/ImsReasonInfo;-><init>()V
 
     .line 2268
-    invoke-interface {v1, v2, v3, p2, v4}, Lcom/android/ims/internal/IImsCallSessionListener;->callSessionHandover(Lcom/android/ims/internal/IImsCallSession;IILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface {v1, v2, v3, p2, v4}, Lcom/android/ims/internal/IImsCallSessionListener;->callSessionHandover(Lcom/android/ims/internal/IImsCallSession;IILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_32
     .catch Landroid/os/RemoteException; {:try_start_13 .. :try_end_32} :catch_38
 

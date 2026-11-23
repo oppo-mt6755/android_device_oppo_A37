@@ -1,5 +1,13 @@
 LOCAL_PATH := $(call my-dir)
 
+# Optional performance hints from the stock camera stack.
+include $(CLEAR_VARS)
+LOCAL_MODULE := libshim_perf
+LOCAL_SRC_FILES := misc/perf.c
+LOCAL_MULTILIB := both
+LOCAL_PROPRIETARY_MODULE := true
+include $(BUILD_SHARED_LIBRARY)
+
 # Miscellaneous legacy C imports, following the Hermes libshims layout.
 include $(CLEAR_VARS)
 LOCAL_MODULE := mtkc
@@ -66,8 +74,9 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libshim_ims_vt
-LOCAL_SRC_FILES := ims/vt_media.c ims/vt_skia.c ims/vt_ui.cpp
-LOCAL_SHARED_LIBRARIES := liblog libui libutils
+LOCAL_SRC_FILES := ims/vt_media.c ims/vt_skia.c ims/vt_stagefright.cpp ims/vt_ui.cpp
+LOCAL_C_INCLUDES := frameworks/av/media/libstagefright/include
+LOCAL_SHARED_LIBRARIES := liblog libui libutils libstagefright libstagefright_foundation
 LOCAL_PROPRIETARY_MODULE := true
 LOCAL_MULTILIB := 32
 include $(BUILD_SHARED_LIBRARY)

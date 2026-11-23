@@ -38,5 +38,12 @@ Changes:
 - system/connectivity/wificond: convert local BSS age to boot-relative time.
 
 Compile validation passes. Android 10 starts its boot animation and SystemUI;
-full boot completion and hardware acceptance are still in progress. The earlier Android 8.1 patch set remains in the original
+full boot completion has passed. Hardware acceptance continues; see the device README for current limits. The earlier Android 8.1 patch set remains in the original
 LineageOS 15.1 device branch.
+
+Current follow-up patches:
+
+- frameworks/av/0002: select the system Binder bus for non-Treble OMX/PQ services.
+- hardware/interfaces/0002: use the validated factory NVRAM Bluetooth address when explicitly configured by the board.
+- hardware/interfaces/0003: translate audio port layouts at the legacy HAL boundary
+  on non-Treble builds, keeping framework-only flags out of the vendor ABI.

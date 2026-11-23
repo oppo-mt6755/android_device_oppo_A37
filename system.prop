@@ -15,6 +15,7 @@ audio.perfservice.bypass=1
 
 # The controller rejects extended feature page 2 despite advertising it.
 ro.bluetooth.max_feature_page=1
+ro.vendor.bluetooth.nvram_path=/data/nvram/APCFG/APRDEB/BT_Addr
 
 # Android 8 MediaTek modem / RIL stack.
 rild.libpath=mtk-ril.so
@@ -45,6 +46,8 @@ persist.volte_enabled_by_hw=1
 
 # Legacy MTK codecs access the PQ service through the system Binder.
 persist.media.treble_omx=false
+# This pre-Treble gralloc uses the platform OMX codecs.
+debug.stagefright.ccodec=0
 
 # Per-frame legacy camera traces can stall the preview pipeline.
 log.tag.mHalFDVT=W

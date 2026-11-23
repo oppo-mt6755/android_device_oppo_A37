@@ -32,7 +32,20 @@ kernel has no MultiMedia2_PLayback PCM for the HAL fast-output handler.
 The old MTK camera and encoder require a 160-byte GraphicBuffer allocation on
 Android 10. Guarded blob instruction changes and DT_NEEDED additions are listed
 in vendor/oppo/A37/shim-dependencies.json; the UI shim asserts the expected size.
-Runtime camera functionality is not yet verified on Android 10.
+Snap is the default camera. Front/rear preview and photos work; HDR, video
+recording, saving and playback have passed user testing. A subsequent GPU
+cleanup crash was fixed by auditing all GraphicBuffer allocations; seven
+alternating recording/decode/release probes then passed without a media-service
+restart. Extended app testing continues.
+
+Wi-Fi scanning/connection and Bluetooth pairing have passed. The radio reads
+USIM records and attaches to LTE. IMS registration, outgoing calls, hangup,
+two-way audio and dial keypad sound have passed user testing after adapting the Q
+call-session listener and legacy audio port layouts. Incoming calls, SMS send and
+receive, and reopening Snap after recording have also passed user testing.
+Native RIL Parcel allocations and SIM manager buffer initialization
+are guarded in the same vendor fixup manifest. The legacy IMS app adapts Q data
+state and IMS parcelable APIs locally, without changing framework Java APIs.
 
 Build: `device/oppo/A37/tools/build-android.sh <targets>` (userdebug, JOBS=8 by
 default). The platform selects its bundled JDK; tools/a37-host/bin/m4 supplies

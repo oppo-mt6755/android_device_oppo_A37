@@ -119,7 +119,6 @@
 
 .field private mListener:Lcom/android/ims/internal/IImsRegistrationListener;
 
-.field private mAddedListener:Lcom/android/ims/internal/IImsRegistrationListener;
 
 .field private mLockObj:Ljava/lang/Object;
 
@@ -1461,7 +1460,7 @@
     .param p1, "imsExtInfo"    # I
 
     .prologue
-    const/4 v9, 0x4
+    const/4 v9, 0x6
 
     const/4 v8, 0x3
 
@@ -1839,9 +1838,9 @@
     const/4 v1, 0x0
 
     .line 979
-    .local v1, "imsReasonInfo":Lcom/android/ims/ImsReasonInfo;
+    .local v1, "imsReasonInfo":Landroid/telephony/ims/ImsReasonInfo;
     :try_start_73
-    new-instance v2, Lcom/android/ims/ImsReasonInfo;
+    new-instance v2, Landroid/telephony/ims/ImsReasonInfo;
 
     .line 980
     iget v3, p0, Lcom/mediatek/ims/ImsService;->mRegErrorCode:I
@@ -1855,18 +1854,18 @@
     .line 979
     const/16 v6, 0x3e8
 
-    invoke-direct {v2, v6, v3, v5}, Lcom/android/ims/ImsReasonInfo;-><init>(IILjava/lang/String;)V
+    invoke-direct {v2, v6, v3, v5}, Landroid/telephony/ims/ImsReasonInfo;-><init>(IILjava/lang/String;)V
     :try_end_82
     .catch Landroid/os/RemoteException; {:try_start_73 .. :try_end_82} :catch_8b
     .catchall {:try_start_73 .. :try_end_82} :catchall_65
 
     .line 982
-    .local v2, "imsReasonInfo":Lcom/android/ims/ImsReasonInfo;
+    .local v2, "imsReasonInfo":Landroid/telephony/ims/ImsReasonInfo;
     :try_start_82
     iget-object v3, p0, Lcom/mediatek/ims/ImsService;->mListener:Lcom/android/ims/internal/IImsRegistrationListener;
 
-    .end local v1    # "imsReasonInfo":Lcom/android/ims/ImsReasonInfo;
-    invoke-interface {v3, v2}, Lcom/android/ims/internal/IImsRegistrationListener;->registrationDisconnected(Lcom/android/ims/ImsReasonInfo;)V
+    .end local v1    # "imsReasonInfo":Landroid/telephony/ims/ImsReasonInfo;
+    invoke-interface {v3, v2}, Lcom/android/ims/internal/IImsRegistrationListener;->registrationDisconnected(Landroid/telephony/ims/ImsReasonInfo;)V
     :try_end_87
     .catch Landroid/os/RemoteException; {:try_start_82 .. :try_end_87} :catch_88
     .catchall {:try_start_82 .. :try_end_87} :catchall_65
@@ -1880,12 +1879,12 @@
     .restart local v0    # "e":Landroid/os/RemoteException;
     move-object v1, v2
 
-    .end local v2    # "imsReasonInfo":Lcom/android/ims/ImsReasonInfo;
-    .local v1, "imsReasonInfo":Lcom/android/ims/ImsReasonInfo;
+    .end local v2    # "imsReasonInfo":Landroid/telephony/ims/ImsReasonInfo;
+    .local v1, "imsReasonInfo":Landroid/telephony/ims/ImsReasonInfo;
     goto :goto_4d
 
     .end local v0    # "e":Landroid/os/RemoteException;
-    .local v1, "imsReasonInfo":Lcom/android/ims/ImsReasonInfo;
+    .local v1, "imsReasonInfo":Landroid/telephony/ims/ImsReasonInfo;
     :catch_8b
     move-exception v0
 
@@ -2000,38 +1999,12 @@
 
 # virtual methods
 .method public close(I)V
-    .registers 4
-    .param p1, "serviceId"    # I
-
-    .prologue
-    .line 410
-    iget-object v0, p0, Lcom/mediatek/ims/ImsService;->mLockObj:Ljava/lang/Object;
-
-    monitor-enter v0
-
-    .line 412
-    const/4 v1, 0x0
-
-    :try_start_4
-    iput-object v1, p0, Lcom/mediatek/ims/ImsService;->mListener:Lcom/android/ims/internal/IImsRegistrationListener;
-    :try_end_6
-    .catchall {:try_start_4 .. :try_end_6} :catchall_8
-
-    monitor-exit v0
-
-    .line 408
+    .registers 2
+    # Registration callbacks outlive individual Q sessions and die with Binder.
     return-void
-
-    .line 410
-    :catchall_8
-    move-exception v1
-
-    monitor-exit v0
-
-    throw v1
 .end method
 
-.method public createCallProfile(III)Lcom/android/ims/ImsCallProfile;
+.method public createCallProfile(III)Landroid/telephony/ims/ImsCallProfile;
     .registers 5
     .param p1, "serviceId"    # I
     .param p2, "serviceType"    # I
@@ -2039,17 +2012,17 @@
 
     .prologue
     .line 531
-    new-instance v0, Lcom/android/ims/ImsCallProfile;
+    new-instance v0, Landroid/telephony/ims/ImsCallProfile;
 
-    invoke-direct {v0, p2, p3}, Lcom/android/ims/ImsCallProfile;-><init>(II)V
+    invoke-direct {v0, p2, p3}, Landroid/telephony/ims/ImsCallProfile;-><init>(II)V
 
     return-object v0
 .end method
 
-.method public createCallSession(ILcom/android/ims/ImsCallProfile;Lcom/android/ims/internal/IImsCallSessionListener;)Lcom/android/ims/internal/IImsCallSession;
+.method public createCallSession(ILandroid/telephony/ims/ImsCallProfile;Lcom/android/ims/internal/IImsCallSessionListener;)Lcom/android/ims/internal/IImsCallSession;
     .registers 11
     .param p1, "serviceId"    # I
-    .param p2, "profile"    # Lcom/android/ims/ImsCallProfile;
+    .param p2, "profile"    # Landroid/telephony/ims/ImsCallProfile;
     .param p3, "listener"    # Lcom/android/ims/internal/IImsCallSessionListener;
 
     .prologue
@@ -2068,7 +2041,7 @@
 
     move-object v4, p0
 
-    invoke-direct/range {v0 .. v6}, Lcom/mediatek/ims/ImsCallSessionProxy;-><init>(Landroid/content/Context;Lcom/android/ims/ImsCallProfile;Lcom/android/ims/internal/IImsCallSessionListener;Lcom/mediatek/ims/ImsService;Landroid/os/Handler;Lcom/mediatek/ims/ImsRILAdapter;)V
+    invoke-direct/range {v0 .. v6}, Lcom/mediatek/ims/ImsCallSessionProxy;-><init>(Landroid/content/Context;Landroid/telephony/ims/ImsCallProfile;Lcom/android/ims/internal/IImsCallSessionListener;Lcom/mediatek/ims/ImsService;Landroid/os/Handler;Lcom/mediatek/ims/ImsRILAdapter;)V
 
     return-object v0
 .end method
@@ -2214,9 +2187,6 @@
 
     .prologue
     .line 585
-    invoke-direct {p0}, Lcom/mediatek/ims/ImsService;->getMainCapabilityPhoneId()I
-
-    move-result p1
 
     .line 586
     const-string/jumbo v3, "ImsService"
@@ -2225,7 +2195,7 @@
 
     invoke-direct {v4}, Ljava/lang/StringBuilder;-><init>()V
 
-    const-string/jumbo v5, "Get config interface on main capability phone "
+    const-string/jumbo v5, "Get config interface on phone "
 
     invoke-virtual {v4, v5}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
@@ -2720,13 +2690,6 @@
 
     .line 402
     :cond_11
-    iget-object v2, p0, Lcom/mediatek/ims/ImsService;->mAddedListener:Lcom/android/ims/internal/IImsRegistrationListener;
-
-    if-eqz v2, :cond_open_listener
-
-    move-object p4, v2
-
-    :cond_open_listener
     const/4 v0, 0x1
 
     invoke-virtual {p0, v0, p4}, Lcom/mediatek/ims/ImsService;->setRegistrationListener(ILcom/android/ims/internal/IImsRegistrationListener;)V
@@ -2761,18 +2724,18 @@
     if-eqz p4, :cond_48
 
     .line 627
-    new-instance v2, Lcom/android/ims/ImsCallProfile;
+    new-instance v2, Landroid/telephony/ims/ImsCallProfile;
 
-    invoke-direct {v2}, Lcom/android/ims/ImsCallProfile;-><init>()V
+    invoke-direct {v2}, Landroid/telephony/ims/ImsCallProfile;-><init>()V
 
     const-string/jumbo v0, "oir"
 
     const/4 v1, 0x2
 
-    invoke-virtual {v2, v0, v1}, Lcom/android/ims/ImsCallProfile;->setCallExtraInt(Ljava/lang/String;I)V
+    invoke-virtual {v2, v0, v1}, Landroid/telephony/ims/ImsCallProfile;->setCallExtraInt(Ljava/lang/String;I)V
 
     .line 628
-    .local v2, "imsCallProfile":Lcom/android/ims/ImsCallProfile;
+    .local v2, "imsCallProfile":Landroid/telephony/ims/ImsCallProfile;
     if-eqz p2, :cond_13
 
     const-string/jumbo v0, ""
@@ -2815,7 +2778,7 @@
     move-object v7, p1
 
     .line 640
-    invoke-direct/range {v0 .. v7}, Lcom/mediatek/ims/ImsCallSessionProxy;-><init>(Landroid/content/Context;Lcom/android/ims/ImsCallProfile;Lcom/android/ims/internal/IImsCallSessionListener;Lcom/mediatek/ims/ImsService;Landroid/os/Handler;Lcom/mediatek/ims/ImsRILAdapter;Ljava/lang/String;)V
+    invoke-direct/range {v0 .. v7}, Lcom/mediatek/ims/ImsCallSessionProxy;-><init>(Landroid/content/Context;Landroid/telephony/ims/ImsCallProfile;Lcom/android/ims/internal/IImsCallSessionListener;Lcom/mediatek/ims/ImsService;Landroid/os/Handler;Lcom/mediatek/ims/ImsRILAdapter;Ljava/lang/String;)V
 
     iput-object v0, p0, Lcom/mediatek/ims/ImsService;->mPendingMT:Lcom/android/ims/internal/IImsCallSession;
 
@@ -2833,16 +2796,16 @@
     invoke-virtual {v0, v3, v1, p3}, Lcom/mediatek/ims/ImsRILAdapter;->setCallIndication(III)V
 
     .line 624
-    .end local v2    # "imsCallProfile":Lcom/android/ims/ImsCallProfile;
+    .end local v2    # "imsCallProfile":Landroid/telephony/ims/ImsCallProfile;
     :goto_35
     return-void
 
     .line 629
-    .restart local v2    # "imsCallProfile":Lcom/android/ims/ImsCallProfile;
+    .restart local v2    # "imsCallProfile":Landroid/telephony/ims/ImsCallProfile;
     :cond_36
     const-string/jumbo v0, "oi"
 
-    invoke-virtual {v2, v0, p2}, Lcom/android/ims/ImsCallProfile;->setCallExtra(Ljava/lang/String;Ljava/lang/String;)V
+    invoke-virtual {v2, v0, p2}, Landroid/telephony/ims/ImsCallProfile;->setCallExtra(Ljava/lang/String;Ljava/lang/String;)V
 
     goto :goto_13
 
@@ -2861,7 +2824,7 @@
     goto :goto_1c
 
     .line 645
-    .end local v2    # "imsCallProfile":Lcom/android/ims/ImsCallProfile;
+    .end local v2    # "imsCallProfile":Landroid/telephony/ims/ImsCallProfile;
     .end local v8    # "e":Landroid/os/RemoteException;
     :cond_48
     iget-object v0, p0, Lcom/mediatek/ims/ImsService;->mImsRILAdapter:Lcom/mediatek/ims/ImsRILAdapter;
@@ -2885,8 +2848,21 @@
     .param p2, "listener"    # Lcom/android/ims/internal/IImsRegistrationListener;
 
     .prologue
+    const/16 v0, 0x64
+
+    if-lt p1, v0, :cond_active_service
+
+    return-void
+
+    :cond_active_service
     .line 520
-    iput-object p2, p0, Lcom/mediatek/ims/ImsService;->mListener:Lcom/android/ims/internal/IImsRegistrationListener;
+    iget-object v0, p0, Lcom/mediatek/ims/ImsService;->mListener:Lcom/android/ims/internal/IImsRegistrationListener;
+
+    invoke-static {v0, p2}, Lcom/mediatek/ims/compat/RegistrationListeners;->add(Lcom/android/ims/internal/IImsRegistrationListener;Lcom/android/ims/internal/IImsRegistrationListener;)Lcom/android/ims/internal/IImsRegistrationListener;
+
+    move-result-object v0
+
+    iput-object v0, p0, Lcom/mediatek/ims/ImsService;->mListener:Lcom/android/ims/internal/IImsRegistrationListener;
 
     .line 521
     iget v0, p0, Lcom/mediatek/ims/ImsService;->mImsRegInfo:I
@@ -2937,6 +2913,12 @@
 
     iput v0, p0, Lcom/mediatek/ims/ImsService;->mActivePhoneId:I
 
+    if-eq p1, v0, :cond_active_phone
+
+    return-void
+
+    :cond_active_phone
+
     iget-object v0, p0, Lcom/mediatek/ims/ImsService;->mImsRILAdapter:Lcom/mediatek/ims/ImsRILAdapter;
 
     const/4 v1, 0x0
@@ -2959,6 +2941,12 @@
     move-result v0
 
     iput v0, p0, Lcom/mediatek/ims/ImsService;->mActivePhoneId:I
+
+    if-eq p1, v0, :cond_active_phone
+
+    return-void
+
+    :cond_active_phone
 
     iget-object v0, p0, Lcom/mediatek/ims/ImsService;->mImsRILAdapter:Lcom/mediatek/ims/ImsRILAdapter;
 
@@ -3219,8 +3207,16 @@
 .end method
 
 .method public addRegistrationListener(IILcom/android/ims/internal/IImsRegistrationListener;)V
-    .registers 4
-    iput-object p3, p0, Lcom/mediatek/ims/ImsService;->mAddedListener:Lcom/android/ims/internal/IImsRegistrationListener;
+    .registers 5
+    invoke-direct {p0}, Lcom/mediatek/ims/ImsService;->getMainCapabilityPhoneId()I
+
+    move-result v0
+
+    if-eq p1, v0, :cond_active_listener
+
+    return-void
+
+    :cond_active_listener
 
     invoke-virtual {p0, p1, p3}, Lcom/mediatek/ims/ImsService;->setRegistrationListener(ILcom/android/ims/internal/IImsRegistrationListener;)V
     return-void

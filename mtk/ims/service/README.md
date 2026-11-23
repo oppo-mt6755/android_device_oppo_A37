@@ -52,3 +52,38 @@ The VT service and its libraries come from the Nokia 3 7.1.1 build
 - The framework needs `mobile_ims` in `networkAttributes` to bring up the ims APN.
 - init has 31 environment slots, so mtkrild loses its sockets
   unless the unused SIM 3 and 4 sockets are dropped.
+
+## Android 10
+
+The compatibility source uses Android 10 IMS parcelable names and adapts precise
+data-state broadcasts to the platform APN bitmask and integer failure codes. The
+single native IMS instance follows the main-capability SIM; other slot adapters
+must not disable or replace its registration listener.
+
+Run `mtk/ims/build-service.sh` from the device tree after building the platform
+framework. Set `SMALI_DIR` to a directory containing `smali.jar` and
+`baksmali.jar` (default: `tools/a37-host/smali` in the source root). Rebuild the
+`ImsService` module to sign the resulting APK with this ROM's platform key.
+
+The VT daemon is needed for IMS control. Video-call audio/snapshot paths remain
+unsupported; the scoped shims reject these old media layouts. Camera recording
+uses the normal camera/OMX pipeline and is independent of video telephony.
+
+Android 10 registers separate MMTEL capability and registration callbacks. The
+listener fanout retains both, reports LTE registration technology and supplies
+six feature slots (voice/video/UT on LTE and Wi-Fi). Feature configuration
+requests always acknowledge completion so framework callers do not wait for
+timeouts. Unsupported UT entries return an explicit error.
+
+Call sessions adapt the Android 10 listener AIDL to the vendor's original callback
+interface. This includes the setup callbacks renamed to initiated/initiatedFailed
+and removal of the redundant session argument in the newer interface.
+
+Configuration objects retain the requesting phone ID. The empty SIM slot's
+Android 10 feature updates are acknowledged without changing the single native
+stack's global VoLTE/WFC properties.
+
+Voice feature updates also send the native VoLTE and IMS voice requests; changing
+the cached property alone does not update a modem that initialized with voice
+disabled. Registration callbacks survive the end of a framework adapter session;
+dead remote callbacks are removed by `RemoteCallbackList`.

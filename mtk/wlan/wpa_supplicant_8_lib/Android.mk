@@ -58,6 +58,7 @@ endif
 ########################
 include $(CLEAR_VARS)
 LOCAL_MODULE := lib_driver_cmd_mt66xx
+LOCAL_SANITIZE := cfi
 LOCAL_SHARED_LIBRARIES := libc libcutils
 LOCAL_CFLAGS := $(L_CFLAGS)
 LOCAL_SRC_FILES := $(WPA_SRC_FILE)

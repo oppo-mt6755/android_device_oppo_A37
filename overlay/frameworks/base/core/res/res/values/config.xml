@@ -20,6 +20,8 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- SurfaceFlinger applies the color matrix during existing GPU composition. -->
     <bool name="config_setColorTransformAccelerated">true</bool>
+    <!-- HAL1 lives in mediaserver and must receive the active camera users. -->
+    <bool name="config_allowMediaUidForCameraServiceProxy">true</bool>
     <bool name="config_device_volte_available">true</bool>
     <bool name="config_carrier_volte_available">true</bool>
     <!-- The physical ALS is supplied by the retained sensor HAL. -->

@@ -117,3 +117,14 @@ int _Z26getAdaptativeFrameRateInfoj13_video_formatjjjPjS0_jjS0_S0_(
     (void)intraPeriod; (void)skipFrames;
     return INVALID_OPERATION;
 }
+
+/* Legacy MediaTek traffic tags are optional; the Q network stack accounts sockets. */
+void _ZN7android8HTTPBase21RegisterSocketUserTagEijj(int socket, unsigned tag, unsigned uid)
+{
+    (void)socket; (void)tag; (void)uid;
+}
+
+void _ZN7android8HTTPBase23UnRegisterSocketUserTagEi(int socket)
+{
+    (void)socket;
+}

@@ -52,7 +52,7 @@ service ril-daemon-mtk /vendor/bin/hw/rild
     # The daemon drops to radio itself while retaining its network capabilities.
     user root
     group radio cache inet misc audio log readproc wakelock system
-    capabilities BLOCK_SUSPEND NET_ADMIN NET_RAW
+    capabilities BLOCK_SUSPEND NET_ADMIN NET_RAW SETUID
     disabled
 
 on property:ril.mtk=1

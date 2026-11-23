@@ -1,0 +1,103 @@
+diff --git a/audio/core/all-versions/default/Device.cpp b/audio/core/all-versions/default/Device.cpp
+index d088cce..12d8025 100644
+--- a/audio/core/all-versions/default/Device.cpp
++++ b/audio/core/all-versions/default/Device.cpp
+@@ -39,6 +39,42 @@ namespace implementation {
+ 
+ using ::android::hardware::audio::common::CPP_VERSION::implementation::HidlUtils;
+ 
++#if defined(LEGACY_AUDIO_HAL) && !defined(AUDIO_NO_SYSTEM_DECLARATIONS)
++namespace {
++// Pre-P HALs have no framework-only flags word before the port extension.
++struct LegacyAudioPortConfig {
++    uint8_t common[offsetof(audio_port_config, flags)];
++    decltype(audio_port_config::ext) ext;
++};
++
++struct LegacyAudioPort {
++    uint8_t common[offsetof(audio_port, active_config)];
++    LegacyAudioPortConfig activeConfig;
++    decltype(audio_port::ext) ext;
++};
++
++static_assert(sizeof(LegacyAudioPortConfig) + sizeof(audio_io_flags) ==
++              sizeof(audio_port_config), "Unexpected legacy port layout");
++static_assert(sizeof(LegacyAudioPort) + sizeof(audio_io_flags) == sizeof(audio_port),
++              "Unexpected legacy audio port layout");
++
++LegacyAudioPortConfig legacyPortConfig(const audio_port_config& config) {
++    LegacyAudioPortConfig legacy{};
++    memcpy(legacy.common, &config, sizeof(legacy.common));
++    legacy.ext = config.ext;
++    return legacy;
++}
++
++std::vector<LegacyAudioPortConfig> legacyPortConfigs(const audio_port_config* configs,
++                                                   size_t count) {
++    std::vector<LegacyAudioPortConfig> legacy;
++    legacy.reserve(count);
++    for (size_t i = 0; i < count; ++i) legacy.push_back(legacyPortConfig(configs[i]));
++    return legacy;
++}
++}  // namespace
++#endif
++
+ Device::Device(audio_hw_device_t* device) : mDevice(device) {}
+ 
+ Device::~Device() {
+@@ -263,9 +299,19 @@ Return<void> Device::createAudioPatch(const hidl_vec<AudioPortConfig>& sources,
+         std::unique_ptr<audio_port_config[]> halSources(HidlUtils::audioPortConfigsToHal(sources));
+         std::unique_ptr<audio_port_config[]> halSinks(HidlUtils::audioPortConfigsToHal(sinks));
+         audio_patch_handle_t halPatch = AUDIO_PATCH_HANDLE_NONE;
++#if defined(LEGACY_AUDIO_HAL) && !defined(AUDIO_NO_SYSTEM_DECLARATIONS)
++        auto legacySources = legacyPortConfigs(halSources.get(), sources.size());
++        auto legacySinks = legacyPortConfigs(halSinks.get(), sinks.size());
++        retval = analyzeStatus("create_audio_patch",
++                               mDevice->create_audio_patch(mDevice, sources.size(),
++                                   reinterpret_cast<audio_port_config*>(legacySources.data()),
++                                   sinks.size(),
++                                   reinterpret_cast<audio_port_config*>(legacySinks.data()), &halPatch));
++#else
+         retval = analyzeStatus("create_audio_patch",
+                                mDevice->create_audio_patch(mDevice, sources.size(), &halSources[0],
+                                                            sinks.size(), &halSinks[0], &halPatch));
++#endif
+         if (retval == Result::OK) {
+             patch = static_cast<AudioPatchHandle>(halPatch);
+         }
+@@ -286,7 +332,20 @@ Return<Result> Device::releaseAudioPatch(int32_t patch) {
+ Return<void> Device::getAudioPort(const AudioPort& port, getAudioPort_cb _hidl_cb) {
+     audio_port halPort;
+     HidlUtils::audioPortToHal(port, &halPort);
++#if defined(LEGACY_AUDIO_HAL) && !defined(AUDIO_NO_SYSTEM_DECLARATIONS)
++    LegacyAudioPort legacy{};
++    memcpy(legacy.common, &halPort, sizeof(legacy.common));
++    legacy.activeConfig = legacyPortConfig(halPort.active_config);
++    legacy.ext = halPort.ext;
++    Result retval = analyzeStatus("get_audio_port",
++            mDevice->get_audio_port(mDevice, reinterpret_cast<audio_port*>(&legacy)));
++    memcpy(&halPort, legacy.common, sizeof(legacy.common));
++    memcpy(&halPort.active_config, legacy.activeConfig.common, sizeof(legacy.activeConfig.common));
++    halPort.active_config.ext = legacy.activeConfig.ext;
++    halPort.ext = legacy.ext;
++#else
+     Result retval = analyzeStatus("get_audio_port", mDevice->get_audio_port(mDevice, &halPort));
++#endif
+     AudioPort resultPort = port;
+     if (retval == Result::OK) {
+         HidlUtils::audioPortFromHal(halPort, &resultPort);
+@@ -299,8 +358,14 @@ Return<Result> Device::setAudioPortConfig(const AudioPortConfig& config) {
+     if (version() >= AUDIO_DEVICE_API_VERSION_3_0) {
+         struct audio_port_config halPortConfig;
+         HidlUtils::audioPortConfigToHal(config, &halPortConfig);
++#if defined(LEGACY_AUDIO_HAL) && !defined(AUDIO_NO_SYSTEM_DECLARATIONS)
++        auto legacy = legacyPortConfig(halPortConfig);
++        return analyzeStatus("set_audio_port_config", mDevice->set_audio_port_config(
++                mDevice, reinterpret_cast<audio_port_config*>(&legacy)));
++#else
+         return analyzeStatus("set_audio_port_config",
+                              mDevice->set_audio_port_config(mDevice, &halPortConfig));
++#endif
+     }
+     return Result::NOT_SUPPORTED;
+ }

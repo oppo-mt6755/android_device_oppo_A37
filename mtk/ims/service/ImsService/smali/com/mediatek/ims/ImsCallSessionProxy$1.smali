@@ -743,12 +743,12 @@
 
     .line 837
     :cond_12
-    new-instance v0, Lcom/android/ims/ImsConferenceState;
+    new-instance v0, Landroid/telephony/ims/ImsConferenceState;
 
-    invoke-direct {v0}, Lcom/android/ims/ImsConferenceState;-><init>()V
+    invoke-direct {v0}, Landroid/telephony/ims/ImsConferenceState;-><init>()V
 
     .line 839
-    .local v0, "confState":Lcom/android/ims/ImsConferenceState;
+    .local v0, "confState":Landroid/telephony/ims/ImsConferenceState;
     iget-object v7, p0, Lcom/mediatek/ims/ImsCallSessionProxy$1;->mParticipants:Ljava/util/LinkedHashMap;
 
     invoke-virtual {v7}, Ljava/util/LinkedHashMap;->entrySet()Ljava/util/Set;
@@ -777,7 +777,7 @@
 
     .line 842
     .local v2, "entry":Ljava/util/Map$Entry;, "Ljava/util/Map$Entry<Ljava/lang/String;Landroid/os/Bundle;>;"
-    iget-object v9, v0, Lcom/android/ims/ImsConferenceState;->mParticipants:Ljava/util/HashMap;
+    iget-object v9, v0, Landroid/telephony/ims/ImsConferenceState;->mParticipants:Ljava/util/HashMap;
 
     invoke-interface {v2}, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
 
@@ -853,7 +853,7 @@
 
     .line 848
     .local v5, "userInfo":Landroid/os/Bundle;
-    iget-object v7, v0, Lcom/android/ims/ImsConferenceState;->mParticipants:Ljava/util/HashMap;
+    iget-object v7, v0, Landroid/telephony/ims/ImsConferenceState;->mParticipants:Ljava/util/HashMap;
 
     invoke-static {v4}, Ljava/lang/Integer;->toString(I)Ljava/lang/String;
 
@@ -905,7 +905,7 @@
 
     iget-object v8, p0, Lcom/mediatek/ims/ImsCallSessionProxy$1;->this$0:Lcom/mediatek/ims/ImsCallSessionProxy;
 
-    invoke-interface {v7, v8, v0}, Lcom/android/ims/internal/IImsCallSessionListener;->callSessionConferenceStateUpdated(Lcom/android/ims/internal/IImsCallSession;Lcom/android/ims/ImsConferenceState;)V
+    invoke-interface {v7, v8, v0}, Lcom/android/ims/internal/IImsCallSessionListener;->callSessionConferenceStateUpdated(Lcom/android/ims/internal/IImsCallSession;Landroid/telephony/ims/ImsConferenceState;)V
     :try_end_a7
     .catch Landroid/os/RemoteException; {:try_start_9c .. :try_end_a7} :catch_a8
 

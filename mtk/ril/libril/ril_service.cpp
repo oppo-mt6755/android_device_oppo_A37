@@ -1161,8 +1161,14 @@ Return<void> RadioImpl::setupDataCall(int32_t serial, RadioTechnology radioTechn
                 (isRoaming ? dataProfileInfo.roamingProtocol : dataProfileInfo.protocol);
         // The native IMS stack discovers P-CSCF only on ccmni4. The vendor
         // request numbers interfaces from one; regular PDNs use ccmni0-3.
+        // Q may leave profileId invalid even when the APN explicitly carries IMS.
+        const bool ims = (dataProfileInfo.supportedApnTypesBitmap &
+                static_cast<uint32_t>(ApnTypes::IMS)) != 0 ||
+                static_cast<int>(dataProfileInfo.profileId) == RIL_DATA_PROFILE_IMS;
+        const int profile = ims ? RIL_DATA_PROFILE_IMS :
+                static_cast<int>(dataProfileInfo.profileId);
         int i = 5;
-        if ((int)dataProfileInfo.profileId != RIL_DATA_PROFILE_IMS) {
+        if (!ims) {
             i = 0;
             while (i < 4 && dataCallCids[i] != -1) i++;
             i = i < 4 ? i + 1 : 0;
@@ -1175,7 +1181,7 @@ Return<void> RadioImpl::setupDataCall(int32_t serial, RadioTechnology radioTechn
 #endif
         dispatchStrings(serial, mSlotId, RIL_REQUEST_SETUP_DATA_CALL, 8,
             std::to_string((int) radioTechnology + 2).c_str(),
-            std::to_string((int) dataProfileInfo.profileId).c_str(),
+            std::to_string(profile).c_str(),
             dataProfileInfo.apn.c_str(),
             dataProfileInfo.user.c_str(),
             dataProfileInfo.password.c_str(),

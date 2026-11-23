@@ -162,13 +162,13 @@
     .local v11, "result":[I
     const/4 v14, 0x1
 
-    new-array v10, v14, [Lcom/android/ims/ImsSsInfo;
+    new-array v10, v14, [Landroid/telephony/ims/ImsSsInfo;
 
     .line 147
-    .local v10, "info":[Lcom/android/ims/ImsSsInfo;
-    new-instance v14, Lcom/android/ims/ImsSsInfo;
+    .local v10, "info":[Landroid/telephony/ims/ImsSsInfo;
+    new-instance v14, Landroid/telephony/ims/ImsSsInfo;
 
-    invoke-direct {v14}, Lcom/android/ims/ImsSsInfo;-><init>()V
+    invoke-direct {v14}, Landroid/telephony/ims/ImsSsInfo;-><init>()V
 
     const/4 v15, 0x0
 
@@ -183,7 +183,7 @@
 
     aget v15, v11, v15
 
-    iput v15, v14, Lcom/android/ims/ImsSsInfo;->mStatus:I
+    iput v15, v14, Landroid/telephony/ims/ImsSsInfo;->mStatus:I
 
     .line 151
     const-string/jumbo v14, "ImsUtService"
@@ -236,7 +236,7 @@
     .line 155
     move/from16 v0, v16
 
-    invoke-interface {v14, v15, v0, v10}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationCallBarringQueried(Lcom/android/ims/internal/IImsUt;I[Lcom/android/ims/ImsSsInfo;)V
+    invoke-interface {v14, v15, v0, v10}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationCallBarringQueried(Lcom/android/ims/internal/IImsUt;I[Landroid/telephony/ims/ImsSsInfo;)V
     :try_end_b9
     .catch Landroid/os/RemoteException; {:try_start_a2 .. :try_end_b9} :catch_ba
 
@@ -261,7 +261,7 @@
 
     .line 161
     .end local v4    # "e":Landroid/os/RemoteException;
-    .end local v10    # "info":[Lcom/android/ims/ImsSsInfo;
+    .end local v10    # "info":[Landroid/telephony/ims/ImsSsInfo;
     .end local v11    # "result":[I
     :cond_c8
     iget-object v14, v1, Landroid/os/AsyncResult;->exception:Ljava/lang/Throwable;
@@ -299,16 +299,16 @@
     move/from16 v16, v0
 
     .line 168
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v18, 0x33f
 
     const/16 v19, 0x0
 
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 166
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_f5
     .catch Landroid/os/RemoteException; {:try_start_d7 .. :try_end_f5} :catch_f7
 
@@ -376,12 +376,12 @@
 
     move-object/from16 v0, v17
 
-    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Lcom/android/ims/ImsReasonInfo;
+    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Landroid/telephony/ims/ImsReasonInfo;
 
     move-result-object v17
 
     .line 177
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_131
     .catch Landroid/os/RemoteException; {:try_start_110 .. :try_end_131} :catch_133
 
@@ -428,7 +428,7 @@
     move/from16 v16, v0
 
     .line 188
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v18, 0x324
 
@@ -436,10 +436,10 @@
     const/16 v19, 0x0
 
     .line 188
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 187
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_160
     .catch Landroid/os/RemoteException; {:try_start_142 .. :try_end_160} :catch_162
 
@@ -499,7 +499,7 @@
     const/4 v6, 0x0
 
     .line 206
-    .local v6, "imsCfInfo":[Lcom/android/ims/ImsCallForwardInfo;
+    .local v6, "imsCfInfo":[Landroid/telephony/ims/ImsCallForwardInfo;
     if-eqz v2, :cond_1cc
 
     array-length v14, v2
@@ -509,10 +509,10 @@
     .line 207
     array-length v14, v2
 
-    new-array v6, v14, [Lcom/android/ims/ImsCallForwardInfo;
+    new-array v6, v14, [Landroid/telephony/ims/ImsCallForwardInfo;
 
     .line 208
-    .local v6, "imsCfInfo":[Lcom/android/ims/ImsCallForwardInfo;
+    .local v6, "imsCfInfo":[Landroid/telephony/ims/ImsCallForwardInfo;
     const/4 v5, 0x0
 
     .local v5, "i":I
@@ -565,7 +565,7 @@
 
     aget-object v15, v2, v5
 
-    invoke-static {v14, v15}, Lcom/mediatek/ims/ImsUtStub;->-wrap0(Lcom/mediatek/ims/ImsUtStub;Lcom/android/internal/telephony/CallForwardInfo;)Lcom/android/ims/ImsCallForwardInfo;
+    invoke-static {v14, v15}, Lcom/mediatek/ims/ImsUtStub;->-wrap0(Lcom/mediatek/ims/ImsUtStub;Lcom/android/internal/telephony/CallForwardInfo;)Landroid/telephony/ims/ImsCallForwardInfo;
 
     move-result-object v14
 
@@ -578,7 +578,7 @@
 
     .line 218
     .end local v5    # "i":I
-    .end local v6    # "imsCfInfo":[Lcom/android/ims/ImsCallForwardInfo;
+    .end local v6    # "imsCfInfo":[Landroid/telephony/ims/ImsCallForwardInfo;
     :cond_1cc
     :try_start_1cc
     move-object/from16 v0, p0
@@ -603,7 +603,7 @@
     .line 218
     move/from16 v0, v16
 
-    invoke-interface {v14, v15, v0, v6}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationCallForwardQueried(Lcom/android/ims/internal/IImsUt;I[Lcom/android/ims/ImsCallForwardInfo;)V
+    invoke-interface {v14, v15, v0, v6}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationCallForwardQueried(Lcom/android/ims/internal/IImsUt;I[Landroid/telephony/ims/ImsCallForwardInfo;)V
     :try_end_1e3
     .catch Landroid/os/RemoteException; {:try_start_1cc .. :try_end_1e3} :catch_1e5
 
@@ -672,12 +672,12 @@
 
     move-object/from16 v0, v17
 
-    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Lcom/android/ims/ImsReasonInfo;
+    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Landroid/telephony/ims/ImsReasonInfo;
 
     move-result-object v17
 
     .line 228
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_21f
     .catch Landroid/os/RemoteException; {:try_start_1fe .. :try_end_21f} :catch_221
 
@@ -739,16 +739,16 @@
     move/from16 v16, v0
 
     .line 243
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v18, 0x33f
 
     const/16 v19, 0x0
 
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 241
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_25d
     .catch Landroid/os/RemoteException; {:try_start_23f .. :try_end_25d} :catch_25f
 
@@ -794,7 +794,7 @@
     move/from16 v16, v0
 
     .line 252
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v18, 0x324
 
@@ -802,10 +802,10 @@
     const/16 v19, 0x0
 
     .line 252
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 251
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_28c
     .catch Landroid/os/RemoteException; {:try_start_26e .. :try_end_28c} :catch_28e
 
@@ -864,13 +864,13 @@
     .restart local v11    # "result":[I
     const/4 v14, 0x1
 
-    new-array v10, v14, [Lcom/android/ims/ImsSsInfo;
+    new-array v10, v14, [Landroid/telephony/ims/ImsSsInfo;
 
     .line 270
-    .restart local v10    # "info":[Lcom/android/ims/ImsSsInfo;
-    new-instance v14, Lcom/android/ims/ImsSsInfo;
+    .restart local v10    # "info":[Landroid/telephony/ims/ImsSsInfo;
+    new-instance v14, Landroid/telephony/ims/ImsSsInfo;
 
-    invoke-direct {v14}, Lcom/android/ims/ImsSsInfo;-><init>()V
+    invoke-direct {v14}, Landroid/telephony/ims/ImsSsInfo;-><init>()V
 
     const/4 v15, 0x0
 
@@ -885,7 +885,7 @@
 
     aget v15, v11, v15
 
-    iput v15, v14, Lcom/android/ims/ImsSsInfo;->mStatus:I
+    iput v15, v14, Landroid/telephony/ims/ImsSsInfo;->mStatus:I
 
     .line 274
     const-string/jumbo v14, "ImsUtService"
@@ -938,7 +938,7 @@
     .line 278
     move/from16 v0, v16
 
-    invoke-interface {v14, v15, v0, v10}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationCallWaitingQueried(Lcom/android/ims/internal/IImsUt;I[Lcom/android/ims/ImsSsInfo;)V
+    invoke-interface {v14, v15, v0, v10}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationCallWaitingQueried(Lcom/android/ims/internal/IImsUt;I[Landroid/telephony/ims/ImsSsInfo;)V
     :try_end_2fd
     .catch Landroid/os/RemoteException; {:try_start_2e6 .. :try_end_2fd} :catch_2ff
 
@@ -963,7 +963,7 @@
 
     .line 284
     .end local v4    # "e":Landroid/os/RemoteException;
-    .end local v10    # "info":[Lcom/android/ims/ImsSsInfo;
+    .end local v10    # "info":[Landroid/telephony/ims/ImsSsInfo;
     .end local v11    # "result":[I
     :cond_30e
     iget-object v14, v1, Landroid/os/AsyncResult;->exception:Ljava/lang/Throwable;
@@ -1001,16 +1001,16 @@
     move/from16 v16, v0
 
     .line 291
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v18, 0x33f
 
     const/16 v19, 0x0
 
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 289
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_33b
     .catch Landroid/os/RemoteException; {:try_start_31d .. :try_end_33b} :catch_33d
 
@@ -1078,12 +1078,12 @@
 
     move-object/from16 v0, v17
 
-    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Lcom/android/ims/ImsReasonInfo;
+    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Landroid/telephony/ims/ImsReasonInfo;
 
     move-result-object v17
 
     .line 300
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_377
     .catch Landroid/os/RemoteException; {:try_start_356 .. :try_end_377} :catch_379
 
@@ -1130,7 +1130,7 @@
     move/from16 v16, v0
 
     .line 311
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v18, 0x324
 
@@ -1138,10 +1138,10 @@
     const/16 v19, 0x0
 
     .line 311
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 310
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_3a6
     .catch Landroid/os/RemoteException; {:try_start_388 .. :try_end_3a6} :catch_3a8
 
@@ -1293,16 +1293,16 @@
     move/from16 v16, v0
 
     .line 344
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v18, 0x33f
 
     const/16 v19, 0x0
 
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 342
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_42f
     .catch Landroid/os/RemoteException; {:try_start_411 .. :try_end_42f} :catch_431
 
@@ -1370,12 +1370,12 @@
 
     move-object/from16 v0, v17
 
-    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Lcom/android/ims/ImsReasonInfo;
+    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Landroid/telephony/ims/ImsReasonInfo;
 
     move-result-object v17
 
     .line 353
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_46b
     .catch Landroid/os/RemoteException; {:try_start_44a .. :try_end_46b} :catch_46d
 
@@ -1422,7 +1422,7 @@
     move/from16 v16, v0
 
     .line 364
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v18, 0x324
 
@@ -1430,10 +1430,10 @@
     const/16 v19, 0x0
 
     .line 364
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 363
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_49a
     .catch Landroid/os/RemoteException; {:try_start_47c .. :try_end_49a} :catch_49c
 
@@ -1490,17 +1490,17 @@
 
     .line 382
     .restart local v11    # "result":[I
-    new-instance v12, Lcom/android/ims/ImsSsInfo;
+    new-instance v12, Landroid/telephony/ims/ImsSsInfo;
 
-    invoke-direct {v12}, Lcom/android/ims/ImsSsInfo;-><init>()V
+    invoke-direct {v12}, Landroid/telephony/ims/ImsSsInfo;-><init>()V
 
     .line 383
-    .local v12, "ssInfo":Lcom/android/ims/ImsSsInfo;
+    .local v12, "ssInfo":Landroid/telephony/ims/ImsSsInfo;
     const/4 v14, 0x0
 
     aget v14, v11, v14
 
-    iput v14, v12, Lcom/android/ims/ImsSsInfo;->mStatus:I
+    iput v14, v12, Landroid/telephony/ims/ImsSsInfo;->mStatus:I
 
     .line 384
     new-instance v8, Landroid/os/Bundle;
@@ -1586,7 +1586,7 @@
     .end local v4    # "e":Landroid/os/RemoteException;
     .end local v8    # "info":Landroid/os/Bundle;
     .end local v11    # "result":[I
-    .end local v12    # "ssInfo":Lcom/android/ims/ImsSsInfo;
+    .end local v12    # "ssInfo":Landroid/telephony/ims/ImsSsInfo;
     :cond_517
     iget-object v14, v1, Landroid/os/AsyncResult;->exception:Ljava/lang/Throwable;
 
@@ -1630,12 +1630,12 @@
 
     move-object/from16 v0, v17
 
-    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Lcom/android/ims/ImsReasonInfo;
+    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Landroid/telephony/ims/ImsReasonInfo;
 
     move-result-object v17
 
     .line 398
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_542
     .catch Landroid/os/RemoteException; {:try_start_521 .. :try_end_542} :catch_544
 
@@ -1743,16 +1743,16 @@
     move/from16 v16, v0
 
     .line 413
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v18, 0x33f
 
     const/16 v19, 0x0
 
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 411
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_5ae
     .catch Landroid/os/RemoteException; {:try_start_590 .. :try_end_5ae} :catch_5b0
 
@@ -1822,7 +1822,7 @@
     move/from16 v16, v0
 
     .line 422
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v18, 0x324
 
@@ -1830,10 +1830,10 @@
     const/16 v19, 0x0
 
     .line 422
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 421
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_5f4
     .catch Landroid/os/RemoteException; {:try_start_5d6 .. :try_end_5f4} :catch_5f6
 
@@ -1928,7 +1928,7 @@
     const/4 v6, 0x0
 
     .line 446
-    .local v6, "imsCfInfo":[Lcom/android/ims/ImsCallForwardInfo;
+    .local v6, "imsCfInfo":[Landroid/telephony/ims/ImsCallForwardInfo;
     if-eqz v2, :cond_681
 
     array-length v14, v2
@@ -1938,10 +1938,10 @@
     .line 447
     array-length v14, v2
 
-    new-array v6, v14, [Lcom/android/ims/ImsCallForwardInfo;
+    new-array v6, v14, [Landroid/telephony/ims/ImsCallForwardInfo;
 
     .line 448
-    .local v6, "imsCfInfo":[Lcom/android/ims/ImsCallForwardInfo;
+    .local v6, "imsCfInfo":[Landroid/telephony/ims/ImsCallForwardInfo;
     const/4 v5, 0x0
 
     .restart local v5    # "i":I
@@ -1994,7 +1994,7 @@
 
     aget-object v15, v2, v5
 
-    invoke-static {v14, v15}, Lcom/mediatek/ims/ImsUtStub;->-wrap0(Lcom/mediatek/ims/ImsUtStub;Lcom/android/internal/telephony/CallForwardInfo;)Lcom/android/ims/ImsCallForwardInfo;
+    invoke-static {v14, v15}, Lcom/mediatek/ims/ImsUtStub;->-wrap0(Lcom/mediatek/ims/ImsUtStub;Lcom/android/internal/telephony/CallForwardInfo;)Landroid/telephony/ims/ImsCallForwardInfo;
 
     move-result-object v14
 
@@ -2007,7 +2007,7 @@
 
     .line 458
     .end local v5    # "i":I
-    .end local v6    # "imsCfInfo":[Lcom/android/ims/ImsCallForwardInfo;
+    .end local v6    # "imsCfInfo":[Landroid/telephony/ims/ImsCallForwardInfo;
     :cond_681
     :try_start_681
     move-object/from16 v0, p0
@@ -2032,7 +2032,7 @@
     .line 458
     move/from16 v0, v16
 
-    invoke-interface {v14, v15, v0, v6}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationCallForwardQueried(Lcom/android/ims/internal/IImsUt;I[Lcom/android/ims/ImsCallForwardInfo;)V
+    invoke-interface {v14, v15, v0, v6}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationCallForwardQueried(Lcom/android/ims/internal/IImsUt;I[Landroid/telephony/ims/ImsCallForwardInfo;)V
     :try_end_698
     .catch Landroid/os/RemoteException; {:try_start_681 .. :try_end_698} :catch_69a
 
@@ -2227,12 +2227,12 @@
 
     move-object/from16 v0, v17
 
-    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Lcom/android/ims/ImsReasonInfo;
+    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Landroid/telephony/ims/ImsReasonInfo;
 
     move-result-object v17
 
     .line 494
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationUpdateFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationUpdateFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_745
     .catch Landroid/os/RemoteException; {:try_start_724 .. :try_end_745} :catch_747
 
@@ -2340,16 +2340,16 @@
     move/from16 v16, v0
 
     .line 509
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v18, 0x33f
 
     const/16 v19, 0x0
 
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 507
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationUpdateFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationUpdateFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_7b1
     .catch Landroid/os/RemoteException; {:try_start_793 .. :try_end_7b1} :catch_7b3
 
@@ -2419,7 +2419,7 @@
     move/from16 v16, v0
 
     .line 518
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v18, 0x324
 
@@ -2427,10 +2427,10 @@
     const/16 v19, 0x0
 
     .line 518
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 517
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationUpdateFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationUpdateFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_7f7
     .catch Landroid/os/RemoteException; {:try_start_7d9 .. :try_end_7f7} :catch_7f9
 
@@ -2705,12 +2705,12 @@
 
     move-object/from16 v0, v17
 
-    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Lcom/android/ims/ImsReasonInfo;
+    invoke-virtual {v0, v13}, Lcom/mediatek/ims/ImsUtStub;->xcapExceptionToImsReasonInfo(Lcom/mediatek/simservs/xcap/XcapException;)Landroid/telephony/ims/ImsReasonInfo;
 
     move-result-object v17
 
     .line 566
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_8d3
     .catch Landroid/os/RemoteException; {:try_start_8b2 .. :try_end_8d3} :catch_8d5
 
@@ -2772,16 +2772,16 @@
     move/from16 v16, v0
 
     .line 582
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     const/16 v18, 0x33f
 
     const/16 v19, 0x0
 
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 580
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_911
     .catch Landroid/os/RemoteException; {:try_start_8f3 .. :try_end_911} :catch_913
 
@@ -2828,7 +2828,7 @@
     move/from16 v16, v0
 
     .line 592
-    new-instance v17, Lcom/android/ims/ImsReasonInfo;
+    new-instance v17, Landroid/telephony/ims/ImsReasonInfo;
 
     .line 593
     const/16 v18, 0x324
@@ -2836,10 +2836,10 @@
     const/16 v19, 0x0
 
     .line 592
-    invoke-direct/range {v17 .. v19}, Lcom/android/ims/ImsReasonInfo;-><init>(II)V
+    invoke-direct/range {v17 .. v19}, Landroid/telephony/ims/ImsReasonInfo;-><init>(II)V
 
     .line 590
-    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILcom/android/ims/ImsReasonInfo;)V
+    invoke-interface/range {v14 .. v17}, Lcom/android/ims/internal/IImsUtListener;->utConfigurationQueryFailed(Lcom/android/ims/internal/IImsUt;ILandroid/telephony/ims/ImsReasonInfo;)V
     :try_end_940
     .catch Landroid/os/RemoteException; {:try_start_922 .. :try_end_940} :catch_942
 

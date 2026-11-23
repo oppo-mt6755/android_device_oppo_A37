@@ -144,3 +144,19 @@
 
     goto :goto_46
 .end method
+
+.method public onLost(Landroid/net/Network;)V
+    .registers 4
+
+    iget-object v0, p0, Lcom/mediatek/ims/internal/DataDispatcher$5;->this$0:Lcom/mediatek/ims/internal/DataDispatcher;
+
+    invoke-static {v0}, Lcom/mediatek/ims/internal/DataDispatcher;->-get1(Lcom/mediatek/ims/internal/DataDispatcher;)Landroid/os/Handler;
+
+    move-result-object v0
+
+    const-string/jumbo v1, "emergency"
+
+    invoke-static {v0, v1}, Lcom/mediatek/ims/compat/ImsCompat;->notifyDataNetworkLost(Landroid/os/Handler;Ljava/lang/String;)V
+
+    return-void
+.end method

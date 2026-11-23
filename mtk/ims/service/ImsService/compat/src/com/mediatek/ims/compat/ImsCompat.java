@@ -2,11 +2,17 @@ package com.mediatek.ims.compat;
 
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.content.Intent;
+import android.os.Handler;
+import android.telephony.DataFailCause;
+import android.telephony.PreciseDataConnectionState;
 import android.telephony.SubscriptionManager;
-import com.android.ims.ImsCallForwardInfo;
+import android.telephony.data.ApnSetting;
+import android.telephony.ims.ImsCallForwardInfo;
 import com.android.ims.ImsCallForwardInfoEx;
-import com.android.ims.ImsCallProfile;
+import android.telephony.ims.ImsCallProfile;
 import com.android.ims.ImsManager;
+import com.android.ims.ImsConfigListener;
 import com.android.ims.internal.IImsCallSession;
 import com.android.ims.internal.IImsCallSessionListener;
 import com.android.ims.internal.IImsConfig;
@@ -19,6 +25,57 @@ import java.lang.reflect.Method;
 /* Stand-ins for MediaTek framework members that the AOSP framework does not have. */
 public final class ImsCompat {
     private ImsCompat() {}
+
+    public static void completeFeatureSet(ImsConfigListener listener, int feature, int network,
+            int value) throws RemoteException {
+        if (listener != null) {
+            boolean supported = feature >= 0 && feature <= 3;
+            listener.onSetFeatureResponse(feature, network, supported ? value : 0,
+                    supported ? 0 : 1);
+        }
+    }
+
+    public static void unsupportedFeatureGet(ImsConfigListener listener, int feature, int network)
+            throws RemoteException {
+        if (listener != null) listener.onGetFeatureResponse(feature, network, 0, 1);
+    }
+
+    public static PreciseDataConnectionState createDataConnectionState(Intent intent) {
+        String types = intent.getStringExtra("apnType");
+        return new PreciseDataConnectionState(intent.getIntExtra("state", -1),
+                intent.getIntExtra("networkType", 0),
+                ApnSetting.getApnTypesBitmaskFromString(types == null ? "" : types),
+                intent.getStringExtra("apn"), intent.getParcelableExtra("linkProperties"),
+                intent.getIntExtra("failCause", DataFailCause.NONE));
+    }
+
+    public static String getDataConnectionFailure(Intent intent) {
+        int cause = intent.getIntExtra("failCause", DataFailCause.NONE);
+        return cause == DataFailCause.NONE ? "" : DataFailCause.toString(cause);
+    }
+
+    public static boolean shouldHandleDataState(Intent intent) {
+        int state = intent.getIntExtra("state", -1);
+        // Q broadcasts idle APN state for both slots without a subscription ID.
+        // A tracked network's onLost callback handles a real clean disconnect.
+        return state > 0 || intent.getIntExtra("failCause", DataFailCause.NONE) != 0 ||
+                intent.getParcelableExtra("linkProperties") != null;
+    }
+
+    public static void notifyDataNetworkLost(Handler handler, String apnType) {
+        PreciseDataConnectionState state = new PreciseDataConnectionState(0, 0,
+                ApnSetting.getApnTypesBitmaskFromString(apnType), "", null,
+                DataFailCause.LOST_CONNECTION);
+        handler.obtainMessage(7100, state).sendToTarget();
+    }
+
+    public static String getDataConnectionApnType(PreciseDataConnectionState state) {
+        return ApnSetting.getApnTypesStringFromBitmask(state.getDataConnectionApnTypeBitMask());
+    }
+
+    public static String getDataConnectionFailCause(PreciseDataConnectionState state) {
+        return DataFailCause.toString(state.getDataConnectionFailCause());
+    }
 
     public static void setSpecificEccCategory(int category) {}
 

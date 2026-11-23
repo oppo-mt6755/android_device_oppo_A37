@@ -1,0 +1,15 @@
+diff --git a/services/mediacodec/main_codecservice.cpp b/services/mediacodec/main_codecservice.cpp
+index 6a82b1b..b9d6434 100644
+--- a/services/mediacodec/main_codecservice.cpp
++++ b/services/mediacodec/main_codecservice.cpp
+@@ -43,7 +43,9 @@ int main(int argc __unused, char** argv)
+     signal(SIGPIPE, SIG_IGN);
+     SetUpMinijail(kSystemSeccompPolicyPath, kVendorSeccompPolicyPath);
+ 
+-    android::ProcessState::initWithDriver("/dev/vndbinder");
++    // Non-Treble codecs still use services such as PQ on the system Binder bus.
++    android::ProcessState::initWithDriver(property_get_bool("ro.treble.enabled", false)
++            ? "/dev/vndbinder" : "/dev/binder");
+     android::ProcessState::self()->startThreadPool();
+ 
+     ::android::hardware::configureRpcThreadpool(64, false);
