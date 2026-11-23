@@ -10,6 +10,8 @@ ro.sys.sdcardfs=true
 # Use the platform implementations for virtual and USB audio devices.
 ro.hardware.audio.r_submix=default
 ro.hardware.audio.usb=default
+# The original HAL perf client uses an older Parcel layout than Android 10.
+audio.perfservice.bypass=1
 
 # The controller rejects extended feature page 2 despite advertising it.
 ro.bluetooth.max_feature_page=1

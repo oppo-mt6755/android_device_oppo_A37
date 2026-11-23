@@ -22,6 +22,10 @@ Android 10 completes boot and enters the system. The initial storage-mount
 panic is fixed; normal reboot and Binder/storage regression checks pass.
 Other hardware subsystems still need Android 10 runtime validation. Logd, JIT and primary
 audio now start after ambient-capability, memfd and legacy audio-layout fixes.
+The stock audio HAL perf-service hook is bypassed: its pre-Android-10 Parcel
+allocation overwrites caller state when used with the current libbinder.
+The kernel also carries upstream 54708d2858e7 so capability-bearing services
+can resolve their own /proc/self/fd from worker threads.
 
 The old MTK camera and encoder require a 160-byte GraphicBuffer allocation on
 Android 10. Guarded blob instruction changes and DT_NEEDED additions are listed
