@@ -26,6 +26,8 @@ The stock audio HAL perf-service hook is bypassed: its pre-Android-10 Parcel
 allocation overwrites caller state when used with the current libbinder.
 The kernel also carries upstream 54708d2858e7 so capability-bearing services
 can resolve their own /proc/self/fd from worker threads.
+The audio policy routes UI effects through primary DL1 output: the stock
+kernel has no MultiMedia2_PLayback PCM for the HAL fast-output handler.
 
 The old MTK camera and encoder require a 160-byte GraphicBuffer allocation on
 Android 10. Guarded blob instruction changes and DT_NEEDED additions are listed
