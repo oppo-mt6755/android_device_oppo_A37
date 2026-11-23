@@ -117,6 +117,7 @@ KERNEL_TOOLCHAIN := $(abspath prebuilts/gcc/linux-x86/aarch64/aarch64-linux-andr
 
 # The legacy HAL reads calibration files owned by the system group.
 TARGET_USES_CUSTOM_AUDIO_SERVICE_RC := true
+TARGET_USES_LEGACY_AUDIO_HAL := true
 
 BOARD_HAL_STATIC_LIBRARIES += libhealthd.mt6755
 
@@ -147,6 +148,7 @@ TARGET_USES_CUSTOM_MEDIASERVER_RC := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
 TARGET_FLATTEN_APEX := true
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := false
+BOARD_ROOT_EXTRA_FOLDERS += nvdata persistent protect_f protect_s
 
 TARGET_USES_CUSTOM_HAL_SERVICE_RC := true
 

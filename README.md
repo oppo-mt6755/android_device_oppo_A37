@@ -18,7 +18,9 @@ its standard first-stage init mounts that image and switches root before
 starting /system/bin/init. Boot contains only the first-stage ramdisk.
 The kernel DT fstab already mounts system by its controller by-name path.
 SELinux neverallow, file-type and compatibility checks pass.
-Phone boot is still unverified.
+Android 10 reaches boot animation and starts SystemUI. Full boot completion
+and physical touch/display acceptance are still pending. Logd, JIT and primary
+audio now start after ambient-capability, memfd and legacy audio-layout fixes.
 
 The old MTK camera and encoder require a 160-byte GraphicBuffer allocation on
 Android 10. Guarded blob instruction changes and DT_NEEDED additions are listed
@@ -36,3 +38,6 @@ object. Initial bring-up pins the official prebuilt to commit
 `1411b097536a2f2c8188730a786ae08ef613195e` (109.0.5414.118, minSdk 24)
 using .repo/local_manifests/a37-webview.xml. Update this component before
 shipping a general-use build.
+
+Kernel memfd currently supports anonymous shared mappings and CLOEXEC, as
+needed by ART. MFD_ALLOW_SEALING is rejected until file sealing is backported.

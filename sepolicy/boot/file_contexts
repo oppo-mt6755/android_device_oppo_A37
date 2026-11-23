@@ -4,3 +4,6 @@
 /dev/mtk_disp                      u:object_r:graphics_device:s0
 /dev/mtk_cmdq                      u:object_r:graphics_device:s0
 /dev/m4u                           u:object_r:graphics_device:s0
+/persistent                         u:object_r:mnt_vendor_file:s0
+/protect_f                          u:object_r:mnt_vendor_file:s0
+/protect_s                          u:object_r:mnt_vendor_file:s0

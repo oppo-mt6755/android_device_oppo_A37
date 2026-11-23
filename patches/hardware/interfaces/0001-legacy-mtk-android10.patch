@@ -12,6 +12,25 @@ index b57a1ae..4c40ad8 100644
  LOCAL_MODULE_RELATIVE_PATH := hw
  LOCAL_PROPRIETARY_MODULE := true
  LOCAL_SRC_FILES := \
+diff --git a/audio/core/all-versions/default/Android.bp b/audio/core/all-versions/default/Android.bp
+index a1af3c4..e0c8902 100644
+--- a/audio/core/all-versions/default/Android.bp
++++ b/audio/core/all-versions/default/Android.bp
+@@ -47,6 +47,14 @@ cc_library_shared {
+     name: "android.hardware.audio@2.0-impl",
+     defaults: ["android.hardware.audio-impl_default"],
+ 
++    product_variables: {
++        lineage: {
++            uses_legacy_audio_hal: {
++                cflags: ["-DLEGACY_AUDIO_HAL"],
++            },
++        },
++    },
++
+     shared_libs: [
+         "android.hardware.audio@2.0",
+         "android.hardware.audio.common@2.0",
 diff --git a/bluetooth/1.0/default/Android.bp b/bluetooth/1.0/default/Android.bp
 index f4b1e7b..8ee0606 100644
 --- a/bluetooth/1.0/default/Android.bp

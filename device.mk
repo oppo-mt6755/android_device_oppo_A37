@@ -122,6 +122,7 @@ PRODUCT_PACKAGES += \
     libmtk_ims_sockets \
     libshim_ims_vt
 PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/configs/privapp-permissions-ims.xml:system/etc/permissions/privapp-permissions-ims.xml \
     $(DEVICE_PATH)/mtk/ims/init.mt6755.ims.rc:root/init.mt6755.ims.rc
 
 # Keymaster HIDL

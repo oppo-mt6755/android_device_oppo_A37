@@ -17,6 +17,8 @@ The patches were checked against these LineageOS 17.1 commits:
 
 - `device/lineage/sepolicy`: `72049da6bc559ad5e57a2824b975fba5102258a0`
 
+- `hardware/libhardware`: `8caddb38009ef6f4fd650795637891698e34bb3d`
+
 Changes:
 
 - system/core: character-device USB ADB;
@@ -28,12 +30,13 @@ Changes:
 - system/sepolicy and device/lineage/sepolicy: register the in-process HAL1
   service through the existing camera-service attribute without conflicting
   exclusive registration rules.
-- vendor/lineage: board service-init option and China Unicom IMS APN.
+- hardware/libhardware: opt-in legacy audio device ABI for HAL 2.0.
+- vendor/lineage: board service-init/audio ABI options and China Unicom IMS APN.
 - external/tinyalsa: validate absent PCM handles before timestamp queries.
 - external/tinycompress: export only the legacy sound UAPI headers.
 - system/bt: limit feature queries for the older Bluetooth controller.
 - system/connectivity/wificond: convert local BSS age to boot-relative time.
 
-Compile and hardware validation are ongoing; no Android 10 phone boot has
-been verified yet. The earlier Android 8.1 patch set remains in the original
+Compile validation passes. Android 10 starts its boot animation and SystemUI;
+full boot completion and hardware acceptance are still in progress. The earlier Android 8.1 patch set remains in the original
 LineageOS 15.1 device branch.
