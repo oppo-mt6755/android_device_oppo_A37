@@ -47,8 +47,12 @@ Wi-Fi scanning/connection and Bluetooth pairing have passed. The kernel carries
 upstream neighbor-state notification and probe-reset fixes (53385d2 and 765c9c6,
 Android common 2011e72). Without resetting the count, repeated NUD_PROBE requests
 can make Android disconnect a working Wi-Fi connection. With GPS Test active,
-24 rounds of IPv4/IPv6 neighbor probes passed without a disconnect; longer
-real-world Wi-Fi stability still needs observation.
+24 rounds of IPv4/IPv6 neighbor probes passed without a disconnect. A separate
+traffic stall after off-channel ANQP queries required preserving the active BSS
+during remain-on-channel operations and correcting the channel metadata. Eight
+queries then passed with all 40 gateway packets received and no disconnect;
+power save and IP reachability checks remain enabled. Longer real-world Wi-Fi
+stability still needs observation.
 
 The radio reads
 USIM records and attaches to LTE. IMS registration, outgoing calls, hangup,
