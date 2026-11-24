@@ -490,6 +490,12 @@ vendor/usr/keylayout/mtk-tpd.kl|9250656b95368341cb42bfc4c3f402590876c727
 # Misc
 vendor/etc/custom.conf|dfa00a77c92aa8459098a73936701e419b7125d1
 
+# NFC
+xbin/nfcstackp:vendor/bin/nfcstackp|9a3f0aa45850f2bc1e99016f38e9e3c6c1f60d7c
+etc/nfc.cfg:vendor/etc/nfc.cfg
+etc/nfcse.cfg:vendor/etc/nfcse.cfg
+lib/libmtknfc.so:vendor/lib/libmtknfc.so|748b24298484ea19f4566f405d3408758374f9a7
+
 # NVRAM
 lib/libnvram_daemon_callback.so:vendor/lib/libnvram_daemon_callback.so
 lib64/libnvram_daemon_callback.so:vendor/lib64/libnvram_daemon_callback.so

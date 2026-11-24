@@ -1,0 +1,4 @@
+type mt6605_nfc_data_file, file_type, data_file_type;
+
+allow hal_nfc_default mt6605_nfc_data_file:dir rw_dir_perms;
+allow hal_nfc_default mt6605_nfc_data_file:sock_file create_file_perms;

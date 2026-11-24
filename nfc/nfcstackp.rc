@@ -1,0 +1,8 @@
+on post-fs-data
+    mkdir /data/vendor/nfc 0770 nfc nfc
+    restorecon /data/vendor/nfc
+
+service vendor.nfcstackp /vendor/bin/nfcstackp
+    class late_start
+    user nfc
+    group nfc

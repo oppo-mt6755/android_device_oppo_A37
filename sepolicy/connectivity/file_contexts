@@ -1,3 +1,6 @@
 /(system/vendor|vendor)/bin/wmt_loader    u:object_r:mtk_wmt_loader_exec:s0
 /(system/vendor|vendor)/bin/wmt_launcher    u:object_r:mtk_wmt_launcher_exec:s0
 /dev/(stpwmt|wmtdetect|wmtWifi)    u:object_r:mtk_wmt_device:s0
+/(vendor|system/vendor)/bin/nfcstackp    u:object_r:hal_nfc_default_exec:s0
+/dev/mt6605    u:object_r:nfc_device:s0
+/data/vendor/nfc(/.*)?    u:object_r:mt6605_nfc_data_file:s0
