@@ -366,7 +366,7 @@ vendor/bin/mtk_agpsd|82883927718dc1865a089b718dc6e559e379604d
 vendor/bin/wifi2agps|81f12115c29a260845a9ad95650b09d0d5371a93
 vendor/etc/agps_profiles_conf2.xml|2b5c46b97251c205c08a5d805b22cec35cd532e9
 vendor/lib/hw/gps.mt6755.so|96020a46f55dc1993551178ccc7d6118fa4c448f
-vendor/lib/libmnl.so|445c0a9da6863cc79170e843e429bb65f4ba330b
+vendor/lib/libmnl.so|929d1f39f2501389743f9200549028be989b9be7
 vendor/lib64/hw/gps.mt6755.so|508cb249b8a6aac2be1d6bd30fd99b429631b615
 
 # Graphics
