@@ -32,6 +32,13 @@ using namespace std::chrono_literals;
 
 constexpr char kSocketPath[] = "/data/vendor/nfc/mtknfc_server";
 constexpr size_t kPacketCapacity = 520;
+constexpr uint8_t kRfNotification = 0x61;
+constexpr uint8_t kRfInterfaceActivated = 0x05;
+constexpr uint8_t kRfDeactivate = 0x06;
+constexpr uint8_t kIso15693Protocol = 0x83;
+constexpr uint8_t kIso15693PollMode = 0x06;
+constexpr uint8_t kDeactivateToIdle = 0x00;
+constexpr std::array<uint8_t, 4> kDeactivateToDiscovery{0x21, kRfDeactivate, 0x01, 0x03};
 
 // The stock middleware uses little-endian 32-bit fields on this socket.
 enum class Message : uint32_t {
@@ -100,6 +107,17 @@ public:
         return false;
     }
 
+    bool Write(Packet& packet) {
+        if (iso15693Active_ && packet.length == kDeactivateToDiscovery.size() &&
+            memcmp(packet.bytes.data(), kDeactivateToDiscovery.data(), packet.length) == 0) {
+            // MT6605 can acknowledge the direct transition without restarting polling.
+            // An idle notification makes the NCI stack start discovery again if enabled.
+            packet.bytes[3] = kDeactivateToIdle;
+            ALOGD("Returning NFC-V to idle before resuming discovery");
+        }
+        return Send(Message::Write, &packet, sizeof(packet));
+    }
+
     int PrepareDiscovery() {
         constexpr uint32_t reserved = 0;
         std::unique_lock<std::mutex> lock(discovery_lock_);
@@ -127,7 +145,10 @@ public:
                     ALOGE("Invalid NCI packet length from the MT6605 backend");
                     break;
                 }
-                if (packet.length != 0) data_(packet.length, packet.bytes.data());
+                if (packet.length != 0) {
+                    UpdatePollingState(packet);
+                    data_(packet.length, packet.bytes.data());
+                }
                 continue;
             }
 
@@ -139,9 +160,11 @@ public:
             switch (header.type) {
                 case Message::OpenComplete:
                 case Message::PowerCycleComplete:
+                    iso15693Active_ = false;
                     Notify(NfcEvent::OPEN_CPLT, status);
                     break;
                 case Message::CloseComplete:
+                    iso15693Active_ = false;
                     Notify(NfcEvent::CLOSE_CPLT, status);
                     break;
                 case Message::CoreInitializedComplete:
@@ -177,6 +200,16 @@ public:
     }
 
 private:
+    void UpdatePollingState(const Packet& packet) {
+        if (packet.length < 3 || packet.bytes[0] != kRfNotification) return;
+        if (packet.bytes[1] == kRfInterfaceActivated && packet.length >= 7) {
+            iso15693Active_ = packet.bytes[5] == kIso15693Protocol &&
+                    packet.bytes[6] == kIso15693PollMode;
+        } else if (packet.bytes[1] == kRfDeactivate) {
+            iso15693Active_ = false;
+        }
+    }
+
     bool SendFully(const void* payload, size_t length) {
         const auto* data = static_cast<const uint8_t*>(payload);
         while (length != 0) {
@@ -200,6 +233,7 @@ private:
     std::condition_variable discovery_ready_;
     std::optional<NfcStatus> discovery_result_;
     std::atomic<bool> connected_{true};
+    std::atomic<bool> iso15693Active_{false};
 };
 
 class Transport {
@@ -244,7 +278,7 @@ public:
         packet.length = length;
         memcpy(packet.bytes.data(), data, length);
         std::lock_guard<std::mutex> lock(lock_);
-        if (!connection_ || !connection_->Send(Message::Write, &packet, sizeof(packet))) {
+        if (!connection_ || !connection_->Write(packet)) {
             return -EIO;
         }
         return length;
